@@ -37,7 +37,7 @@ class AuthController extends Controller
             $role = trim($request->input('role'));
             $status = trim($request->input('status'));
             $rules = [
-                "firstname" => "required|min:5",
+                "firstname" => "required|min:3",
                 "email" => "required|email|unique:auth",
                 "password"=>"required|min:5|max:15",
                 "phone"=>"required|numeric|min:10",
@@ -104,7 +104,7 @@ class AuthController extends Controller
         }
         
        if(!$token = JWTAuth::attempt($validator->validated())){
-           return response()->json(['msg'=>"Unauthorized User!"],401);
+           return response()->json(['message'=>"Unauthorized User!"],401);
            
         }
 

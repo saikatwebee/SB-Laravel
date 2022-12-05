@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class CustomerIndustries extends Model
 {
+    protected $table = 'customer_industries';
+    public $timestamps = false;
     /**
      * @var array
      */
