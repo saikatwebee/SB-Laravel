@@ -45,7 +45,8 @@ use Illuminate\Support\Facades\Route;
 
     //Routes available to only SS(Industry)
      Route::middleware(['role:SS'])->prefix('customer')->group(function () {
-        Route::get('/customer-datatable', [CustomerController::class, 'getCustomerDemo']); 
+       // Route::get('/customer-datatable', [CustomerController::class, 'getCustomerDemo']); 
+        Route::post('/editNew',[CustomerController::class, 'editNew']); 
     });
 
      //Routes available to only SP(Consultant)
