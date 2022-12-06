@@ -11,16 +11,17 @@ use App\Models\CustomerIndustries;
 
 interface ProfileInterface
 {
-    public static function editNewProfile($data,$customer_id);
+    public static function editCustomerProfile($data,$customer_id);
     public static function getCidByEmail($email);
     public static function addCustomerIndustry($industries,$customer_id);
+    public static function getRowByCid($customer_id);
     
 
 }
 
 class ProfileService implements ProfileInterface{
 
-    public static function editNewProfile($data,$customer_id)
+    public static function editCustomerProfile($data,$customer_id)
     {
         $affectedRows = Customer::where("customer_id",$customer_id)->update($data);
         return $affectedRows;
@@ -29,6 +30,11 @@ class ProfileService implements ProfileInterface{
     public static function getCidByEmail($email){
         $customer = Customer::where('email',$email)->first();
         return $customer->customer_id;
+    }
+
+    public static function getRowByCid($customer_id){
+        $customer = Customer::where('customer_id',$customer_id)->first();
+        return $customer;
     }
 
     public static function addCustomerIndustry($industries,$customer_id){
