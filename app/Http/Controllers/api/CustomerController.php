@@ -132,6 +132,65 @@ class CustomerController extends Controller
         }
     }
 
+
+    public function editExistingCompany(Request $request){
+        try{
+            $data =[
+				'companyname'=>trim($request->input('companyname')),
+				'mycurrentposition'=>trim($request->input('mycurrentposition')),
+				'tinno'=>trim($request->input('tinno')),
+				'city'=>trim($request->input('city')),
+				'state'=>trim($request->input('state')),
+				// 'companywebsite'=>trim($request->input('companywebsite')),
+				// 'companydesc'=>trim($request->input('companydesc')),
+                'industries' =>trim($request->input('companydesc')),
+                'date_updated'=>date('Y-m-d H:i:s')
+            ];
+
+            $rules = [
+                'companyname' => 'required',
+                'mycurrentposition' => 'required',
+                'tinno' => 'required',
+                'city' => 'required',
+                'state' => 'required',
+                // 'companywebsite' => 'required',
+                // 'companydesc' => 'required',
+                'industries' => 'required|numeric',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            } else {
+                //validation successfull
+                $customer_id = ProfileService::getCidByEmail(
+                    auth()->user()->email
+                );
+
+                $res = ProfileService::editCustomerProfile($data, $customer_id);
+                if ($res > 0) {
+                    ProfileService::addCustomerIndustry(
+                        $request->input('industries'),
+                        $customer_id
+                    );
+                    return response()->json(
+                        [
+                            'success' => true,
+                            'message' => 'Update Successfull',
+                            'status' => '200',
+                        ],
+                        Response::HTTP_OK
+                    );
+                }
+
+            }
+        }
+        catch(Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
     public function ProfileUpload($file, $customer_id)
     {
         $fileName = $customer_id . '.' . $file->getClientOriginalExtension();

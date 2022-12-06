@@ -48,6 +48,7 @@ use Illuminate\Support\Facades\Route;
        // Route::get('/customer-datatable', [CustomerController::class, 'getCustomerDemo']); 
         Route::post('/editNew',[CustomerController::class, 'editNew']); 
         Route::post('/editExistingPersonal',[CustomerController::class, 'editExistingPersonal']); 
+        Route::post('/editExistingCompany',[CustomerController::class, 'editExistingCompany']); 
         
     });
 
