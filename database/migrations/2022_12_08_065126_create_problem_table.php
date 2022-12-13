@@ -26,7 +26,7 @@ return new class extends Migration
 3- 3 months – 6 months,
 4- > 6 months');
             $table->string('files', 250)->nullable();
-            $table->integer('status')->nullable();
+            $table->integer('status')->nullable()->default(0);
             $table->string('industries_other')->nullable();
             $table->string('category_other')->nullable();
             $table->integer('typeofproject')->nullable()->comment('1- Onsite,
@@ -34,7 +34,7 @@ return new class extends Migration
             $table->string('budget', 50)->nullable();
             $table->string('location', 50)->nullable();
             $table->string('state', 250)->nullable();
-            $table->integer('action')->default(1)->comment('0- Not Live,
+            $table->integer('action')->default(0)->comment('0- Not Live,
 1- Live,
 2- Awarded(Normal)/Proposal sent (Execution),
 3- On Hold,

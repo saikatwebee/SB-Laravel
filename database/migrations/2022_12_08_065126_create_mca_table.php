@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('mca', function (Blueprint $table) {
-            $table->string('cin', 100)->index('cin');
+            $table->string('cin', 100)->unique('cin_2');
             $table->string('company', 500);
             $table->date('date_reg');
             $table->string('state', 100);
@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('address', 500);
             $table->string('email', 500);
 
-            $table->unique(['cin'], 'cin_2');
+            $table->index(['cin'], 'cin');
         });
     }
 

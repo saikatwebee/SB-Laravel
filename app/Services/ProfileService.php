@@ -24,7 +24,8 @@ class ProfileService implements ProfileInterface{
     public static function editCustomerProfile($data,$customer_id)
     {
         $affectedRows = Customer::where("customer_id",$customer_id)->update($data);
-        return $affectedRows;
+        if($affectedRows > 0)
+        return true;
     }
 
     public static function getCidByEmail($email){

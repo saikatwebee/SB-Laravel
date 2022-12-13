@@ -60,7 +60,7 @@ class CustomerController extends Controller
                 }
 
                 $res = ProfileService::editCustomerProfile($data, $customer_id);
-                if ($res > 0) {
+                if ($res) {
                     ProfileService::addCustomerIndustry(
                         $request->input('industries'),
                         $customer_id
@@ -116,7 +116,7 @@ class CustomerController extends Controller
                 }
 
                 $res = ProfileService::editCustomerProfile($data, $customer_id);
-                if ($res > 0) {
+                if ($res) {
                     return response()->json(
                         [
                             'success' => true,
@@ -169,7 +169,7 @@ class CustomerController extends Controller
                 );
 
                 $res = ProfileService::editCustomerProfile($data, $customer_id);
-                if ($res > 0) {
+                if ($res) {
                     ProfileService::addCustomerIndustry(
                         $request->input('industries'),
                         $customer_id
