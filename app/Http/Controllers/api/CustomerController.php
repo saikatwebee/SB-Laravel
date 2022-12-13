@@ -11,6 +11,14 @@ use App\Services\ProfileService;
 
 class CustomerController extends Controller
 {
+    //demo datatable method 
+
+    public function getInvoiceDemo(){
+        $res= Customer::select("*")->get();
+       // return var_dump($res);
+        return response()->json($res);
+    }
+
     //For SS only
     public function editNew(Request $request)
     {
