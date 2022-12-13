@@ -4,6 +4,7 @@
 use Illuminate\Http\Request;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CustomerController;
+use App\Http\Controllers\api\ProblemController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -49,6 +50,8 @@ use Illuminate\Support\Facades\Route;
         Route::post('/editNew',[CustomerController::class, 'editNew']); 
         Route::post('/editExistingPersonal',[CustomerController::class, 'editExistingPersonal']); 
         Route::post('/editExistingCompany',[CustomerController::class, 'editExistingCompany']); 
+        Route::post('/postProject',[ProblemController::class, 'post_project']); 
+        
         
     });
 

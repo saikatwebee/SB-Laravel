@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('ga', function (Blueprint $table) {
-            $table->integer('cid')->index('cid')->comment('link with customer table');
+            $table->integer('cid')->unique('cid_2')->comment('link with customer table');
             $table->string('query', 1000)->nullable();
             $table->string('channel', 500)->nullable();
             $table->string('campaign', 500)->nullable();
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('landingpage', 500)->nullable();
             $table->timestamp('date_added')->useCurrentOnUpdate()->useCurrent();
 
-            $table->unique(['cid'], 'cid_2');
+            $table->index(['cid'], 'cid');
         });
     }
 
