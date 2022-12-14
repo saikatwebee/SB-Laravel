@@ -140,7 +140,7 @@ class CustomerController extends Controller
         }
     }
 
-
+    //For SS Only
     public function editExistingCompany(Request $request){
         try{
             $data =[
@@ -199,6 +199,63 @@ class CustomerController extends Controller
         }
     }
 
+    //SP Profile Edit starts 
+    //SP - Account tab
+    public function editSPAccount(Request $request)
+    {
+        try {
+            $data['firstname'] = trim($request->input('firstname'));
+            $data['lastname'] = trim($request->input('lastname'));
+            $data['email'] = trim($request->input('email'));
+            $data['phone'] = trim($request->input('phone'));
+            $data['dob'] = trim($request->input('dob'));
+            $data['date_updated'] = date('Y-m-d H:i:s');
+
+            $rules = [
+                'firstname' => 'required|min:3',
+                'lastname' => 'required|min:3',
+                'phone' => 'required|numeric|min:10',
+                'companylogo' => 'mimes:png,jpg,jpeg|max:2048',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            } else {
+                //validation successfull
+                $customer_id = ProfileService::getCidByEmail(
+                    auth()->user()->email
+                );
+                //file upload code
+                if(isset($_FILES['companylogo'])){
+                    if ($request->file('companylogo')->isValid()) {
+                        $file = $request->file('companylogo');
+                        $uploaded_file = $this->ProfileUpload($file, $customer_id);
+                        if ($uploaded_file) {
+                            $data['companylogo'] = $uploaded_file;
+                        }
+                    } 
+                }
+                
+
+                $res = ProfileService::editCustomerProfile($data, $customer_id);
+                if ($res) {
+                    return response()->json(
+                        [
+                            'success' => true,
+                            'message' => 'Update Successfull',
+                            'status' => '200',
+                        ],
+                        Response::HTTP_OK
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
     public function ProfileUpload($file, $customer_id)
     {
         $fileName = $customer_id . '.' . $file->getClientOriginalExtension();
@@ -211,7 +268,7 @@ class CustomerController extends Controller
             }
         }
         if ($file->move(public_path('customerProfile'), $fileName)) {
-            return true;
+            return $fileName;
         }
     }
 }
