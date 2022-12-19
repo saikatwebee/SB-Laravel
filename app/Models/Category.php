@@ -23,7 +23,7 @@ class Category extends Model
      * @var string
      */
     protected $table = 'category';
-
+    public $timestamps = false;
     /**
      * @var array
      */

@@ -8,17 +8,11 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Customer;
 use App\Services\ProfileService;
+use App\Services\CommonService;
 
 class CustomerController extends Controller
 {
-    //demo datatable method 
-
-    public function getInvoiceDemo(){
-        $res= Customer::select("*")->get();
-       // return var_dump($res);
-        return response()->json($res);
-    }
-
+   
     //For SS only
     public function editNew(Request $request)
     {
@@ -55,7 +49,7 @@ class CustomerController extends Controller
                 return response()->json($validator->errors()->toJson(), 400);
             } else {
                 //validation successfull
-                $customer_id = ProfileService::getCidByEmail(
+                $customer_id = CommonService::getCidByEmail(
                     auth()->user()->email
                 );
                 //file upload code
@@ -111,7 +105,7 @@ class CustomerController extends Controller
                 return response()->json($validator->errors()->toJson(), 400);
             } else {
                 //validation successfull
-                $customer_id = ProfileService::getCidByEmail(
+                $customer_id = CommonService::getCidByEmail(
                     auth()->user()->email
                 );
                 //file upload code
@@ -172,7 +166,7 @@ class CustomerController extends Controller
                 return response()->json($validator->errors()->toJson(), 400);
             } else {
                 //validation successfull
-                $customer_id = ProfileService::getCidByEmail(
+                $customer_id = CommonService::getCidByEmail(
                     auth()->user()->email
                 );
 
@@ -260,7 +254,7 @@ class CustomerController extends Controller
     {
         $fileName = $customer_id . '.' . $file->getClientOriginalExtension();
         //check profile pic is already exist or not
-        $row = ProfileService::getRowByCid($customer_id);
+        $row = CommonService::getRowByCid($customer_id);
         $logo = $row->companylogo;
         if ($logo != null || $logo != '') {
             if (file_exists(public_path('customerProfile/' . $logo))) {
