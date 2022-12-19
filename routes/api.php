@@ -50,6 +50,7 @@ use Illuminate\Support\Facades\Route;
         Route::post('/editNew',[CustomerController::class, 'editNew']); 
         Route::post('/editExistingPersonal',[CustomerController::class, 'editExistingPersonal']); 
         Route::post('/editExistingCompany',[CustomerController::class, 'editExistingCompany']); 
+        //Post Project
         Route::post('/postProject',[ProblemController::class, 'post_project']); 
         
         
@@ -57,6 +58,8 @@ use Illuminate\Support\Facades\Route;
 
      //Routes available to only SP(Consultant)
      Route::middleware(['role:SP'])->prefix('customer')->group(function () {
+        //Profile Edit
+        Route::post('/editSPAccount',[CustomerController::class, 'editSPAccount']);
         
     });
 
