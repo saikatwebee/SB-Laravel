@@ -61,6 +61,8 @@ use Illuminate\Support\Facades\Route;
      Route::middleware(['role:SP'])->prefix('customer')->group(function () {
         //Profile Edit
         Route::post('/editSPAccount',[CustomerController::class, 'editSPAccount']);
+        Route::post('/editSPPersonal',[CustomerController::class, 'editSPPersonal']);
+        
         
     });
 
