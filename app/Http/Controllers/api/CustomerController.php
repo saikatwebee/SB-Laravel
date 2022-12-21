@@ -250,6 +250,97 @@ class CustomerController extends Controller
         }
     }
 
+    //SP - Personal tab
+    public function editSPPersonal(Request $request)
+    {
+        try {
+            $data['city'] = trim($request->input('city'));
+            $data['state'] = trim($request->input('state'));
+            $data['address'] = trim($request->input('address'));
+
+            $rules = [
+                'city' => 'required|min:3',
+                'state' => 'required|min:3',
+                'address' => 'required|min:3',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            } else {
+                //validation successfull
+                $customer_id = ProfileService::getCidByEmail(
+                    auth()->user()->email
+                );
+                
+
+                $res = ProfileService::editCustomerProfile($data, $customer_id);
+                if ($res) {
+                    return response()->json(
+                        [
+                            'success' => true,
+                            'message' => 'Update Successfull',
+                            'status' => '200',
+                        ],
+                        Response::HTTP_OK
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    //SP - Career tab
+    public function editSPCareer(Request $request)
+    {
+        try {
+            $data['companyname'] = trim($request->input('companyname'));
+            $data['mycurrentposition'] = trim($request->input('mycurrentposition'));
+            $data['mytotalnoexp'] = trim($request->input('mytotalnoexp'));
+            $data['linkedin'] = trim($request->input('linkedin'));
+            $data['brief_bio'] = trim($request->input('brief_bio'));
+            $data['date_updated'] = date('Y-m-d H:i:s');
+
+            $rules = [
+                'companyname' => 'required|min:3',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            } else {
+                //validation successfull
+                $customer_id = ProfileService::getCidByEmail(
+                    auth()->user()->email
+                );
+                
+
+                $res = ProfileService::editCustomerProfile($data, $customer_id);
+                if ($res) {
+                    //$industries = $request->input('industries');
+                    $industries = ['2','3','4'];
+                    foreach($industries as $ind){
+                        ProfileService::addCustomerIndustry($ind,$customer_id);
+                    }
+                   
+                    return response()->json(
+                        [
+                            'success' => true,
+                            'message' => 'Update Successfull',
+                            'status' => '200',
+                        ],
+                        Response::HTTP_OK
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
     public function ProfileUpload($file, $customer_id)
     {
         $fileName = $customer_id . '.' . $file->getClientOriginalExtension();
