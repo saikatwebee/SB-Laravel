@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Mail;
 // use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
+
 class ProblemController extends Controller
 {
     public function post_project(Request $request)
@@ -162,5 +163,52 @@ class ProblemController extends Controller
             ->get();
 
         return response()->json($res);
+    }
+
+    
+    //SP - Show Interest
+    public function ShowInterest(Request $request)
+    {
+        try {
+            $problem_id = trim($request->input('problem_id'));
+                $customer_id = CommonService::getCidByEmail(
+                    auth()->user()->email
+                );
+                //Check forwarded
+                $chk = ProblemService::checkProblemForwarded($customer_id, $problem_id);
+                if($chk) {
+                    $data['action'] = 5;
+                    $res = ProblemService::updateProblemToProvider($data, $customer_id, $problem_id);
+                    if ($res) {
+                        return response()->json(
+                            [
+                                'success' => true,
+                                'message' => 'Update Successfull',
+                                'status' => '200',
+                            ],
+                            Response::HTTP_OK
+                        );
+                    }
+                } else {
+                    $data['action'] = 5;
+                    $data['customer_id'] = $customer_id;
+                    $data['problem_id'] = $problem_id;
+                    $data['date_added'] = date('Y-m-d H:i:s');
+                    $res = ProblemService::addProblemToProvider($data);
+                    if ($res) {
+                        return response()->json(
+                            [
+                                'success' => true,
+                                'message' => 'Update Successfull',
+                                'status' => '200',
+                            ],
+                            Response::HTTP_OK
+                        );
+                    }
+                }
+            
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 }

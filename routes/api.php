@@ -70,6 +70,9 @@ use Illuminate\Support\Facades\Route;
         Route::post('/editSPCareer',[CustomerController::class, 'editSPCareer']);
         Route::post('/microEdit',[CustomerController::class, 'microEdit']);
         //Profile Edit end
+        //Show Interest
+        Route::post('/ShowInterest',[ProblemController::class, 'ShowInterest']);
+        
         
         });
 
