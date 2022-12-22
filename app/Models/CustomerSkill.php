@@ -20,6 +20,7 @@ class CustomerSkill extends Model
      * @var string
      */
     protected $table = 'customer_skill';
+    public $timestamps = false;
 
     /**
      * @var array
