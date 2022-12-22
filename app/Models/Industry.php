@@ -15,12 +15,15 @@ use Illuminate\Database\Eloquent\Model;
  * @property Problem[] $problems
  * @property Skill[] $skills
  */
-class Industries extends Model
+class Industry extends Model
 {
     /**
      * @var array
      */
+    protected $table = 'industries';
+    public $timestamps = false;
     protected $fillable = ['name', 'p_id', 'status'];
+    
 
     /**
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
