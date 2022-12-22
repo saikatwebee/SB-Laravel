@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Exception;
 use App\Models\CustomerPlane;
 use App\Models\Problem;
+use App\Models\ProblemToProvider;
 
 interface ProblemInterface
 {
@@ -48,6 +49,23 @@ class ProblemService implements ProblemInterface{
             if($affectedRows > 0)
             return true;
         }
+    }
+
+    public static function updateProblemToProvider($data,$customer_id,$problem_id)
+    {
+        $affectedRows = ProblemToProvider::where(["customer_id"=>$customer_id,"problem_id"=>$problem_id])->update($data);
+        if($affectedRows > 0)
+        return true;
+    }
+
+    public static function checkProblemForwarded($customer_id,$problem_id){
+        if (ProblemToProvider::where(["customer_id"=>$customer_id,"problem_id"=>$problem_id])->exists())
+        return true;
+    }
+    public static function addProblemToProvider($data){
+        $affectedRows = Problem::insert($data);
+        if($affectedRows > 0)
+        return true;
     }
 
     

@@ -61,6 +61,9 @@ use Illuminate\Support\Facades\Route;
         //Profile Edit
         Route::post('/editSPAccount',[CustomerController::class, 'editSPAccount']);
         Route::post('/editSPPersonal',[CustomerController::class, 'editSPPersonal']);
+        //Show Interest
+        Route::post('/ShowInterest',[ProblemController::class, 'ShowInterest']);
+        
         
         
     });

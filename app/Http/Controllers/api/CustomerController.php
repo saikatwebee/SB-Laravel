@@ -218,7 +218,7 @@ class CustomerController extends Controller
                 return response()->json($validator->errors()->toJson(), 400);
             } else {
                 //validation successfull
-                $customer_id = ProfileService::getCidByEmail(
+                $customer_id = CommonService::getCidByEmail(
                     auth()->user()->email
                 );
                 //file upload code
@@ -270,7 +270,7 @@ class CustomerController extends Controller
                 return response()->json($validator->errors()->toJson(), 400);
             } else {
                 //validation successfull
-                $customer_id = ProfileService::getCidByEmail(
+                $customer_id = CommonService::getCidByEmail(
                     auth()->user()->email
                 );
                 
@@ -313,7 +313,7 @@ class CustomerController extends Controller
                 return response()->json($validator->errors()->toJson(), 400);
             } else {
                 //validation successfull
-                $customer_id = ProfileService::getCidByEmail(
+                $customer_id = CommonService::getCidByEmail(
                     auth()->user()->email
                 );
                 
