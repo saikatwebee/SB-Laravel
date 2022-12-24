@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Exception;
 use App\Models\CustomerPlane;
 use App\Models\Problem;
+use App\Models\ProblemReferral;
 use App\Models\ProblemToProvider;
 
 interface ProblemInterface
@@ -51,6 +52,23 @@ class ProblemService implements ProblemInterface{
         }
     }
 
+    public static function subApplyCount($customer_id){
+        $apply_count = CustomerPlane::select("apply")->where('customer_id',$customer_id)->get();
+        if($apply_count->apply > 0){
+            $apply = $apply_count->apply - 1;
+            $affectedRows = CustomerPlane::where("customer_id",$customer_id)->update(['apply'=>$apply]);
+            if($affectedRows > 0)
+            return true;
+        }
+    }
+
+    public static function updateProblem($data,$problem_id)
+    {
+        $affectedRows = Problem::where("id",$problem_id)->update($data);
+        if($affectedRows > 0)
+        return true;
+    }
+
     public static function updateProblemToProvider($data,$customer_id,$problem_id)
     {
         $affectedRows = ProblemToProvider::where(["customer_id"=>$customer_id,"problem_id"=>$problem_id])->update($data);
@@ -63,7 +81,12 @@ class ProblemService implements ProblemInterface{
         return true;
     }
     public static function addProblemToProvider($data){
-        $affectedRows = Problem::insert($data);
+        $affectedRows = ProblemToProvider::insert($data);
+        if($affectedRows > 0)
+        return true;
+    }
+    public static function addReferProject($data){
+        $affectedRows = ProblemReferral::insert($data);
         if($affectedRows > 0)
         return true;
     }
