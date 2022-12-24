@@ -56,13 +56,22 @@ use Illuminate\Support\Facades\Route;
         
     });
 
-     //Routes available to only SP(Consultant)
-     Route::middleware(['role:SP'])->prefix('customer')->group(function () {
+    //Routes available to only SP(Consultant)
+    Route::middleware(['role:SP'])->prefix('customer')->group(function () {
         //Profile Edit
         Route::post('/editSPAccount',[CustomerController::class, 'editSPAccount']);
         Route::post('/editSPPersonal',[CustomerController::class, 'editSPPersonal']);
         //Show Interest
         Route::post('/ShowInterest',[ProblemController::class, 'ShowInterest']);
+        //Not Relevant
+        Route::post('/NotRelevant',[ProblemController::class, 'NotRelevant']);
+        //Apply Project
+        Route::post('/ApplyProject',[ProblemController::class, 'ApplyProject']);
+        //Refer Project
+        Route::post('/ReferProject',[ProblemController::class, 'ReferProject']);
+        //Award Normal Project
+        Route::post('/AwardNormalProject',[ProblemController::class, 'AwardNormalProject']);
+        
         
         
         
