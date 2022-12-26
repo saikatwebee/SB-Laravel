@@ -25,6 +25,7 @@ class ProblemToProvider extends Model
      * @var string
      */
     protected $table = 'problem_to_provider';
+    public $timestamps = false;
 
     /**
      * @var array

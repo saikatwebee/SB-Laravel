@@ -89,6 +89,15 @@ use Illuminate\Support\Facades\Route;
 
         //Show Interest
         Route::post('/ShowInterest',[ProblemController::class, 'ShowInterest']);
+        //Not Relevant
+        Route::post('/NotRelevant',[ProblemController::class, 'NotRelevant']);
+        //Apply Project
+        Route::post('/ApplyProject',[ProblemController::class, 'ApplyProject']);
+        //Refer Project
+        Route::post('/ReferProject',[ProblemController::class, 'ReferProject']);
+        //Award Normal Project
+        Route::post('/AwardNormalProject',[ProblemController::class, 'AwardNormalProject']);
+        
         
         
         });
@@ -102,6 +111,7 @@ use Illuminate\Support\Facades\Route;
         });
 
 });
+?>
 
 
 

@@ -359,7 +359,7 @@ class ProblemController extends Controller
                     return response()->json(
                         [
                             'success' => true,
-                            'message' => 'Update Successfull',
+                            'message' => 'Updated Successfully',
                             'status' => '200',
                         ],
                         Response::HTTP_OK
@@ -375,13 +375,163 @@ class ProblemController extends Controller
                     return response()->json(
                         [
                             'success' => true,
-                            'message' => 'Update Successfull',
+                            'message' => 'Added Successfully',
                             'status' => '200',
                         ],
                         Response::HTTP_OK
                     );
                 }
             }
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    //SP - Not Relevant (action = 4)
+    public function NotRelevant(Request $request)
+    {
+        try {
+            $problem_id = trim($request->input('problem_id'));
+            $data['action'] = 4;
+            $data['date_added'] = date('Y-m-d H:i:s');
+                $customer_id = CommonService::getCidByEmail(
+                    auth()->user()->email
+                );
+                //Check forwarded
+                $chk = ProblemService::checkProblemForwarded($customer_id, $problem_id);
+                if($chk) {
+                    $res = ProblemService::updateProblemToProvider($data, $customer_id, $problem_id);
+                    if ($res) {
+                        return response()->json(
+                            [
+                                'success' => true,
+                                'message' => 'Updated Successfull',
+                                'status' => '200',
+                            ],
+                            Response::HTTP_OK
+                        );
+                    }
+                } else {
+                    $data['customer_id'] = $customer_id;
+                    $data['problem_id'] = $problem_id;
+                    $res = ProblemService::addProblemToProvider($data);
+                    if ($res) {
+                        return response()->json(
+                            [
+                                'success' => true,
+                                'message' => 'Updated Successfull',
+                                'status' => '200',
+                            ],
+                            Response::HTTP_OK
+                        );
+                    }
+                }
+            
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    //SP - Project Apply (action = 1)
+    public function ApplyProject(Request $request)
+    {
+        try {
+            $problem_id = trim($request->input('problem_id'));
+            $data['action'] = 1;
+            $data['date_added'] = date('Y-m-d H:i:s');
+            $data['offer'] = trim($request->input('offer'));
+                $customer_id = CommonService::getCidByEmail(
+                    auth()->user()->email
+                );
+                //Check forwarded
+                $chk = ProblemService::checkProblemForwarded($customer_id, $problem_id);
+                if($chk) {
+                    $res = ProblemService::updateProblemToProvider($data, $customer_id, $problem_id);
+                    if ($res) {
+                        return response()->json(
+                            [
+                                'success' => true,
+                                'message' => 'Updated Successfully',
+                                'status' => '200',
+                            ],
+                            Response::HTTP_OK
+                        );
+                    }
+                } else {
+                    $data['customer_id'] = $customer_id;
+                    $data['problem_id'] = $problem_id;
+                    $res = ProblemService::addProblemToProvider($data);
+                    if ($res) {
+                        return response()->json(
+                            [
+                                'success' => true,
+                                'message' => 'Updated Successfully',
+                                'status' => '200',
+                            ],
+                            Response::HTTP_OK
+                        );
+                    }
+                }
+            
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    //Award Normal Project
+    public function AwardNormalProject(Request $request)
+    {
+        try {
+            $problem_id = trim($request->input('problem_id'));
+            $provider_id= trim($request->input('provider_id'));
+            $data['awarded_date'] = date('Y-m-d H:i:s');
+            $data['action'] = 2;
+            $res = ProblemService::updateProblem($data,$problem_id);
+            if ($res) {
+                $datas['action'] = 2;
+                $datas['date_added'] = date('Y-m-d H:i:s');
+                $res1 = ProblemService::updateProblemToProvider($datas,$provider_id,$problem_id);
+                if ($res1) {
+                    return response()->json(
+                        [
+                            'success' => true,
+                            'message' => 'Updated Successfully',
+                            'status' => '200',
+                        ],
+                        Response::HTTP_OK
+                    );
+                }
+            }
+            
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    //Refer Project to Friend
+    public function ReferProject(Request $request)
+    {
+        try {
+            $data['problem_id'] = trim($request->input('problem_id'));
+            $data['name'] = trim($request->input('name'));
+            $data['email'] = trim($request->input('email'));
+            $data['phone'] = trim($request->input('phone'));
+            $data['date'] = date('Y-m-d H:i:s');
+            $data['customer_id'] = CommonService::getCidByEmail(
+                auth()->user()->email
+            );
+            $res = ProblemService::addReferProject($data);
+            if ($res) {
+                return response()->json(
+                    [
+                        'success' => true,
+                        'message' => 'Updated Successfully',
+                        'status' => '200',
+                    ],
+                    Response::HTTP_OK
+                );
+            }
+            
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }
