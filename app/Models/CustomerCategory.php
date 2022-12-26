@@ -20,6 +20,7 @@ class CustomerCategory extends Model
      * @var string
      */
     protected $table = 'customer_category';
+    public $timestamps = false;
 
     /**
      * @var array

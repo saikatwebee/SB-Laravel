@@ -18,7 +18,6 @@ use Illuminate\Support\Facades\Mail;
 // use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
-
 class ProblemController extends Controller
 {
     public function post_project(Request $request)
@@ -134,7 +133,7 @@ class ProblemController extends Controller
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }
-
+    //SS-list of notlive project  
     public function notLiveProject()
     {
         $customer_id = CommonService::getCidByEmail(auth()->user()->email);
@@ -149,8 +148,8 @@ class ProblemController extends Controller
         //using laravel query Builder
         //method : 3
         $res = DB::table('problem')
-            ->join('industries', 'problem.industries', '=', 'industries.id')
-            ->join('category', 'problem.sub_cat', '=', 'category.id')
+            ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+            ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
             ->select(
                 'problem.id as projectId',
                 'problem.describe',
@@ -165,47 +164,224 @@ class ProblemController extends Controller
         return response()->json($res);
     }
 
+    //SS-list of live project including normal & execution project 
+    public function liveProject()
+    {
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+        $res = DB::table('problem')
+            ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+            ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+            ->select(
+                'problem.id as projectId',
+                'problem.describe',
+                'industries.name as industry',
+                'category.name as category',
+                'problem.execution',
+                'problem.date_added'
+            )
+            ->where(['customer_id' => $customer_id, 'action' => 1])
+            ->get();
+
+        return response()->json($res);
+    }
+
+    //SS-list of completed project including normal & execution project 
+    public function completedProject()
+    {
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+        $res = DB::table('problem')
+            ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+            ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+            ->select(
+                'problem.id as projectId',
+                'problem.describe',
+                'industries.name as industry',
+                'category.name as category',
+                'problem.execution',
+                'problem.date_added'
+            )
+            ->where('customer_id',$customer_id,)
+            ->whereIn('action', [2,4,5])
+            ->get();
+
+        return response()->json($res);
+    }
+
+
+    //SS-list of onhold project including normal & execution project 
+    public function onholdProject()
+    {
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+        $res = DB::table('problem')
+            ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+            ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+            ->select(
+                'problem.id as projectId',
+                'problem.describe',
+                'industries.name as industry',
+                'category.name as category',
+                'problem.execution',
+                'problem.date_added'
+            )
+            ->where(['customer_id' => $customer_id, 'action' => 3])
+            ->get();
+
+        return response()->json($res);
+    }
     
-    //SP - Show Interest (action = 5)
+    //SP-latest project (forwarded project)
+
+    public function latestNormal(){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+       
+        //DB::enableQueryLog();
+        $res = DB::table('problem_to_provider')
+			->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+            ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+            ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+            ->select(
+                'problem.id as projectId',
+                'problem.describe',
+                'industries.name as industry',
+                'category.name as category',
+                'problem.location',
+                'problem.date_added'
+            )
+            ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 0])
+            ->where('problem.execution', '<', '2')
+            ->where('problem.action','1')
+			->get();
+
+        return response()->json($res);
+
+    }
+
+     //SP-latest Applied Project(Normal)
+
+    public function appliedNormal(){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+        $res = DB::table('problem_to_provider')
+			->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+            ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+            ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+            ->select(
+                'problem.id as projectId',
+                'problem.describe',
+                'industries.name as industry',
+                'category.name as category',
+                'problem.location',
+                'problem.date_added'
+            )
+            ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 1])
+            ->where('problem.execution', '<', '2')
+            ->where('problem.action','1')
+			->get();
+
+        return response()->json($res);
+    }
+
+    //SP-latest Awarded Project(Normal)
+
+    public function awardedNormal(){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+        $res = DB::table('problem_to_provider')
+			->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+            ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+            ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+            ->select(
+                'problem.id as projectId',
+                'problem.describe',
+                'industries.name as industry',
+                'category.name as category',
+                'problem.location',
+                'problem.date_added'
+            )
+            ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 2])
+            ->where('problem.execution', '<', '2')
+            ->where('problem.action','2')
+			->get();
+
+        return response()->json($res);
+    }
+
+    //SP-latest Not-Awarded Project(Normal)
+
+    public function notawardedNormal(){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+        $res = DB::table('problem_to_provider')
+			->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+            ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+            ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+            ->select(
+                'problem.id as projectId',
+                'problem.describe',
+                'industries.name as industry',
+                'category.name as category',
+                'problem.location',
+                'problem.date_added'
+            )
+            ->where('problem_to_provider.customer_id',$customer_id)
+            ->where('problem_to_provider.action','!=', '2')
+            ->where('problem.execution', '<', '2')
+            ->where('problem.action','2')
+			->get();
+
+        return response()->json($res);
+    }
+
+
+
+    //SP - Show Interest
     public function ShowInterest(Request $request)
     {
         try {
             $problem_id = trim($request->input('problem_id'));
-            $data['action'] = 5;
-            $data['date_added'] = date('Y-m-d H:i:s');
-                $customer_id = CommonService::getCidByEmail(
-                    auth()->user()->email
+            $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+            //Check forwarded
+            $chk = ProblemService::checkProblemForwarded(
+                $customer_id,
+                $problem_id
+            );
+            if ($chk) {
+                $data['action'] = 5;
+                $res = ProblemService::updateProblemToProvider(
+                    $data,
+                    $customer_id,
+                    $problem_id
                 );
-                //Check forwarded
-                $chk = ProblemService::checkProblemForwarded($customer_id, $problem_id);
-                if($chk) {
-                    $res = ProblemService::updateProblemToProvider($data, $customer_id, $problem_id);
-                    if ($res) {
-                        return response()->json(
-                            [
-                                'success' => true,
-                                'message' => 'Update Successfull',
-                                'status' => '200',
-                            ],
-                            Response::HTTP_OK
-                        );
-                    }
-                } else {
-                    $data['customer_id'] = $customer_id;
-                    $data['problem_id'] = $problem_id;
-                    $res = ProblemService::addProblemToProvider($data);
-                    if ($res) {
-                        return response()->json(
-                            [
-                                'success' => true,
-                                'message' => 'Update Successfull',
-                                'status' => '200',
-                            ],
-                            Response::HTTP_OK
-                        );
-                    }
+                if ($res) {
+                    return response()->json(
+                        [
+                            'success' => true,
+                            'message' => 'Updated Successfully',
+                            'status' => '200',
+                        ],
+                        Response::HTTP_OK
+                    );
                 }
-            
+            } else {
+                $data['action'] = 5;
+                $data['customer_id'] = $customer_id;
+                $data['problem_id'] = $problem_id;
+                $data['date_added'] = date('Y-m-d H:i:s');
+                $res = ProblemService::addProblemToProvider($data);
+                if ($res) {
+                    return response()->json(
+                        [
+                            'success' => true,
+                            'message' => 'Added Successfully',
+                            'status' => '200',
+                        ],
+                        Response::HTTP_OK
+                    );
+                }
+            }
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }
@@ -229,7 +405,7 @@ class ProblemController extends Controller
                         return response()->json(
                             [
                                 'success' => true,
-                                'message' => 'Update Successfull',
+                                'message' => 'Updated Successfull',
                                 'status' => '200',
                             ],
                             Response::HTTP_OK
@@ -243,7 +419,7 @@ class ProblemController extends Controller
                         return response()->json(
                             [
                                 'success' => true,
-                                'message' => 'Update Successfull',
+                                'message' => 'Updated Successfull',
                                 'status' => '200',
                             ],
                             Response::HTTP_OK
@@ -275,7 +451,7 @@ class ProblemController extends Controller
                         return response()->json(
                             [
                                 'success' => true,
-                                'message' => 'Update Successfull',
+                                'message' => 'Updated Successfully',
                                 'status' => '200',
                             ],
                             Response::HTTP_OK
@@ -289,7 +465,7 @@ class ProblemController extends Controller
                         return response()->json(
                             [
                                 'success' => true,
-                                'message' => 'Update Successfull',
+                                'message' => 'Updated Successfully',
                                 'status' => '200',
                             ],
                             Response::HTTP_OK
@@ -319,7 +495,7 @@ class ProblemController extends Controller
                     return response()->json(
                         [
                             'success' => true,
-                            'message' => 'Update Successfull',
+                            'message' => 'Updated Successfully',
                             'status' => '200',
                         ],
                         Response::HTTP_OK
@@ -349,7 +525,7 @@ class ProblemController extends Controller
                 return response()->json(
                     [
                         'success' => true,
-                        'message' => 'Update Successfull',
+                        'message' => 'Updated Successfully',
                         'status' => '200',
                     ],
                     Response::HTTP_OK

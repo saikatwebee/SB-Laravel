@@ -12,7 +12,6 @@ use App\Services\CommonService;
 
 class CustomerController extends Controller
 {
-   
     //For SS only
     public function editNew(Request $request)
     {
@@ -135,18 +134,21 @@ class CustomerController extends Controller
     }
 
     //For SS Only
-    public function editExistingCompany(Request $request){
-        try{
-            $data =[
-				'companyname'=>trim($request->input('companyname')),
-				'mycurrentposition'=>trim($request->input('mycurrentposition')),
-				'tinno'=>trim($request->input('tinno')),
-				'city'=>trim($request->input('city')),
-				'state'=>trim($request->input('state')),
-				// 'companywebsite'=>trim($request->input('companywebsite')),
-				// 'companydesc'=>trim($request->input('companydesc')),
-                'industries' =>trim($request->input('companydesc')),
-                'date_updated'=>date('Y-m-d H:i:s')
+    public function editExistingCompany(Request $request)
+    {
+        try {
+            $data = [
+                'companyname' => trim($request->input('companyname')),
+                'mycurrentposition' => trim(
+                    $request->input('mycurrentposition')
+                ),
+                'tinno' => trim($request->input('tinno')),
+                'city' => trim($request->input('city')),
+                'state' => trim($request->input('state')),
+                // 'companywebsite'=>trim($request->input('companywebsite')),
+                // 'companydesc'=>trim($request->input('companydesc')),
+                'industries' => trim($request->input('companydesc')),
+                'date_updated' => date('Y-m-d H:i:s'),
             ];
 
             $rules = [
@@ -185,15 +187,13 @@ class CustomerController extends Controller
                         Response::HTTP_OK
                     );
                 }
-
             }
-        }
-        catch(Exception $e){
+        } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }
 
-    //SP Profile Edit starts 
+    //SP Profile Edit starts
     //SP - Account tab
     public function editSPAccount(Request $request)
     {
@@ -222,16 +222,18 @@ class CustomerController extends Controller
                     auth()->user()->email
                 );
                 //file upload code
-                if(isset($_FILES['companylogo'])){
+                if (isset($_FILES['companylogo'])) {
                     if ($request->file('companylogo')->isValid()) {
                         $file = $request->file('companylogo');
-                        $uploaded_file = $this->ProfileUpload($file, $customer_id);
+                        $uploaded_file = $this->ProfileUpload(
+                            $file,
+                            $customer_id
+                        );
                         if ($uploaded_file) {
                             $data['companylogo'] = $uploaded_file;
                         }
-                    } 
+                    }
                 }
-                
 
                 $res = ProfileService::editCustomerProfile($data, $customer_id);
                 if ($res) {
@@ -273,7 +275,6 @@ class CustomerController extends Controller
                 $customer_id = CommonService::getCidByEmail(
                     auth()->user()->email
                 );
-                
 
                 $res = ProfileService::editCustomerProfile($data, $customer_id);
                 if ($res) {
@@ -297,7 +298,9 @@ class CustomerController extends Controller
     {
         try {
             $data['companyname'] = trim($request->input('companyname'));
-            $data['mycurrentposition'] = trim($request->input('mycurrentposition'));
+            $data['mycurrentposition'] = trim(
+                $request->input('mycurrentposition')
+            );
             $data['mytotalnoexp'] = trim($request->input('mytotalnoexp'));
             $data['linkedin'] = trim($request->input('linkedin'));
             $data['brief_bio'] = trim($request->input('brief_bio'));
@@ -305,6 +308,7 @@ class CustomerController extends Controller
 
             $rules = [
                 'companyname' => 'required|min:3',
+                'brief_bio' => 'required',
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -316,16 +320,85 @@ class CustomerController extends Controller
                 $customer_id = CommonService::getCidByEmail(
                     auth()->user()->email
                 );
-                
 
                 $res = ProfileService::editCustomerProfile($data, $customer_id);
                 if ($res) {
-                    //$industries = $request->input('industries');
-                    $industries = ['2','3','4'];
-                    foreach($industries as $ind){
-                        ProfileService::addCustomerIndustry($ind,$customer_id);
+                    $industry_str = $request->input('industries');
+                    $industries = explode(',', $industry_str);
+
+                    $category_str = $request->input('category');
+                    $categories = explode(',', $category_str);
+
+                    $skill_str = $request->input('skills');
+                    $skills = explode(',', $skill_str);
+
+                    //adding Customer Industries
+                    foreach ($industries as $ind) {
+                        ProfileService::addCustomerIndustry_Sp(
+                            $ind,
+                            $customer_id
+                        );
                     }
-                   
+
+                    //adding Customer Categories
+                    foreach ($categories as $cat) {
+                        ProfileService::addCustomerCategory_Sp(
+                            $cat,
+                            $customer_id
+                        );
+                    }
+
+                    //adding Customer Skills
+                    foreach ($skills as $skill) {
+                        ProfileService::addCustomerSkill_Sp(
+                            $skill,
+                            $customer_id
+                        );
+                    }
+
+                    return response()->json(
+                        [
+                            'success' => true,
+                            'message' => 'Update Successfull',
+                            'status' => '200',
+                        ],
+                        Response::HTTP_OK
+                    );
+                }
+            }
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function microEdit(Request $request)
+    {
+        try {
+            //$id = $this->customer->getId();
+
+            $data['mc_status'] = 0;
+            $data['mc_hour'] = $request->input('mc_hour');
+            $data['mc_location'] = $request->input('mc_location');
+            $data['mc_cost'] = $request->input('mc_cost');
+
+            $rules = [
+                'mc_hour' => 'required',
+                'mc_location' => 'required',
+                'mc_cost' => 'required',
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            } else {
+                //validation successfull
+                $customer_id = CommonService::getCidByEmail(
+                    auth()->user()->email
+                );
+
+                $res = ProfileService::editCustomerProfile($data,$customer_id);
+                if ($res) {
                     return response()->json(
                         [
                             'success' => true,
