@@ -44,7 +44,8 @@ use Illuminate\Support\Facades\Route;
 
         //Customer Panel :
 
-        //Routes available to only SS(Industry)
+        ////Routes available to only SS(Industry)////
+
         Route::middleware(['role:SS'])->prefix('customer')->group(function () {
 
         //Profile Edit start
@@ -55,13 +56,17 @@ use Illuminate\Support\Facades\Route;
 
         //Project related routes of SS start
         Route::post('/postProject',[ProblemController::class, 'post_project']); 
-        Route::post('/notlive-project', [ProblemController::class, 'notLiveProject']);
+        Route::get('/notlive-project', [ProblemController::class, 'notLiveProject']);
+        Route::get('/live-project', [ProblemController::class, 'liveProject']);
+        Route::get('/completed-project', [ProblemController::class, 'completedProject']);
+        Route::get('/onhold-project', [ProblemController::class, 'onholdProject']);
 
         //Project related routes of SS end
 
         });
 
-        //Routes available to only SP(Consultant)
+        ////Routes available to only SP(Consultant)////
+
         Route::middleware(['role:SP'])->prefix('customer')->group(function () {
       
         //Profile Edit start
@@ -70,13 +75,28 @@ use Illuminate\Support\Facades\Route;
         Route::post('/editSPCareer',[CustomerController::class, 'editSPCareer']);
         Route::post('/microEdit',[CustomerController::class, 'microEdit']);
         //Profile Edit end
+
+       
+        //SP: latest Project Normal 
+        Route::get('/latestNormal-project', [ProblemController::class, 'latestNormal']);
+        //SP: Applied Project Normal
+        Route::get('/appliedNormal-project', [ProblemController::class, 'appliedNormal']);
+        //SP: Awarded Project Normal
+        Route::get('/awardedNormal-project', [ProblemController::class, 'awardedNormal']);
+        //SP: Awarded Project Normal
+        Route::get('/notawardedNormal-project', [ProblemController::class, 'notawardedNormal']);
+        
+
         //Show Interest
         Route::post('/ShowInterest',[ProblemController::class, 'ShowInterest']);
         
         
         });
 
+
+
         //Routes available to only SS(Industry) and SP(Consultant)
+       
         Route::middleware(['role:SS,SP'])->prefix('customer')->group(function () {
          
         });
