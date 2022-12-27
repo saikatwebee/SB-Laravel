@@ -153,10 +153,6 @@ class AuthController extends Controller
         ]);
     }
 
-    public function getmac(){
-        $MacAdd = substr(exec('getmac'), 0, 17); 
-        return $MacAdd;
-    }
 
     
 }
