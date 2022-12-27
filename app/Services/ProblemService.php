@@ -15,6 +15,12 @@ interface ProblemInterface
     public static function getExpDate($customer_id);
     public static function getProblemCount($customer_id);
     public static function subProblemCount($customer_id);
+    public static function subApplyCount($customer_id);
+    public static function updateProblem($data,$problem_id);
+    public static function updateProblemToProvider($data,$customer_id,$problem_id);
+    public static function checkProblemForwarded($customer_id,$problem_id);
+    public static function addProblemToProvider($data);
+    public static function addReferProject($data);
    
 }
 

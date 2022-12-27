@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CustomerController;
 use App\Http\Controllers\api\ProblemController;
+use App\Http\Controllers\api\InvoiceController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Route;
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/profile', [AuthController::class, 'userProfile']);  
+        Route::get('/getmac', [AuthController::class, 'getmac'])->withoutMiddleware(['jwt.verify']); //to get mac address
 
         //Admin Panel :
 
@@ -119,6 +121,9 @@ use Illuminate\Support\Facades\Route;
         //Routes available to only SS(Industry) and SP(Consultant)
        
         Route::middleware(['role:SS,SP'])->prefix('customer')->group(function () {
+
+                //Get Invoice List
+                Route::get('/invoiceList', [InvoiceController::class, 'invoiceList']);
          
         });
 
