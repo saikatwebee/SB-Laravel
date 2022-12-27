@@ -16,10 +16,15 @@ class Role
      */
     public function handle(Request $request, Closure $next, string $role)
     {
-        if($request->user()->role==$role){
-            return $next($request);
+       $role_arr=explode('|',$role);
+
+        foreach($role_arr as $role){
+            if($request->user()->role==$role){
+                return $next($request);
+            }
         }
-        return response()->json(['message' => 'Access Denied! You are not authorized to visit this page.'], 403);
+        
+        return response()->json(['message' =>'Access Denied! You are not authorized to visit this page.','status'=>'This Route is only available for '. implode(',',$role_arr)], 403);
         
     }
 }
