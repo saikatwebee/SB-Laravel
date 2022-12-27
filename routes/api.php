@@ -15,8 +15,7 @@ use Illuminate\Support\Facades\Route;
         Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['jwt.verify']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
-        Route::get('/profile', [AuthController::class, 'userProfile']);  
-        Route::get('/getmac', [AuthController::class, 'getmac'])->withoutMiddleware(['jwt.verify']); //to get mac address
+        Route::get('/profile', [AuthController::class, 'userProfile']);
 
         //Admin Panel :
 
