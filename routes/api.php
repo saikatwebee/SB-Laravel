@@ -123,6 +123,11 @@ use Illuminate\Support\Facades\Route;
 
             //Get Invoice List
             Route::get('/invoiceList', [InvoiceController::class, 'invoiceList']);
+            //Get Invoice by ID with details
+            Route::post('/ViewInvoice', [InvoiceController::class, 'ViewInvoice']);
+            //Add New Invoice
+            Route::post('/add_invoice', [InvoiceController::class, 'add_invoice']);
+            
          
         });
 
