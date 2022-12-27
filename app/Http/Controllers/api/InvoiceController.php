@@ -31,5 +31,49 @@ class InvoiceController extends Controller
     
         return response()->json($res);
     }
+
+    
+    //View Invoice by ID
+    public function ViewInvoice(Request $request)
+    {
+        try {
+            $inv_id = trim($request->input('inv_id'));
+            return InvoiceService::getInvoice($inv_id);
+            
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    //Insert New Invoice Data
+    public function add_invoice(Request $request)
+    {
+        try {
+            $data = [
+                'customer_id' => trim($request->input('customer_id')),
+                'plan_id' => trim($request->input('plan_id')),
+                'txn_id' => trim($request->input('txn_id')),
+                'plancost' => trim($request->input('plancost')),
+                'date' => date('Y-m-d H:i:s'),
+                'tax' => trim($request->input('tax')),
+                'totalcost' => trim($request->input('totalcost'))
+            ];
+            $res = InvoiceService::AddInvoice($data);
+            if ($res) {
+                return response()->json(
+                    [
+                        'success' => true,
+                        'message' =>
+                            'Invoice Added Successfully',
+                        'status' => '200',
+                    ],
+                    Response::HTTP_OK
+                );
+
+            }
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
     
 }
