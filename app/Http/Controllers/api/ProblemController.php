@@ -335,7 +335,133 @@ class ProblemController extends Controller
         return response()->json($res);
     }
 
+ //SP-latest project (Execution)
 
+ public function latestExecution(){
+    $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+   
+    //DB::enableQueryLog();
+    $res = DB::table('problem')
+        ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+        ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+        ->select(
+            'problem.id as projectId',
+            'problem.describe',
+            'industries.name as industry',
+            'category.name as category',
+            'problem.location',
+            'problem.date_added'
+        )
+        ->where('problem.execution', '2')
+        ->where('problem.action','1')
+        ->get();
+
+    return response()->json($res);
+
+}
+
+ //SP-latest Applied Project(Execution)
+
+public function appliedExecution(){
+    $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+    $res = DB::table('problem_to_provider')
+        ->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+        ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+        ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+        ->select(
+            'problem.id as projectId',
+            'problem.describe',
+            'industries.name as industry',
+            'category.name as category',
+            'problem.location',
+            'problem.date_added'
+        )
+        ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 1])
+        ->where('problem_to_provider.shortlist','0')
+        ->where('problem.execution', '2')
+        ->where('problem.action','1')
+        ->get();
+
+    return response()->json($res);
+}
+
+//SP-Shortlisted Project(Execution)
+
+public function shortlistedExecution(){
+    $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+    $res = DB::table('problem_to_provider')
+        ->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+        ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+        ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+        ->select(
+            'problem.id as projectId',
+            'problem.describe',
+            'industries.name as industry',
+            'category.name as category',
+            'problem.location',
+            'problem.date_added'
+        )
+        ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 1])
+        ->where('problem_to_provider.shortlist','1')
+        ->where('problem.execution','2')
+        ->where('problem.action','1')
+        ->get();
+
+    return response()->json($res);
+}
+
+//SP-latest Awarded Project(Execution)
+
+public function awardedExecution(){
+    $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+    $res = DB::table('problem_to_provider')
+        ->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+        ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+        ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+        ->select(
+            'problem.id as projectId',
+            'problem.describe',
+            'industries.name as industry',
+            'category.name as category',
+            'problem.location',
+            'problem.date_added'
+        )
+        ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 2])
+        ->where('problem.execution','2')
+        ->where('problem.action','2')
+        ->get();
+
+    return response()->json($res);
+}
+
+//SP-latest Not-Awarded Project(Execution)
+
+public function notawardedExecution(){
+    $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+    $res = DB::table('problem_to_provider')
+        ->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+        ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+        ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+        ->select(
+            'problem.id as projectId',
+            'problem.describe',
+            'industries.name as industry',
+            'category.name as category',
+            'problem.location',
+            'problem.date_added'
+        )
+        ->where('problem_to_provider.customer_id',$customer_id)
+        ->where('problem_to_provider.action','!=', '2')
+        ->where('problem.execution','2')
+        ->where('problem.action','2')
+        ->get();
+
+    return response()->json($res);
+}
 
     //SP - Show Interest
     public function ShowInterest(Request $request)
