@@ -76,15 +76,27 @@ use Illuminate\Support\Facades\Route;
         Route::post('/microEdit',[CustomerController::class, 'microEdit']);
         //Profile Edit end
 
-       
-        //SP: latest Project Normal 
+        //SP Normal Project
+        //Latest Project  
         Route::get('/latestNormal-project', [ProblemController::class, 'latestNormal']);
-        //SP: Applied Project Normal
+        //Applied Project
         Route::get('/appliedNormal-project', [ProblemController::class, 'appliedNormal']);
-        //SP: Awarded Project Normal
+        //Awarded Project
         Route::get('/awardedNormal-project', [ProblemController::class, 'awardedNormal']);
-        //SP: Awarded Project Normal
+        //Not Awarded Project
         Route::get('/notawardedNormal-project', [ProblemController::class, 'notawardedNormal']);
+
+        //SP Execution Project
+        //Latest Project  
+        Route::get('/latestExecution-project', [ProblemController::class, 'latestExecution']);
+        //Applied Project
+        Route::get('/appliedExecution-project', [ProblemController::class, 'appliedExecution']);
+        //Shortlisted Project
+        Route::get('/shortlistedExecution-project', [ProblemController::class, 'shortlistedExecution']);
+        //Awarded Project
+        Route::get('/awardedExecution-project', [ProblemController::class, 'awardedExecution']);
+        //Not Awarded Project
+        Route::get('/notawardedExecution-project', [ProblemController::class, 'notawardedExecution']);
         
 
         //Show Interest
