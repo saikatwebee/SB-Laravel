@@ -27,20 +27,20 @@ use Illuminate\Support\Facades\Route;
         });
 
         //Routes available to Admin and Project 
-        Route::middleware(['role:A,P'])->prefix('admin')->group(function () {
+        Route::middleware(['role:A|P'])->prefix('admin')->group(function () {
         
         });
 
 
         //Routes available to Admin,Sales-Admin and Project 
-        Route::middleware(['role:A,S,P'])->prefix('admin')->group(function () {
+        Route::middleware(['role:A|S|P'])->prefix('admin')->group(function () {
         
         });
 
 
         //Routes available to Admin,Sales-Admin,Project and Sales-Executive
-        Route::middleware(['role:A,S,P,U'])->prefix('admin')->group(function () {
-        
+        Route::middleware(['role:A|S|P|U'])->prefix('admin')->group(function () {
+            
         });
 
 
@@ -120,10 +120,10 @@ use Illuminate\Support\Facades\Route;
 
         //Routes available to only SS(Industry) and SP(Consultant)
        
-        Route::middleware(['role:SS,SP'])->prefix('customer')->group(function () {
+        Route::middleware(['role:SS|SP'])->prefix('customer')->group(function () {
 
-                //Get Invoice List
-                Route::get('/invoiceList', [InvoiceController::class, 'invoiceList']);
+            //Get Invoice List
+            Route::get('/invoiceList', [InvoiceController::class, 'invoiceList']);
          
         });
 
