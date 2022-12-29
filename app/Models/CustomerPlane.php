@@ -23,6 +23,7 @@ class CustomerPlane extends Model
      * @var string
      */
     protected $table = 'customer_plane';
+    public $timestamps = false;
 
     /**
      * @var array
