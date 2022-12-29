@@ -17,6 +17,18 @@ use Illuminate\Support\Facades\Route;
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/profile', [AuthController::class, 'userProfile']);
 
+        //get all state list
+        Route::get('/stateList', [AuthController::class, 'stateList']);
+
+        //get all industry list 
+        Route::get('/industryList', [AuthController::class, 'industryList']);
+
+        //get all category list
+        Route::get('/categoryList', [AuthController::class, 'categoryList']);
+
+        //get all skill list
+        Route::get('/skillList', [AuthController::class, 'skillList']);
+
         //Admin Panel :
 
         //Routes available to only Admin 
@@ -134,6 +146,7 @@ use Illuminate\Support\Facades\Route;
             Route::get('/ViewPlan', [InvoiceController::class, 'ViewPlan']);
             //Add or Update Plan Details
             Route::post('/UpdatePlan', [InvoiceController::class, 'UpdatePlan']);
+            
             
             
             
