@@ -18,6 +18,7 @@ use App\Services\AuthService;
 
 
 
+
 class AuthController extends Controller
 
 {
@@ -140,6 +141,27 @@ class AuthController extends Controller
              //fetch from user table 
             return AuthService::user_auth($authUser_email);
     }
+
+    public function stateList(){
+        $res = AuthService::get_state_list();
+        return response()->json($res);
+    }
+
+    public function industryList(){
+        $res = AuthService::get_industry_list();
+        return response()->json($res);
+    }
+
+    public function categoryList(){
+        $res = AuthService::get_category_list();
+        return response()->json($res);
+    }
+
+    public function skillList(){
+        $res = AuthService::get_skill_list();
+        return response()->json($res);
+    }
+
     public function createNewToken($token){
           $user=$this->auth_user_profile();
           $role = $this->get_role();

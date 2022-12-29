@@ -4,8 +4,6 @@ namespace App\Services;
 use App\Models\Auth;
 use App\Models\Customer;
 use App\Models\User;
-use Illuminate\Support\Facades\Hash;
-use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
 use Illuminate\Support\Facades\DB;
 
 interface AuthInterface
@@ -16,7 +14,11 @@ interface AuthInterface
     public static function user_insert($firstname,$email,$phone,$user_type,$status);
     public static function customer_auth($email);
     public static function user_auth($email);
-
+    public static function get_state_list();
+    public static function get_industry_list();
+    public static function get_category_list();
+    public static function get_skill_list();
+  
   }
 
 class AuthService implements AuthInterface{
@@ -84,6 +86,41 @@ class AuthService implements AuthInterface{
         return $customer;
         
     }
+
+    public static function get_state_list()
+    {
+       $states =  DB::table('states')
+            ->select('state_id','name')->get();
+            return $states;
+    }
+
+
+    public static function get_industry_list()
+    {
+       $states =  DB::table('industries')
+            ->select('id','name')
+            ->get();
+            return $states;
+    }
+
+    public static function get_category_list()
+    {
+       $states =  DB::table('category')
+            ->select('id','name','p_id')
+            ->limit(72)
+            ->get();
+            return $states;
+    }
+
+    public static function get_skill_list()
+    {
+       $states =  DB::table('skill')
+            ->select('id','name')
+            ->limit(33)
+            ->get();
+            return $states;
+    }
+
 
   
 

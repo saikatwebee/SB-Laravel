@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
-use App\Models\Customer;
 use App\Services\ProfileService;
 use App\Services\CommonService;
 
