@@ -36,6 +36,7 @@ class Invoice extends Model
      * @var string
      */
     protected $table = 'invoice';
+    public $timestamps = false;
 
     /**
      * Indicates if the IDs are auto-incrementing.

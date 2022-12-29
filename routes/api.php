@@ -127,6 +127,15 @@ use Illuminate\Support\Facades\Route;
             Route::post('/ViewInvoice', [InvoiceController::class, 'ViewInvoice']);
             //Add New Invoice
             Route::post('/add_invoice', [InvoiceController::class, 'add_invoice']);
+            //Update GST Details
+            Route::post('/update_gst', [InvoiceController::class, 'update_gst']);
+
+            //Get Plan Details
+            Route::get('/ViewPlan', [InvoiceController::class, 'ViewPlan']);
+            //Add or Update Plan Details
+            Route::post('/UpdatePlan', [InvoiceController::class, 'UpdatePlan']);
+            
+            
             
          
         });
