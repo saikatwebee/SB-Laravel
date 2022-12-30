@@ -662,4 +662,16 @@ public function notawardedExecution(){
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }
+
+     //View Project by ID
+     public function ViewProject(Request $request)
+     {
+         try {
+             $p_id = trim($request->input('p_id'));
+             return ProblemService::getProject($p_id);
+             
+         } catch (Exception $e) {
+             return response()->json(['message' => $e->getMessage()], 404);
+         }
+     }
 }

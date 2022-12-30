@@ -7,6 +7,7 @@ use App\Models\CustomerPlane;
 use App\Models\Problem;
 use App\Models\ProblemReferral;
 use App\Models\ProblemToProvider;
+use Illuminate\Support\Facades\DB;
 
 interface ProblemInterface
 {
@@ -95,6 +96,20 @@ class ProblemService implements ProblemInterface{
         $affectedRows = ProblemReferral::insert($data);
         if($affectedRows > 0)
         return true;
+    }
+    public static function getProject($id){
+        $inv = DB::table('problem')
+            ->leftJoin('industries', 'industries.id', '=', 'problem.industries')
+            ->leftJoin('category', 'category.id', '=', 'problem.sub_cat')
+            ->select(
+                'problem.*',
+                'industries.name as industry',
+                'category.name as cat'
+            )
+            ->where('problem.id',$id)
+            ->get();
+        return $inv;
+        
     }
 
     
