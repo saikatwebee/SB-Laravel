@@ -428,4 +428,33 @@ class CustomerController extends Controller
             return $fileName;
         }
     }
+
+    //Add General Referral
+    public function add_referral(Request $request)
+    {
+        try {
+            $data = [
+                'name' => trim($request->input('name')),
+                'email' => trim($request->input('email')),
+                'phone' => trim($request->input('phone')),
+                'referer_id' => trim($request->input('customer_id'))
+            ];
+            $res = ProfileService::AddRefferal($data);
+            if ($res) {
+                return response()->json(
+                    [
+                        'success' => true,
+                        'message' =>
+                            'Referral Added Successfully',
+                        'status' => '200',
+                    ],
+                    Response::HTTP_OK
+                );
+
+            }
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
 }

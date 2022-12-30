@@ -22,6 +22,8 @@ interface ProblemInterface
     public static function checkProblemForwarded($customer_id,$problem_id);
     public static function addProblemToProvider($data);
     public static function addReferProject($data);
+    public static function getProject($id);
+    public static function getProfile($id);
    
 }
 
@@ -60,7 +62,7 @@ class ProblemService implements ProblemInterface{
     }
 
     public static function subApplyCount($customer_id){
-        $apply_count = CustomerPlane::select("apply")->where('customer_id',$customer_id)->get();
+        $apply_count = CustomerPlane::select("apply")->where('customer_id',$customer_id)->first();
         if($apply_count->apply > 0){
             $apply = $apply_count->apply - 1;
             $affectedRows = CustomerPlane::where("customer_id",$customer_id)->update(['apply'=>$apply]);
@@ -111,6 +113,18 @@ class ProblemService implements ProblemInterface{
         return $inv;
         
     }
+    public static function getProfile($id){
+        $pro = DB::table('customer')
+            ->select(
+                'customer.*'
+            )
+            ->where('customer_id',$id)
+            ->get();
+        return $pro;
+        
+    }
+
+   
 
     
 }

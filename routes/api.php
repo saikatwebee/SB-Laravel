@@ -74,6 +74,9 @@ use Illuminate\Support\Facades\Route;
         Route::get('/completed-project', [ProblemController::class, 'completedProject']);
         Route::get('/onhold-project', [ProblemController::class, 'onholdProject']);
 
+        //SP details applied to the project
+        Route::post('/SP_applied',[ProblemController::class, 'SP_applied']); 
+
         //Project related routes of SS end
 
         });
@@ -123,6 +126,8 @@ use Illuminate\Support\Facades\Route;
         //Award Normal Project
         Route::post('/AwardNormalProject',[ProblemController::class, 'AwardNormalProject']);
         
+        //Subtract Apply Credits
+        Route::post('/SubApplyCredits',[ProblemController::class, 'SubApplyCredits']);
         
         
         });
@@ -149,9 +154,12 @@ use Illuminate\Support\Facades\Route;
 
             //Project Details
             Route::post('/ViewProject', [ProblemController::class, 'ViewProject']);
-            
-            
-            
+
+            //View Profile
+            Route::post('/ViewProfile', [ProblemController::class, 'ViewProfile']);
+                  
+            //Add referral
+            Route::post('/add_referral', [CustomerController::class, 'add_referral']);
             
             
          
