@@ -674,4 +674,58 @@ public function notawardedExecution(){
              return response()->json(['message' => $e->getMessage()], 404);
          }
      }
+
+     //SS-Normal Project SP applied list
+     public function SP_applied(Request $request){
+        $p_id = trim($request->input('p_id'));
+    
+        $res = DB::table('problem_to_provider')
+            ->leftJoin('customer', 'problem_to_provider.customer_id', '=', 'customer.customer_id')
+            ->select(
+                'problem_to_provider.*',
+                'customer.firstname as SP_name',
+                'customer.email as SP_email',
+                'customer.phone as SP_phone'
+            )
+            ->where('problem_to_provider.problem_id',$p_id)
+            ->where('problem_to_provider.action','>', '0')
+            ->where('problem_to_provider.action','<', '3')
+            ->get();
+    
+        return response()->json($res);
+    }
+
+    //View SS or SP Profile
+    public function ViewProfile(Request $request)
+    {
+        try {
+            $c_id = trim($request->input('c_id'));
+            return ProblemService::getProfile($c_id);
+            
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    //Subtract Apply Credits
+    public function SubApplyCredits(Request $request)
+    {
+        try {
+            $c_id = trim($request->input('c_id'));
+            $res =  ProblemService::subApplyCount($c_id);
+            if ($res) {
+                return response()->json(
+                    [
+                        'success' => true,
+                        'message' => 'Updated Successfully',
+                        'status' => '200',
+                    ],
+                    Response::HTTP_OK
+                );
+            }
+            
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
 }

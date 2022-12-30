@@ -8,6 +8,7 @@ use App\Models\Customer;
 use App\Models\CustomerIndustries;
 use App\Models\CustomerCategory;
 use App\Models\CustomerSkill;
+use App\Models\ReferalDatabase;
 
 interface ProfileInterface
 {
@@ -124,6 +125,12 @@ class ProfileService implements ProfileInterface
                 return true;
             }
         }
+    }
+
+    public static function AddRefferal($data){
+        $affectedRows = ReferalDatabase::insert($data);
+        if($affectedRows > 0)
+        return true;
     }
 
     
