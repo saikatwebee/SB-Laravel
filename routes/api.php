@@ -146,6 +146,10 @@ use Illuminate\Support\Facades\Route;
             Route::get('/ViewPlan', [InvoiceController::class, 'ViewPlan']);
             //Add or Update Plan Details
             Route::post('/UpdatePlan', [InvoiceController::class, 'UpdatePlan']);
+
+            //Project Details
+            Route::post('/ViewProject', [ProblemController::class, 'ViewProject']);
+            
             
             
             
