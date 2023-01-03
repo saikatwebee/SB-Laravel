@@ -85,7 +85,7 @@ class CustomerController extends Controller
     {
         try {
             $data['firstname'] = trim($request->input('firstname'));
-            $data['lastname'] = trim($request->input('firstname'));
+            $data['lastname'] = trim($request->input('lastname'));
             $data['email'] = trim($request->input('email'));
             $data['phone'] = trim($request->input('phone'));
             $data['date_updated'] = date('Y-m-d H:i:s');
@@ -146,7 +146,7 @@ class CustomerController extends Controller
                 'state' => trim($request->input('state')),
                 // 'companywebsite'=>trim($request->input('companywebsite')),
                 // 'companydesc'=>trim($request->input('companydesc')),
-                'industries' => trim($request->input('companydesc')),
+                'industries' => trim($request->input('industries')),
                 'date_updated' => date('Y-m-d H:i:s'),
             ];
 
