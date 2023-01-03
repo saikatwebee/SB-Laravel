@@ -77,6 +77,9 @@ use Illuminate\Support\Facades\Route;
         //SP details applied to the project
         Route::post('/SP_applied',[ProblemController::class, 'SP_applied']); 
 
+        //Award Normal Project
+        Route::post('/AwardNormalProject',[ProblemController::class, 'AwardNormalProject']);
+
         //Project related routes of SS end
 
         });
@@ -123,8 +126,6 @@ use Illuminate\Support\Facades\Route;
         Route::post('/ApplyProject',[ProblemController::class, 'ApplyProject']);
         //Refer Project
         Route::post('/ReferProject',[ProblemController::class, 'ReferProject']);
-        //Award Normal Project
-        Route::post('/AwardNormalProject',[ProblemController::class, 'AwardNormalProject']);
         
         //Subtract Apply Credits
         Route::post('/SubApplyCredits',[ProblemController::class, 'SubApplyCredits']);
