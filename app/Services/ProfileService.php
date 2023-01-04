@@ -17,6 +17,10 @@ interface ProfileInterface
     public static function addCustomerIndustry_Sp($industries, $customer_id);
     public static function addCustomerCategory_Sp($cat, $customer_id);
     public static function addCustomerSkill_Sp($skill, $customer_id);
+    public static function getCustomerIndustries($customer_id);
+    public static function getCustomerCategory($customer_id);
+    public static function getCustomerSkill($customer_id);
+
 }
 
 class ProfileService implements ProfileInterface
