@@ -162,13 +162,17 @@ use Illuminate\Support\Facades\Route;
             //Add referral
             Route::post('/add_referral', [CustomerController::class, 'add_referral']);
             
+              //get customer industry list
+              Route::get('/customerIndustries', [CustomerController::class, 'customerIndustries']);
+
+              //get customer category list
+              Route::get('/customercategory', [CustomerController::class, 'customercategory']);
+  
+              //get customer skill list
+              Route::get('/customerskill', [CustomerController::class, 'customerskill']);
+  
             
          
         });
 
 });
-?>
-
-
-
-   
