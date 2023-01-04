@@ -413,6 +413,34 @@ class CustomerController extends Controller
         }
     }
 
+    public function customerIndustries(){
+        $customer_id = CommonService::getCidByEmail(
+            auth()->user()->email
+        );
+
+        $res = ProfileService::getCustomerIndustries($customer_id);
+        return response()->json($res);
+    }
+
+    public function customerCategory(){
+        $customer_id = CommonService::getCidByEmail(
+            auth()->user()->email
+        );
+
+        $res = ProfileService::getCustomerCategory($customer_id);
+        return response()->json($res);
+    }
+
+    public function customerSkill(){
+        $customer_id = CommonService::getCidByEmail(
+            auth()->user()->email
+        );
+
+        $res = ProfileService::getCustomerSkill($customer_id);
+        return response()->json($res);
+    }
+
+
     public function ProfileUpload($file, $customer_id)
     {
         $fileName = $customer_id . '.' . $file->getClientOriginalExtension();
