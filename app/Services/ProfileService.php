@@ -9,6 +9,7 @@ use App\Models\CustomerIndustries;
 use App\Models\CustomerCategory;
 use App\Models\CustomerSkill;
 use App\Models\ReferalDatabase;
+use Illuminate\Support\Facades\DB;
 
 interface ProfileInterface
 {
@@ -17,6 +18,10 @@ interface ProfileInterface
     public static function addCustomerIndustry_Sp($industries, $customer_id);
     public static function addCustomerCategory_Sp($cat, $customer_id);
     public static function addCustomerSkill_Sp($skill, $customer_id);
+    public static function getCustomerIndustries($customer_id);
+    public static function getCustomerCategory($customer_id);
+    public static function getCustomerSkill($customer_id);
+
 }
 
 class ProfileService implements ProfileInterface
@@ -125,6 +130,30 @@ class ProfileService implements ProfileInterface
                 return true;
             }
         }
+    }
+
+    public static function getCustomerIndustries($customer_id){
+        $data =  DB::table('customer_industries')
+            ->select('industries_id')
+            ->where('cuustomer_id',$customer_id)
+            ->get();
+            return $data;
+    }
+
+    public static function getCustomerCategory($customer_id){
+        $data =  DB::table('customer_category')
+        ->select('category_id')
+        ->where('cuustomer_id',$customer_id)
+        ->get();
+        return $data;
+    }
+
+    public static function getCustomerSkill($customer_id){
+        $data =  DB::table('customer_skill')
+            ->select('skill_id')
+            ->where('cuustomer_id',$customer_id)
+            ->get();
+            return $data;
     }
 
     public static function AddRefferal($data){
