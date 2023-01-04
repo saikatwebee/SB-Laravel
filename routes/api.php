@@ -166,10 +166,10 @@ use Illuminate\Support\Facades\Route;
               Route::get('/customerIndustries', [CustomerController::class, 'customerIndustries']);
 
               //get customer category list
-              Route::get('/customercategory', [CustomerController::class, 'customercategory']);
+              Route::get('/customerCategory', [CustomerController::class, 'customercategory']);
   
               //get customer skill list
-              Route::get('/customerskill', [CustomerController::class, 'customerskill']);
+              Route::get('/customerSkill', [CustomerController::class, 'customerskill']);
   
             
          

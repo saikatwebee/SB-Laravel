@@ -135,7 +135,7 @@ class ProfileService implements ProfileInterface
     public static function getCustomerIndustries($customer_id){
         $data =  DB::table('customer_industries')
             ->select('industries_id')
-            ->where('cuustomer_id',$customer_id)
+            ->where('customer_id',$customer_id)
             ->get();
             return $data;
     }
@@ -143,7 +143,7 @@ class ProfileService implements ProfileInterface
     public static function getCustomerCategory($customer_id){
         $data =  DB::table('customer_category')
         ->select('category_id')
-        ->where('cuustomer_id',$customer_id)
+        ->where('customer_id',$customer_id)
         ->get();
         return $data;
     }
@@ -151,7 +151,7 @@ class ProfileService implements ProfileInterface
     public static function getCustomerSkill($customer_id){
         $data =  DB::table('customer_skill')
             ->select('skill_id')
-            ->where('cuustomer_id',$customer_id)
+            ->where('customer_id',$customer_id)
             ->get();
             return $data;
     }
