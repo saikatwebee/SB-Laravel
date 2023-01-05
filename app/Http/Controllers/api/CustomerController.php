@@ -38,7 +38,7 @@ class CustomerController extends Controller
                 'brief_bio' => 'required',
                 'city' => 'required',
                 'state' => 'required',
-                'companylogo' => 'mimes:png,jpg,jpeg|max:2048',
+               // 'companylogo' => 'mimes:png,jpg,jpeg,JPG,JPEG|max:100000000',
             ];
 
             $validator = Validator::make($request->all(), $rules);
@@ -51,15 +51,16 @@ class CustomerController extends Controller
                     auth()->user()->email
                 );
                 //file upload code
-                if ($request->file('companylogo')->isValid()) {
-                    $file = $request->file('companylogo');
-                    $uploaded_file = $this->ProfileUpload($file, $customer_id);
-                    if ($uploaded_file) {
-                        $data['companylogo'] = $uploaded_file;
+                if(isset($_FILES['companylogo']['name'])){
+                    if ($request->file('companylogo')->isValid()) {
+                        $file = $request->file('companylogo');
+                        $uploaded_file = $this->ProfileUpload($file, $customer_id);
+                        if ($uploaded_file) {
+                            $data['companylogo'] = $uploaded_file;
+                        }
                     }
                 }
-
-                $res = ProfileService::editCustomerProfile($data, $customer_id);
+               $res = ProfileService::editCustomerProfile($data, $customer_id);
                 if ($res) {
                     ProfileService::addCustomerIndustry(
                         $request->input('industries'),
