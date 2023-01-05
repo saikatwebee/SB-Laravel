@@ -121,6 +121,25 @@ class AuthService implements AuthInterface{
             return $states;
     }
 
+    public static function check_mac($mac,$email)
+    {
+       $user_id =  DB::table('user')
+            ->select('user_id')
+            ->where('email',$email)
+            ->get();
+        
+        if ($user_id > 0) {
+            if ($user_id = 1){
+                $mac_ck = DB::table('mac')
+                ->select('mac')
+                ->where(['user_id'=>$user_id,'mac'=>$mac])
+                ->get();
+            }
+            
+        }
+    }
+
+
 
   
 
