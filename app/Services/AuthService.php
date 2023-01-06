@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\Auth;
 use App\Models\Customer;
 use App\Models\User;
+use App\Models\Mac;
 use Illuminate\Support\Facades\DB;
 
 interface AuthInterface
@@ -126,15 +127,22 @@ class AuthService implements AuthInterface{
        $user_id =  DB::table('user')
             ->select('user_id')
             ->where('email',$email)
-            ->get();
-        
-        if ($user_id > 0) {
-            if ($user_id = 1){
-                $mac_ck = DB::table('mac')
-                ->select('mac')
-                ->where(['user_id'=>$user_id,'mac'=>$mac])
-                ->get();
+            ->get()->first();
+        $uid = $user_id->user_id;
+       
+        if ($uid > 0) {
+           
+            if ($uid == 1){
+                if(Mac::where(['user_id' => $uid,'mac' => $mac,])->exists()){
+                    return true;
+                }
+            } else{
+               
+                if(Mac::where(['mac' => $mac])->exists()){
+                    return true;
+                }
             }
+           
             
         }
     }
