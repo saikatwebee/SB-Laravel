@@ -24,6 +24,8 @@ interface ProblemInterface
     public static function addReferProject($data);
     public static function getProject($id);
     public static function getProfile($id);
+    public static function getCategoryDependent($ind);
+    public static function getSkillDependent($ind);
    
 }
 
@@ -124,6 +126,50 @@ class ProblemService implements ProblemInterface{
         
     }
 
+    public static function getCategoryDependent($ind){
+        $data = DB::table('category')
+                ->select('id','name')
+                ->where(['ind_id'=>$ind,'status'=>1])
+                ->orderBy('id', 'asc')
+                ->get();
+
+                if($data->count() > 0){
+                    return $data;
+                }
+                else{
+                    $default_data = DB::table('category')
+                                ->select('id','name')
+                                ->where(['status'=>1])
+                                ->orderBy('id', 'asc')
+                                ->limit(72)
+                                ->get();
+                        return $default_data;
+                }
+
+                
+    }
+
+    public static function getSkillDependent($ind){
+        $data = DB::table('skill')
+            ->select('id','name')
+            ->where(['ind_id'=>$ind,'status'=>1])
+            ->orderBy('id', 'asc')
+            ->get();
+
+            if($data->count() > 0){
+                return $data;
+            }
+            else{
+                $default_data = DB::table('skill')
+                            ->select('id','name')
+                            ->where(['status'=>1])
+                            ->orderBy('id', 'asc')
+                            ->limit(33)
+                            ->get();
+                    return $default_data;
+            }
+
+    }
    
 
     

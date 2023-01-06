@@ -728,4 +728,23 @@ public function notawardedExecution(){
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }
+
+    public function categoryDepDropdown(Request $request){
+        try {
+            $ind_id = trim($request->input('industries'));
+            $dropdown =  ProblemService::getCategoryDependent($ind_id);
+            return response()->json($dropdown);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+    public function skillDepDropdown(Request $request){
+        try {
+            $ind_id = trim($request->input('industries'));
+            $dropdown =  ProblemService::getSkillDependent($ind_id);
+            return response()->json($dropdown);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
 }

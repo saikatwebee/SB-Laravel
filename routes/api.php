@@ -81,8 +81,12 @@ use Illuminate\Support\Facades\Route;
 
         //Award Normal Project
         Route::post('/AwardNormalProject',[ProblemController::class, 'AwardNormalProject']);
+        Route::post('/categoryDepDropdown',[ProblemController::class, 'categoryDepDropdown']);
+        Route::post('/skillDepDropdown',[ProblemController::class, 'skillDepDropdown']);
 
         //Project related routes of SS end
+
+
 
         });
 
