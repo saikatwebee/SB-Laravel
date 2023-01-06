@@ -138,7 +138,7 @@ class AuthService implements AuthInterface{
                 }
             } else{
                
-                if(Mac::where(['mac' => $mac])->exists()){
+                if(Mac::where(['mac' => $mac])->where('user_id','!=',1)->exists()){
                     return true;
                 }
             }
