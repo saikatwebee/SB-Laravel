@@ -180,25 +180,33 @@ class AuthController extends Controller
         $mac = $request->input('mac');
         $email = $request->input('email');
 
-        $check_mac = AuthService::check_mac($mac,$email);
-
-        $rules = [
+         $rules = [
            "email" => "required|email|",
            "password"=>"required|min:5|max:15",
             ];
 
-           
+          
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
+            
             return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
         }
-        
-       if(!$token = JWTAuth::attempt($validator->validated())){
-           return response()->json(['message'=>"Unauthorized User!"],401);
+        else{
+            
+            $check_mac = AuthService::check_mac($mac,$email);
            
+            if($check_mac){
+                //token creation
+                if(!$token = JWTAuth::attempt($validator->validated())){
+                    return response()->json(['message'=>"Email or Password is incorrect!"],401);
+                }
+                    return  $this->createNewToken($token);
+            }
+            else{
+                return response()->json(['message'=>"Mac Address is not present,Kindly Contact IT Team!"],403);
+            }
         }
-
-        return  $this->createNewToken($token);
+        
     }
 
 
