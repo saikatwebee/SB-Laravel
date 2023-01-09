@@ -23,10 +23,6 @@ class AuthController extends Controller
 
 {
 
-    // public function __construct() {
-    //     $this->middleware('auth:api', ['except' => ['login', 'register']]);
-    // }
-
     public function register(Request $request)
     {
 
@@ -183,12 +179,12 @@ class AuthController extends Controller
             if($check_mac){
                 //token creation
                 if(!$token = JWTAuth::attempt($validator->validated())){
-                    return response()->json(['message'=>"Login Failure - Email or Password is incorrect!"],401);
+                    return response()->json(['message'=>"Email or Password is incorrect!"],401);
                 }
                     return  $this->createNewToken($token);
             }
             else{
-                return response()->json(['message'=>"Login Failure - Mac Address is not registered, Kindly Contact IT Team!"],403);
+                return response()->json(['message'=>"Mac Address is not present,Kindly Contact IT Team!"],403);
             }
         }
         
