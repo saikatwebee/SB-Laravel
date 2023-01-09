@@ -13,6 +13,7 @@ interface AuthInterface
     public static function auth_insert($firstname,$email,$password,$user_type,$status);
     public static function customer_insert($firstname,$email,$phone,$user_type,$howsb,$reg_url);
     public static function user_insert($firstname,$email,$phone,$user_type,$status);
+    public static function changePassword($pwd,$auth_id);
     public static function customer_auth($email);
     public static function user_auth($email);
     public static function get_state_list();
@@ -75,6 +76,13 @@ class AuthService implements AuthInterface{
         $user->parent_id = 1;
         if($user->save())
         return true;
+    }
+
+    public static function changePassword($pwd,$auth_id){
+      $rows =  Auth::where(['id'=>$auth_id])->update(['password'=>$pwd]);
+      if ($rows > 0)
+        return true;
+    
     }
     
     public static function user_auth($email){

@@ -73,8 +73,7 @@ class ProblemController extends Controller
                     if ($verify) {
                         //step:2 get the plan expiry date
                         $exp_date = ProblemService::getExpDate($customer_id);
-                        var_dump($exp_date);
-                        die();
+                        
                         $today = date('Y-m-d H:i:s');
                         //step:3 get the problem credit
                         $problem_count = ProblemService::getProblemCount(
