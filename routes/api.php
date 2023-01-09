@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/profile', [AuthController::class, 'userProfile']);
+        Route::post('/changePassword', [AuthController::class, 'changePassword']);
 
         //get all state list
         Route::get('/stateList', [AuthController::class, 'stateList']);

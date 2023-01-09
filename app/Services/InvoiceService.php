@@ -59,7 +59,7 @@ class InvoiceService implements InvoiceInterface
     public static function verifyCId($customer_id){
         if(CustomerPlane::where('customer_id',$customer_id)->exists()){
             return true;
-          }
+        }
     }
     public static function getPlandetails($plan_id){
         $Plan = Subscriberplane::where('id',$plan_id)->first();
@@ -68,12 +68,10 @@ class InvoiceService implements InvoiceInterface
     }
     public static function updatePlandetails($data,$customer_id)
     {
-        $affectedRows = CustomerPlane::where('customer_id', $customer_id)->update(
-            $data
-        );
-        if ($affectedRows > 0) {
-            return true;
-        }
+        $affectedRows = CustomerPlane::where('customer_id', $customer_id)->update($data);
+        if ($affectedRows > 0)
+        return true;
+        
     }
     public static function AddPlandetails($data){
         $affectedRows = CustomerPlane::insert($data);

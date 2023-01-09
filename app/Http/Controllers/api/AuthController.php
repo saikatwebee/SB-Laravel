@@ -162,19 +162,6 @@ class AuthController extends Controller
         return response()->json($res);
     }
 
-    public function createNewToken($token){
-          $user=$this->auth_user_profile();
-          $role = $this->get_role();
-        
-        return response()->json([
-            'access_token'=>$token,
-            'token_type'=>'bearer',
-            'role'=>$role,
-            'user'=>$user,
-            'expires_in'=> auth()->factory()->getTTL()*60,
-        ]);
-    }
-
     public function admin_login(Request $request){
 
         $mac = $request->input('mac');
@@ -185,10 +172,8 @@ class AuthController extends Controller
            "password"=>"required|min:5|max:15",
             ];
 
-          
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
-            
             return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
         }
         else{
@@ -208,6 +193,44 @@ class AuthController extends Controller
         }
         
     }
+
+    public function changePassword(Request $request){
+        try {
+            // $oldPassword= trim($request->input('oldpassword'));
+            $password= trim($request->input('newpassword'));
+
+            $rules = [
+               "newpassword"=>"required|min:5|max:15",
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+            }
+            else{
+                $res = AuthService::changePassword(bcrypt($password),auth()->user()->id);
+                if ($res)
+                return response()->json(['success' => true,'message' => 'Password changed Successfully','status' => '200',],Response::HTTP_OK);
+            
+            }
+
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function createNewToken($token){
+        $user=$this->auth_user_profile();
+        $role = $this->get_role();
+      
+      return response()->json([
+          'access_token'=>$token,
+          'token_type'=>'bearer',
+          'role'=>$role,
+          'user'=>$user,
+          'expires_in'=> auth()->factory()->getTTL()*60,
+      ]);
+  }
 
 
     
