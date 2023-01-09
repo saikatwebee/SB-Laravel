@@ -59,15 +59,15 @@ class ProblemController extends Controller
                 if ($res) {
                     //Email sending code ...
                     //mail to industry
-                    Mail::to(auth()->user()->email)->send(
-                        new PostProject(auth()->user()->email)
-                    );
-                    //mail to info@solutionbuggy.com
-                    Mail::to('saikatsb10@gmail.com')->send(
-                        new PostProjectInfo('saikatsb10@gmail.com')
-                    );
+                    // Mail::to(auth()->user()->email)->send(
+                    //     new PostProject(auth()->user()->email)
+                    // );
+                    // //mail to info@solutionbuggy.com
+                    // Mail::to('saikatsb10@gmail.com')->send(
+                    //     new PostProjectInfo('saikatsb10@gmail.com')
+                    // );
 
-                    //Substract Problem count code ...
+                   //Substract Problem count code ...
                     //step:1 verify plane Id
                     $verify = ProblemService::verifyPlanId($customer_id);
                     if ($verify) {
@@ -742,6 +742,36 @@ public function notawardedExecution(){
             $ind_id = trim($request->input('industries'));
             $dropdown =  ProblemService::getSkillDependent($ind_id);
             return response()->json($dropdown);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function getIndustryById(Request $request){
+        try {
+            $ind_id = trim($request->input('industries'));
+            $industries =  CommonService::getIndById($ind_id);
+            return response()->json($industries);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function getCategoryById(Request $request){
+        try {
+            $subCat = trim($request->input('sub_cat'));
+            $sub_cat =  CommonService::getCatById($subCat);
+            return response()->json($sub_cat);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function getSkillById(Request $request){
+        try {
+            $skill_id = trim($request->input('skill'));
+            $skill =  CommonService::getSkillById($skill_id);
+            return response()->json($skill);
         } catch (Exception $e){
             return response()->json(['message' => $e->getMessage()], 404);
         }

@@ -32,6 +32,16 @@ use Illuminate\Support\Facades\Route;
         //get all skill list
         Route::get('/skillList', [AuthController::class, 'skillList']);
 
+        //get industry name by id
+        Route::post('/getIndustryById', [ProblemController::class, 'getIndustryById']);
+
+         //get category name by id
+         Route::post('/getCategoryById', [ProblemController::class, 'getCategoryById']);
+
+        //get skill name by id
+        Route::post('/getSkillById', [ProblemController::class, 'getSkillById']);
+        
+
         //Admin Panel :
 
         //Routes available to only Admin 
