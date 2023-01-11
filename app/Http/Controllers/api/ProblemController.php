@@ -351,8 +351,8 @@ class ProblemController extends Controller
             'problem.location',
             'problem.date_added'
         )
-        ->where('problem.execution', '2')
-        ->where('problem.action','1')
+        ->where(['problem.execution'=> '2','problem.action'=>'1'])
+        ->where('problem_to_provider.action','0')
         ->get();
 
     return response()->json($res);
@@ -730,8 +730,8 @@ public function notawardedExecution(){
 
     public function categoryDepDropdown(Request $request){
         try {
-            $ind_id = trim($request->input('industries'));
-            $dropdown =  ProblemService::getCategoryDependent($ind_id);
+          $ind_id = $request->input('industries');
+          $dropdown =  ProblemService::getCategoryDependent($ind_id);
             return response()->json($dropdown);
         } catch (Exception $e){
             return response()->json(['message' => $e->getMessage()], 404);
