@@ -129,7 +129,7 @@ class ProblemService implements ProblemInterface{
 
     public static function getCategoryDependent($ind){
         $data = DB::table('category')
-                ->select('id','name')
+                ->select('id','name','ind_id')
                 ->where(['ind_id'=>$ind,'status'=>1])
                 ->orderBy('id', 'asc')
                 ->get();
@@ -146,8 +146,6 @@ class ProblemService implements ProblemInterface{
                                 ->get();
                         return $default_data;
                 }
-
-                
     }
 
     public static function getSkillDependent($ind){
@@ -172,8 +170,6 @@ class ProblemService implements ProblemInterface{
 
     }
    
-
-    
 }
 
 ?>
