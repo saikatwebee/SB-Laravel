@@ -338,9 +338,9 @@ class ProblemController extends Controller
 
  public function latestExecution(){
     $customer_id = CommonService::getCidByEmail(auth()->user()->email);
-   
-    //DB::enableQueryLog();
-    $res = DB::table('problem')
+
+    $res = DB::table('problem_to_provider')
+        ->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
         ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
         ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
         ->select(
@@ -351,12 +351,13 @@ class ProblemController extends Controller
             'problem.location',
             'problem.date_added'
         )
-        ->where(['problem.execution'=> '2','problem.action'=>'1'])
-        ->where('problem_to_provider.action','0')
+        ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 0])
+        ->where('problem_to_provider.shortlist','0')
+        ->where('problem.execution', '2')
+        ->where('problem.action','1')
         ->get();
 
     return response()->json($res);
-
 }
 
  //SP-latest Applied Project(Execution)
