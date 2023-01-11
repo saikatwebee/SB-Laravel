@@ -187,7 +187,9 @@ use Illuminate\Support\Facades\Route;
   
               //get customer skill list
               Route::get('/customerSkill', [CustomerController::class, 'customerSkill']);
-  
+
+              //get plan details from subscriberplane table
+              Route::post('/getPlan', [InvoiceController::class, 'getPlan']);
             
          
         });
