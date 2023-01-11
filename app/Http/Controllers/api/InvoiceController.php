@@ -159,5 +159,17 @@ class InvoiceController extends Controller
              return response()->json(['message' => $e->getMessage()], 404);
          }
      }
+
+      //View Subscriber Plan Details by Plan ID
+      public function getPlan(Request $request)
+      {
+          try {
+             $plan_id = trim($request->input('id'));
+              return InvoiceService::getPlandetails($plan_id);
+              
+          } catch (Exception $e) {
+              return response()->json(['message' => $e->getMessage()], 404);
+          }
+      }
     
 }
