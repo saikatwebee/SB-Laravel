@@ -109,7 +109,8 @@ class ProblemService implements ProblemInterface{
                 'category.name as cat'
             )
             ->where('problem.id',$id)
-            ->get();
+            ->get()
+            ->first();
         return $inv;
         
     }
