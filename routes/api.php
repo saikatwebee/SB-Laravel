@@ -12,10 +12,13 @@ use Illuminate\Support\Facades\Route;
         Route::middleware('jwt.verify')->group(function () {
         //Routes available to all users
         Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware(['jwt.verify']);
+        Route::post('/adminLogin', [AuthController::class, 'admin_login'])->withoutMiddleware(['jwt.verify']);
+       
         Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['jwt.verify']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/profile', [AuthController::class, 'userProfile']);
+        Route::post('/changePassword', [AuthController::class, 'changePassword']);
 
         //get all state list
         Route::get('/stateList', [AuthController::class, 'stateList']);
@@ -28,6 +31,16 @@ use Illuminate\Support\Facades\Route;
 
         //get all skill list
         Route::get('/skillList', [AuthController::class, 'skillList']);
+
+        //get industry name by id
+        Route::post('/getIndustryById', [ProblemController::class, 'getIndustryById']);
+
+         //get category name by id
+         Route::post('/getCategoryById', [ProblemController::class, 'getCategoryById']);
+
+        //get skill name by id
+        Route::post('/getSkillById', [ProblemController::class, 'getSkillById']);
+        
 
         //Admin Panel :
 
@@ -79,8 +92,12 @@ use Illuminate\Support\Facades\Route;
 
         //Award Normal Project
         Route::post('/AwardNormalProject',[ProblemController::class, 'AwardNormalProject']);
+        Route::post('/categoryDepDropdown',[ProblemController::class, 'categoryDepDropdown']);
+        Route::post('/skillDepDropdown',[ProblemController::class, 'skillDepDropdown']);
 
         //Project related routes of SS end
+
+
 
         });
 
@@ -170,7 +187,9 @@ use Illuminate\Support\Facades\Route;
   
               //get customer skill list
               Route::get('/customerSkill', [CustomerController::class, 'customerSkill']);
-  
+
+              //get plan details from subscriberplane table
+              Route::post('/getPlan', [InvoiceController::class, 'getPlan']);
             
          
         });

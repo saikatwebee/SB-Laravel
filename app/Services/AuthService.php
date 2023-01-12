@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\Auth;
 use App\Models\Customer;
 use App\Models\User;
+use App\Models\Mac;
 use Illuminate\Support\Facades\DB;
 
 interface AuthInterface
@@ -12,6 +13,7 @@ interface AuthInterface
     public static function auth_insert($firstname,$email,$password,$user_type,$status);
     public static function customer_insert($firstname,$email,$phone,$user_type,$howsb,$reg_url);
     public static function user_insert($firstname,$email,$phone,$user_type,$status);
+    public static function changePassword($pwd,$auth_id);
     public static function customer_auth($email);
     public static function user_auth($email);
     public static function get_state_list();
@@ -75,6 +77,13 @@ class AuthService implements AuthInterface{
         if($user->save())
         return true;
     }
+
+    public static function changePassword($pwd,$auth_id){
+      $rows =  Auth::where(['id'=>$auth_id])->update(['password'=>$pwd]);
+      if ($rows > 0)
+        return true;
+    
+    }
     
     public static function user_auth($email){
         $user = User::where('email',$email)->first();
@@ -120,6 +129,32 @@ class AuthService implements AuthInterface{
             ->get();
             return $states;
     }
+
+    public static function check_mac($mac,$email)
+    {
+       $user_id =  DB::table('user')
+            ->select('user_id')
+            ->where('email',$email)
+            ->get()->first();
+        $uid = $user_id->user_id;
+       
+        if ($uid > 0) {
+           
+            if ($uid == 1){
+                if(Mac::where(['user_id' => $uid,'mac' => $mac,])->exists()){
+                    return true;
+                }
+            } else{
+               
+                if(Mac::where(['mac' => $mac])->where('user_id','!=',1)->exists()){
+                    return true;
+                }
+            }
+           
+            
+        }
+    }
+
 
 
   

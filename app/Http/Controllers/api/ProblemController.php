@@ -59,22 +59,21 @@ class ProblemController extends Controller
                 if ($res) {
                     //Email sending code ...
                     //mail to industry
-                    Mail::to(auth()->user()->email)->send(
-                        new PostProject(auth()->user()->email)
-                    );
-                    //mail to info@solutionbuggy.com
-                    Mail::to('saikatsb10@gmail.com')->send(
-                        new PostProjectInfo('saikatsb10@gmail.com')
-                    );
+                    // Mail::to(auth()->user()->email)->send(
+                    //     new PostProject(auth()->user()->email)
+                    // );
+                    // //mail to info@solutionbuggy.com
+                    // Mail::to('saikatsb10@gmail.com')->send(
+                    //     new PostProjectInfo('saikatsb10@gmail.com')
+                    // );
 
-                    //Substract Problem count code ...
+                   //Substract Problem count code ...
                     //step:1 verify plane Id
                     $verify = ProblemService::verifyPlanId($customer_id);
                     if ($verify) {
                         //step:2 get the plan expiry date
                         $exp_date = ProblemService::getExpDate($customer_id);
-                        var_dump($exp_date);
-                        die();
+                        
                         $today = date('Y-m-d H:i:s');
                         //step:3 get the problem credit
                         $problem_count = ProblemService::getProblemCount(
@@ -339,9 +338,9 @@ class ProblemController extends Controller
 
  public function latestExecution(){
     $customer_id = CommonService::getCidByEmail(auth()->user()->email);
-   
-    //DB::enableQueryLog();
-    $res = DB::table('problem')
+
+    $res = DB::table('problem_to_provider')
+        ->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
         ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
         ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
         ->select(
@@ -352,12 +351,13 @@ class ProblemController extends Controller
             'problem.location',
             'problem.date_added'
         )
+        ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 0])
+        ->where('problem_to_provider.shortlist','0')
         ->where('problem.execution', '2')
         ->where('problem.action','1')
         ->get();
 
     return response()->json($res);
-
 }
 
  //SP-latest Applied Project(Execution)
@@ -687,9 +687,9 @@ public function notawardedExecution(){
                 'customer.email as SP_email',
                 'customer.phone as SP_phone'
             )
-            ->where('problem_to_provider.problem_id',$p_id)
-            ->where('problem_to_provider.action','>', '0')
-            ->where('problem_to_provider.action','<', '3')
+            ->where(['problem_to_provider.problem_id'=>$p_id, 'problem_to_provider.action'=>1])
+            // ->where('problem_to_provider.action','>', '0')
+            // ->where('problem_to_provider.action','<', '3')
             ->get();
     
         return response()->json($res);
@@ -725,6 +725,55 @@ public function notawardedExecution(){
             }
             
         } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function categoryDepDropdown(Request $request){
+        try {
+          $ind_id = $request->input('industries');
+          $dropdown =  ProblemService::getCategoryDependent($ind_id);
+            return response()->json($dropdown);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+    public function skillDepDropdown(Request $request){
+        try {
+            $ind_id = trim($request->input('industries'));
+            $dropdown =  ProblemService::getSkillDependent($ind_id);
+            return response()->json($dropdown);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function getIndustryById(Request $request){
+        try {
+            $ind_id = trim($request->input('industries'));
+            $industries =  CommonService::getIndById($ind_id);
+            return response()->json($industries);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function getCategoryById(Request $request){
+        try {
+            $subCat = trim($request->input('sub_cat'));
+            $sub_cat =  CommonService::getCatById($subCat);
+            return response()->json($sub_cat);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function getSkillById(Request $request){
+        try {
+            $skill_id = trim($request->input('skill'));
+            $skill =  CommonService::getSkillById($skill_id);
+            return response()->json($skill);
+        } catch (Exception $e){
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }

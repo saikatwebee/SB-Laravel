@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Exception;
 use App\Models\Customer;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 interface CommonInterface
 {
@@ -18,7 +19,12 @@ interface CommonInterface
     public static function getUidByEmail($email);
     public static function getRowByUid($customer_id);
 
+
+    public static function getIndById($industries);
+    public static function getCatById($sub_cat);
+    public static function getSkillById($sub_cat);
 }
+
 class CommonService implements CommonInterface{
 
     public static function getCidByEmail($email){
@@ -40,6 +46,35 @@ class CommonService implements CommonInterface{
         $user = User::where('user_id',$user_id)->first();
         return $user;
     }
+
+    public static function getIndById($industries){
+        $data = DB::table('industries')
+                    ->select('name')
+                    ->where('id',$industries)
+                    ->get()
+                    ->first();
+                    return $data->name;
+    }
+
+    public static function getCatById($sub_cat){
+        $data = DB::table('category')
+        ->select('name')
+        ->where('id',$sub_cat)
+        ->get()
+        ->first();
+        return $data->name;
+    }
+
+    public static function getSkillById($skill){
+
+        $data = DB::table('skill')
+        ->select('name')
+        ->where('id',$skill)
+        ->get()
+        ->first();
+        return $data->name;
+    }
+
 }
  
 ?>
