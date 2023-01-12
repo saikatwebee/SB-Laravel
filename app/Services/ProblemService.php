@@ -112,7 +112,9 @@ class ProblemService implements ProblemInterface{
             )
             ->where('problem.id',$id)
             ->get()
+
             ->first();
+           
         return $inv;
         
     }
