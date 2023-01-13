@@ -414,31 +414,76 @@ class CustomerController extends Controller
         }
     }
 
+    //get customer industries list for authenticated users 
     public function customerIndustries(){
-        $customer_id = CommonService::getCidByEmail(
-            auth()->user()->email
-        );
-
-        $res = ProfileService::getCustomerIndustries($customer_id);
-        return response()->json($res);
+        try{
+            $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+            $res = ProfileService::getCustomerIndustries($customer_id);
+            return response()->json($res);
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 
+    //get customer industries list by post request of customerId
+    public function customerIndustriesByCid(Request $request){
+        try{
+            $customer_id = $request->input('c_id');
+            $res = ProfileService::getCustomerIndustries($customer_id);
+            return response()->json($res);
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    //get customer category list for authenticated users 
     public function customerCategory(){
-        $customer_id = CommonService::getCidByEmail(
-            auth()->user()->email
-        );
-
-        $res = ProfileService::getCustomerCategory($customer_id);
-        return response()->json($res);
+      try{
+            $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+            $res = ProfileService::getCustomerCategory($customer_id);
+            return response()->json($res);
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 
-    public function customerSkill(){
-        $customer_id = CommonService::getCidByEmail(
-            auth()->user()->email
-        );
+     //get customer category list by post request of customerId
+    public function customerCategoryByCid(Request $request){
+        try{
+            $customer_id = $request->input('c_id');
+            $res = ProfileService::getCustomerCategory($customer_id);
+            return response()->json($res);
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
 
-        $res = ProfileService::getCustomerSkill($customer_id);
-        return response()->json($res);
+    //get customer skill list for authenticated users 
+    public function customerSkill(){
+       try{
+            $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+            $res = ProfileService::getCustomerSkill($customer_id);
+            return response()->json($res);
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+     //get customer skill list by post request of customerId
+    public function customerSkillByCid(Request $request){
+        try{
+            $customer_id = $request->input('c_id');
+            $res = ProfileService::getCustomerSkill($customer_id);
+            return response()->json($res);
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 
 
