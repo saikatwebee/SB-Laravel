@@ -621,7 +621,7 @@ public function notawardedExecution(){
                     return response()->json(
                         [
                             'success' => true,
-                            'message' => 'Updated Successfully',
+                            'message' => 'Awarded Successfully',
                             'status' => '200',
                         ],
                         Response::HTTP_OK
