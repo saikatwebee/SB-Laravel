@@ -93,6 +93,7 @@ use Illuminate\Support\Facades\Route;
 
         //Award Normal Project
         Route::post('/AwardNormalProject',[ProblemController::class, 'AwardNormalProject']);
+        
         Route::post('/categoryDepDropdown',[ProblemController::class, 'categoryDepDropdown']);
         Route::post('/skillDepDropdown',[ProblemController::class, 'skillDepDropdown']);
 
@@ -180,14 +181,27 @@ use Illuminate\Support\Facades\Route;
             //Add referral
             Route::post('/add_referral', [CustomerController::class, 'add_referral']);
             
-              //get customer industry list
+              //get customer industry list for current authenticated user
               Route::get('/customerIndustries', [CustomerController::class, 'customerIndustries']);
 
-              //get customer category list
+              //get customer category list for current authenticated user
               Route::get('/customerCategory', [CustomerController::class, 'customerCategory']);
   
-              //get customer skill list
+              //get customer skill list for current authenticated user
               Route::get('/customerSkill', [CustomerController::class, 'customerSkill']);
+
+
+              //get customer industry list for current authenticated user
+              Route::post('/customerIndustriesByCid', [CustomerController::class, 'customerIndustriesByCid']);
+
+              //get customer category list for current authenticated user
+              Route::post('/customerCategoryByCid', [CustomerController::class, 'customerCategoryByCid']);
+  
+              //get customer skill list for current authenticated user
+              Route::post('/customerSkillByCid', [CustomerController::class, 'customerSkillByCid']);
+
+
+
 
               //get plan details from subscriberplane table
               Route::post('/getPlan', [InvoiceController::class, 'getPlan']);
