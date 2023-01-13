@@ -124,7 +124,8 @@ class ProblemService implements ProblemInterface{
                 'customer.*'
             )
             ->where('customer_id',$id)
-            ->get();
+            ->get()
+            ->first();
         return $pro;
         
     }
