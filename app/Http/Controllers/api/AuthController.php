@@ -158,6 +158,34 @@ class AuthController extends Controller
         return response()->json($res);
     }
 
+    
+
+    public function changePassword(Request $request){
+        try {
+            // $oldPassword= trim($request->input('oldpassword'));
+            $password= trim($request->input('newpassword'));
+
+            $rules = [
+               "newpassword"=>"required|min:5|max:15",
+            ];
+
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+            }
+            else{
+                $res = AuthService::changePassword(bcrypt($password),auth()->user()->id);
+                if ($res)
+                return response()->json(['success' => true,'message' => 'Password changed Successfully','status' => '200',],Response::HTTP_OK);
+            
+            }
+
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+
     public function admin_login(Request $request){
 
         $mac = $request->input('mac');
@@ -190,28 +218,25 @@ class AuthController extends Controller
         
     }
 
-    public function changePassword(Request $request){
+    public function adminTokenValidation(Request $request){
+      
         try {
-            // $oldPassword= trim($request->input('oldpassword'));
-            $password= trim($request->input('newpassword'));
+            $token = $request->input('token');
+            $payload = JWTAuth::setToken($token)->getPayload();
+            return response()->json($payload);
 
-            $rules = [
-               "newpassword"=>"required|min:5|max:15",
-            ];
-
-            $validator = Validator::make($request->all(), $rules);
-            if ($validator->fails()) {
-                return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
-            }
-            else{
-                $res = AuthService::changePassword(bcrypt($password),auth()->user()->id);
-                if ($res)
-                return response()->json(['success' => true,'message' => 'Password changed Successfully','status' => '200',],Response::HTTP_OK);
-            
-            }
-
-        } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+        } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
+    
+            return response()->json(['message'=>'Token is expired'], 500);
+    
+        } catch (\Tymon\JWTAuth\Exceptions\TokenInvalidException $e) {
+    
+            return response()->json(['message'=>'Token is invalid'], 500);
+    
+        } catch (\Tymon\JWTAuth\Exceptions\JWTException $e) {
+    
+            return response()->json(['message' => 'Authorization Token not found'], 500);
+    
         }
     }
 

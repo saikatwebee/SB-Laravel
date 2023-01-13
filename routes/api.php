@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
         //Routes available to all users
         Route::post('/login', [AuthController::class, 'login'])->withoutMiddleware(['jwt.verify']);
         Route::post('/adminLogin', [AuthController::class, 'admin_login'])->withoutMiddleware(['jwt.verify']);
+        Route::post('/adminTokenValidation',[AuthController::class, 'adminTokenValidation'])->withoutMiddleware(['jwt.verify']);
        
         Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['jwt.verify']);
         Route::post('/logout', [AuthController::class, 'logout']);
