@@ -687,8 +687,8 @@ public function notawardedExecution(){
                 'customer.email as SP_email',
                 'customer.phone as SP_phone'
             )
-            ->where('problem_to_provider.problem_id',$p_id)
-             ->where('problem_to_provider.action','>', '0')
+            ->where(['problem_to_provider.problem_id'=>$p_id])
+            ->where('problem_to_provider.action','>', '0')
             ->where('problem_to_provider.action','<', '3')
             ->get();
     
