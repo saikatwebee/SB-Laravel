@@ -54,6 +54,8 @@ class InvoiceService implements InvoiceInterface
     public static function getPlan($customer_id){
         $Plan = CustomerPlane::where('customer_id',$customer_id)->first();
         return $Plan;
+
+        //DB::table('customer_plane')->where('')
         
     }
     public static function verifyCId($customer_id){
