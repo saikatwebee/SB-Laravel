@@ -82,7 +82,8 @@ class InvoiceController extends Controller
      {
          try {
             $customer_id = CommonService::getCidByEmail(auth()->user()->email);
-             return InvoiceService::getPlan($customer_id);
+             $plan = InvoiceService::getPlan($customer_id);
+             return response()->json($plan);
              
          } catch (Exception $e) {
              return response()->json(['message' => $e->getMessage()], 404);
