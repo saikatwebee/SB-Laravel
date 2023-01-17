@@ -205,6 +205,10 @@ use Illuminate\Support\Facades\Route;
 
               //get plan details from subscriberplane table
               Route::post('/getPlan', [InvoiceController::class, 'getPlan']);
+
+              //bug report
+              Route::post('/bugReport', [CustomerController::class, 'bugReport']);
+
             
          
         });

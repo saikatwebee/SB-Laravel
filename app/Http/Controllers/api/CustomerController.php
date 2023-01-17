@@ -8,6 +8,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use App\Services\ProfileService;
 use App\Services\CommonService;
+use App\Mail\BugReport;
 
 class CustomerController extends Controller
 {
@@ -527,6 +528,38 @@ class CustomerController extends Controller
 
             }
         } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function bugReport(Request $request){
+        try{
+            $bug_desc = $request->input('bug_desc');
+             $rules =[
+                'bug_desc'=>'required'
+             ];
+
+            $validator = Validator::make($request->all(),$rules);
+            if ($validator->fails()) {
+                return response()->json($validator->errors()->toJson(), 400);
+            } else {
+                // Mail::to('saikatsb10@gmail.com')->send(
+                //     new BugReport('saikatsb10@gmail.com')
+                // );
+                return response()->json(
+                    [
+                        'success' => true,
+                        'message' =>
+                            'Bug reported Successfully',
+                        'status' => '200',
+                    ],
+                    Response::HTTP_OK
+                );
+
+            }
+
+        }
+        catch(Exception $e){
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }
