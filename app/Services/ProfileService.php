@@ -21,6 +21,7 @@ interface ProfileInterface
     public static function getCustomerIndustries($customer_id);
     public static function getCustomerCategory($customer_id);
     public static function getCustomerSkill($customer_id);
+    public static function CheckActivation($email);
 
 }
 
@@ -28,13 +29,21 @@ class ProfileService implements ProfileInterface
 {
     public static function editCustomerProfile($data, $customer_id)
     {
-        $affectedRows = Customer::where('customer_id', $customer_id)->update(
-            $data
-        );
+        $affectedRows = Customer::where('customer_id', $customer_id)->update($data);
         if ($affectedRows > 0) {
             return true;
         }
     }
+
+    public static function CheckActivation($email)
+    {
+        if(Customer::where(['email'=>$email,'status'=>1])->exists()){
+            return true;
+        }
+        
+    }
+
+
 
     public static function addCustomerIndustry($industries, $customer_id)
     {

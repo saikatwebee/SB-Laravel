@@ -6,13 +6,16 @@ use Illuminate\Http\Request;
 use Exception;
 use App\Models\Customer;
 use App\Models\User;
+use App\Models\Auth;
 use Illuminate\Support\Facades\DB;
 
 interface CommonInterface
 {
     //for customers (including SS & SP)
     public static function getCidByEmail($email);
+    public static function getCphByEmail($email);
     public static function getRowByCid($customer_id);
+    public static function getAuthIdByEmail($email);
 
     //for our Employes 
 
@@ -32,9 +35,19 @@ class CommonService implements CommonInterface{
         return $customer->customer_id;
     }
 
+    public static function getCphByEmail($email){
+        $customer = Customer::where('email',$email)->first();
+        return $customer->phone;
+    }
+
     public static function getRowByCid($customer_id){
         $customer = Customer::where('customer_id',$customer_id)->first();
         return $customer;
+    }
+
+    public static function getAuthIdByEmail($email){
+        $auth = Auth::where('email',$email)->first();
+        return $auth->id;
     }
 
     public static function getUidByEmail($email){
