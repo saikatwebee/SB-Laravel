@@ -14,6 +14,8 @@ use Tymon\JWTAuth\Exceptions\JWTException;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\User;
 use App\Services\AuthService;
+use App\Services\CommonService;
+use App\Services\ProfileService;
 
 
 
@@ -90,14 +92,14 @@ class AuthController extends Controller
     public function login(Request $request){
 
         $rules = [
-           "email" => "required|email|",
+           "email" => "required|email",
            "password"=>"required|min:5|max:15",
             ];
 
            
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
-            return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+            return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);
         }
         
        if(!$token = JWTAuth::attempt($validator->validated())){
@@ -106,6 +108,82 @@ class AuthController extends Controller
         }
 
         return  $this->createNewToken($token);
+    }
+
+    public function loginWithOtp(Request $request){
+        try{
+
+        $email = trim($request->input('email'));
+        $rules = [
+            "email" => "required|email",
+           ];
+
+        $validator = Validator::make($request->all(), $rules);
+         if ($validator->fails()) {
+             return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);
+         }
+         else{
+            if($email!=''){
+                $check_email= AuthService::check_email($email);
+                if($check_email){
+                    //for existing user
+                    $customer_id = CommonService::getCidByEmail($email);
+                    $auth_id = CommonService::getAuthIdByEmail($email);
+                    $phone  = CommonService::getCphByEmail($email);
+
+                    $ph="+91".$phone;
+					$otp = mt_rand(1111,9999);
+                    
+                    //Account Activation
+                    $data=['status'=>1];
+                    $res = ProfileService::editCustomerProfile($data, $customer_id);
+
+                    //check Account Activation
+                    $check = ProfileService::CheckActivation($email);
+                    if($check){
+
+                        // return response()->json(['message' => $otp, 'ph'=>$ph]);
+
+                        //sending otp sms
+                        //otp sms
+
+						$ch = curl_init();
+
+						curl_setopt($ch, CURLOPT_URL, 'https://api.kaleyra.io/v1/HXIN1700258037IN/messages');
+						curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+						curl_setopt($ch, CURLOPT_POST, 1);
+						curl_setopt($ch, CURLOPT_POSTFIELDS, "to=".$ph."&type=OTP&sender=SOLBUG&body= ".$otp." is your OTP for login to SolutionBuggy Portal. Please do not share it with anyone.&template_id=1007163645755201460");
+
+						$headers = array();
+						$headers[] = 'Content-Type: application/x-www-form-urlencoded';
+						$headers[] = 'Api-Key: Aaa25fd00f22308bba995277ea7baea2b';
+						curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+						$result = curl_exec($ch);
+						$error = curl_error($ch);
+
+						curl_close($ch);
+
+                        $otpData = ['otp'=>$otp];
+                        $row = AuthService::auth_update($otpData,$auth_id);
+
+                        return response()->json(['message' => 'Otp has been sent successfully','res'=>$result,'err'=>$error,'row'=>$row]);
+
+                      }
+                    else{
+                        //Account not activated 
+                        return response()->json(['message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111'],210);
+                    }
+                }
+                else{
+                    return response()->json(['message' => 'Your Email is not Registered'],210);
+                }
+            }
+         }
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
     }
 
      public function logout() {
