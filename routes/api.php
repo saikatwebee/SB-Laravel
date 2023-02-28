@@ -6,6 +6,7 @@ use App\Http\Controllers\api\AuthController;
 use App\Http\Controllers\api\CustomerController;
 use App\Http\Controllers\api\ProblemController;
 use App\Http\Controllers\api\InvoiceController;
+use App\Http\Controllers\api\PlaneController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -206,10 +207,17 @@ use Illuminate\Support\Facades\Route;
 
               //get plan details from subscriberplane table
               Route::post('/getPlan', [InvoiceController::class, 'getPlan']);
-
+              // plane checkout details
+              Route::post('/getSubcriberPlane', [PlaneController::class, 'getSubcriberPlane']);
+              
               //bug report
               Route::post('/bugReport', [CustomerController::class, 'bugReport']);
 
+              //success page
+              Route::post('/paymentSuccess', [PlaneController::class, 'paymentSuccess']);
+
+               //falied page
+               Route::post('/paymentFailed', [PlaneController::class, 'paymentFailed']);
             
          
         });
