@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
+
 /**
  * @property int $id
  * @property int $cid
@@ -19,6 +21,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Proposal extends Model
 {
+    
     /**
      * The table associated with the model.
      * 
