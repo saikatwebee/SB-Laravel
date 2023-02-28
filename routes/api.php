@@ -151,7 +151,7 @@ use Illuminate\Support\Facades\Route;
         //Subtract Apply Credits
         Route::post('/SubApplyCredits',[ProblemController::class, 'SubApplyCredits']);
         
-        
+        Route::post('/proposalInsert', [ProblemController::class, 'proposalInsert']);
         });
 
 
