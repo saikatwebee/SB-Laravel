@@ -42,7 +42,7 @@ class InvoiceService implements InvoiceInterface
                 'subscriberplane.title'
             )
             ->where('invoice.id',$id)
-            ->get();
+            ->first();
         return $inv;
         
     }
