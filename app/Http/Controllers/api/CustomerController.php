@@ -8,6 +8,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use App\Services\ProfileService;
 use App\Services\CommonService;
+use App\Services\ReferalService;
 use App\Mail\BugReport;
 
 class CustomerController extends Controller
@@ -564,4 +565,34 @@ class CustomerController extends Controller
         }
     }
 
+    public function referalInsert(Request $request){
+        try{
+           $data['name']=trim($request->input('name'));
+           $data['email']=trim($request->input('email'));
+           $data['phone']=trim($request->input('phone'));
+           $data['referer_id'] = CommonService::getCidByEmail(auth()->user()->email);
+           $rules = [
+            "name" => "required|min:5|max:20",
+            "email" => "required|email|unique:auth",
+            "phone" => "required|numeric|min:10",
+           ];
+           $validator = Validator::make($request->all(), $rules);
+                 if ($validator->fails()) {
+                      // return response()->json($validator->errors()->toJson(),400);
+                       return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+                    }
+                    else{
+                        $res = ReferalService::referal_insert($data);
+                    if ($res) {
+                        //return response()->json(["Referral Added Successfully"]);
+                        return response()->json([ 'success' => true,'message' =>'Referral Added Successfully','status' => '200', ], Response::HTTP_OK );
+                             }
+                    }
+            }
+        catch(Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
 }
+?>

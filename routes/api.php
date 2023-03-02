@@ -151,8 +151,11 @@ use Illuminate\Support\Facades\Route;
         //Subtract Apply Credits
         Route::post('/SubApplyCredits',[ProblemController::class, 'SubApplyCredits']);
         
+        //proposal insert
         Route::post('/proposalInsert', [ProblemController::class, 'proposalInsert']);
         });
+
+});
 
 
 
@@ -218,8 +221,10 @@ use Illuminate\Support\Facades\Route;
 
                //falied page
                Route::post('/paymentFailed', [PlaneController::class, 'paymentFailed']);
-            
+
+               //referal page
+               Route::post('/referalInsert', [CustomerController::class, 'referalInsert']);
          
         });
 
-});
+
