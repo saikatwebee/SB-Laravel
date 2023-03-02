@@ -786,18 +786,29 @@ public function notawardedExecution(){
            $data['is_gst']=trim($request->input('is_gst'));
            $data['cid']=trim($request->input('cid'));
            $data['pid']=trim($request->input('pid'));
-        
-         $uploaded_file = $this->proposalUpload($request->file('proposal_doc'), $data['cid']);
-        
-        
-         if($uploaded_file){  
-            $data['proposal_doc']=$uploaded_file;
-            $res=ProblemService::proposal_insert($data);
-            if($res)
-           return response()->json($res);
+           $rules = [
+            "ammount" => "required|numeric|max:10",
+            "is_gst" => "required",
+            "cid" => "required|numeric",
+            "pid" => "required|numeric",
+           ];
+           $validator = Validator::make($request->all(), $rules);
+                 if ($validator->fails()) {
+                      // return response()->json($validator->errors()->toJson(),400);
+                       return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+                    }
+                    else{
+                        $uploaded_file = $this->proposalUpload($request->file('proposal_doc'), $data['cid']);
+                        if($uploaded_file){  
+                            $data['proposal_doc']=$uploaded_file;
+                            $res=ProblemService::proposal_insert($data);
+                            if($res)
+                           return response()->json($res);
+                        }
+                        
+                    }
+
         }
-        
-    }
         catch(Exception $e){
             return response()->json(['message' => $e->getMessage()], 404);
         }
@@ -822,6 +833,8 @@ public function notawardedExecution(){
 
 
 }
+?>
+
 
 
 
