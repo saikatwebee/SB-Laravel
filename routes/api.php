@@ -7,6 +7,7 @@ use App\Http\Controllers\api\CustomerController;
 use App\Http\Controllers\api\ProblemController;
 use App\Http\Controllers\api\InvoiceController;
 use App\Http\Controllers\api\PlaneController;
+use App\Http\Controllers\api\AdminController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -49,8 +50,8 @@ use Illuminate\Support\Facades\Route;
 
         //Routes available to only Admin 
         Route::middleware(['role:A'])->prefix('admin')->group(function () {
-       
-
+                Route::get('/dashboard_section1', [AdminController::class, 'dashboard_section1']);
+                
         });
 
         //Routes available to Admin and Project 
