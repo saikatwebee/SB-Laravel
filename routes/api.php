@@ -16,6 +16,13 @@ use Illuminate\Support\Facades\Route;
         Route::post('/loginWithOtp', [AuthController::class, 'loginWithOtp'])->withoutMiddleware(['jwt.verify']);
         Route::post('/adminLogin', [AuthController::class, 'admin_login'])->withoutMiddleware(['jwt.verify']);
         Route::post('/adminTokenValidation',[AuthController::class, 'adminTokenValidation'])->withoutMiddleware(['jwt.verify']);
+
+        //success page
+        Route::get('/paymentSuccess', [PlaneController::class, 'paymentSuccess'])->withoutMiddleware(['jwt.verify']);
+
+        //falied page
+        Route::post('/paymentFailed', [PlaneController::class, 'paymentFailed'])->withoutMiddleware(['jwt.verify']);
+     
        
         Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['jwt.verify']);
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -213,12 +220,7 @@ use Illuminate\Support\Facades\Route;
               //bug report
               Route::post('/bugReport', [CustomerController::class, 'bugReport']);
 
-              //success page
-              Route::post('/paymentSuccess', [PlaneController::class, 'paymentSuccess']);
-
-               //falied page
-               Route::post('/paymentFailed', [PlaneController::class, 'paymentFailed']);
-            
+              
          
         });
 
