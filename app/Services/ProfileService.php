@@ -9,6 +9,7 @@ use App\Models\CustomerIndustries;
 use App\Models\CustomerCategory;
 use App\Models\CustomerSkill;
 use App\Models\ReferalDatabase;
+use App\Models\DatabaseComplete;
 use Illuminate\Support\Facades\DB;
 
 interface ProfileInterface
@@ -21,7 +22,13 @@ interface ProfileInterface
     public static function getCustomerIndustries($customer_id);
     public static function getCustomerCategory($customer_id);
     public static function getCustomerSkill($customer_id);
+    public static function getFullName($customer_id);
+    public static function getPhone($customer_id);
+    public static function getAssignedToByCid($customer_id);
+    public static function getAssignedToByEmail($email);
+    public static function getAssignedName($user_id);
     public static function CheckActivation($email);
+
 
 }
 
@@ -169,6 +176,65 @@ class ProfileService implements ProfileInterface
         $affectedRows = ReferalDatabase::insert($data);
         if($affectedRows > 0)
         return true;
+    }
+
+    public static function getFullName($customer_id){
+        $data =  DB::table('customer')
+        ->select('firstname','lastname')
+        ->where('customer_id',$customer_id)
+        ->get()
+        ->first();
+
+        $fullname = $data->firstname. " ".$data->lastname;
+        return $fullname;
+    }
+
+    public static function getPhone($customer_id){
+        $data =  DB::table('customer')
+        ->select('phone')
+        ->where('customer_id',$customer_id)
+        ->get()
+        ->first();
+        return $data->phone;
+    }
+
+    public static function getAssignedToByCid($customer_id){
+        $data = DB::table('database_complete')
+                    ->select('assigned_to')
+                    ->where('customer_id',$customer_id)
+                    ->get()
+                    ->first();
+        
+        return $data->assigned_to;
+
+                    
+    }
+
+    public static function getAssignedToByEmail($email){
+        $data = DB::table('database_complete')
+                    ->select('assigned_to')
+                    ->where('email',$email)
+                    ->get()
+                    ->first();
+
+                  return  $data->assigned_to;
+                  
+                    
+    }
+
+   
+
+    public static function getAssignedNameByEmail($user_id){
+        $data = DB::table('user')
+        ->select('firstname','lastname')
+        ->where('user_id',$user_id)
+        ->get()
+        ->first();
+
+        $assigned_name = $data->firstname. " ".$data->lastname;
+
+      return  $assigned_name;
+      
     }
 
     
