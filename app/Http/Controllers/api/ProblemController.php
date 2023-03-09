@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\api\CustomerController;
 use App\Mail\PostProject;
 use App\Mail\PostProjectInfo;
 use Illuminate\Support\Facades\Validator;
@@ -17,6 +18,7 @@ use App\Services\ProblemService;
 use Illuminate\Support\Facades\Mail;
 // use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
+use App\Models\Proposal;
 
 class ProblemController extends Controller
 {
@@ -777,4 +779,65 @@ public function notawardedExecution(){
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }
+
+    public function proposalInsert(Request $request){
+        try{
+           $data['ammount']=trim($request->input('ammount'));
+           $data['is_gst']=trim($request->input('is_gst'));
+           $data['cid']=trim($request->input('cid'));
+           $data['pid']=trim($request->input('pid'));
+           $rules = [
+            "ammount" => "required|numeric|max:10",
+            "is_gst" => "required",
+            "cid" => "required|numeric",
+            "pid" => "required|numeric",
+           ];
+           $validator = Validator::make($request->all(), $rules);
+                 if ($validator->fails()) {
+                      // return response()->json($validator->errors()->toJson(),400);
+                       return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+                    }
+                    else{
+                        $uploaded_file = $this->proposalUpload($request->file('proposal_doc'), $data['cid']);
+                        if($uploaded_file){  
+                            $data['proposal_doc']=$uploaded_file;
+                            $res=ProblemService::proposal_insert($data);
+                            if($res)
+                           return response()->json($res);
+                        }
+                        
+                    }
+
+        }
+        catch(Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+    public function proposalUpload($file, $customer_id)
+    {
+        $fileName = $file->getClientOriginalName();
+        //check profile pic is already exist or not
+       
+            // if (file_exists(public_path('customerProfile/' . $logo))) {
+            //     unlink(public_path('customerProfile/' . $logo));
+            // }
+
+            if (!is_dir(public_path('proposal/'.$customer_id))) {
+    			mkdir(public_path('proposal/'.$customer_id), 0777, true);
+        	}
+        
+        if ($file->move(public_path('proposal/'.$customer_id), $fileName)) {
+            return $fileName;
+        }
+    }
+
+
 }
+?>
+
+
+
+
+
+
+

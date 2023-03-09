@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Exception;
 use App\Models\CustomerPlane;
+use App\Models\Proposal;
 use App\Models\Problem;
 use App\Models\ProblemReferral;
 use App\Models\ProblemToProvider;
@@ -26,6 +27,7 @@ interface ProblemInterface
     public static function getProfile($id);
     public static function getCategoryDependent($ind);
     public static function getSkillDependent($ind);
+    public static function proposal_insert($data1);
    
 }
 
@@ -171,6 +173,13 @@ class ProblemService implements ProblemInterface{
                     return $default_data;
             }
 
+
+    }
+    
+    public static function proposal_insert($data1){
+        $affected_rows=Proposal::insert($data1);
+        if($affected_rows > 0)
+            return true;
     }
    
 }
