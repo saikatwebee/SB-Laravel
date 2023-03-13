@@ -8,6 +8,7 @@ use App\Http\Controllers\api\ProblemController;
 use App\Http\Controllers\api\InvoiceController;
 use App\Http\Controllers\api\PlaneController;
 use App\Http\Controllers\api\AdminController;
+use App\Http\Controllers\api\OnboardingController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -108,8 +109,8 @@ use Illuminate\Support\Facades\Route;
         Route::post('/skillDepDropdown',[ProblemController::class, 'skillDepDropdown']);
 
         //Project related routes of SS end
-
-
+        //insert and update in onboarding second form(requirement submisssion)
+        Route::post('/reqSub',[OnboardingController::class, 'req_sub']);
 
         });
 
@@ -218,6 +219,7 @@ use Illuminate\Support\Facades\Route;
 
               //get plan details from subscriberplane table
               Route::post('/getPlan', [InvoiceController::class, 'getPlan']);
+              
               // plane checkout details
               Route::post('/getSubcriberPlane', [PlaneController::class, 'getSubcriberPlane']);
               
@@ -225,7 +227,8 @@ use Illuminate\Support\Facades\Route;
               Route::post('/bugReport', [CustomerController::class, 'bugReport']);
 
               //referral insert
-              Route::post('referalInsert',[CustomerController::class, 'referalInsert']);
+              Route::post('/referalInsert',[CustomerController::class, 'referalInsert']);
+
          
         });
          
