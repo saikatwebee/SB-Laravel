@@ -180,25 +180,114 @@ class PlaneController extends Controller
 
 
 
-						
+						$slack_cid=$customer_id;
 						$slack_name = ProfileService::getFullName($customer_id);
 						$slack_email = $data['email'];
 						$slack_phone = ProfileService::getPhone($customer_id);
 						$slack_assign_id = ProfileService::getAssignedTobyEmail($data['email']);
-						//$slack_assign_id = ProfileService::getAssignedTobyCid($customer_id);
-						//$slack_assign_name= $this->customer_model->getassign_name($slack_assign_id);
+						
+						if($slack_assign_id!=null){
+							//$slack_assign_id = ProfileService::getAssignedTobyCid($customer_id);
+							$slack_assign_name= ProfileService::getAssignedName($slack_assign_id);
+						}
+						else{
+							$slack_assign_name= "Not Assigned";
+						}
+						$planId= $data['udf2'];
+						$planData = InvoiceService::getPlandetails($planId);
+						 $slack_planName= $planData->title;
+						 $slack_planCost= $planData->cost;
 
-						var_dump($slack_assign_id);
-						
-						
-						
-						
-						
-						// $slack_assign_name= $this->customer_model->getassign_name($slack_assign_id);
-						// $planId= $this->input->post('udf2');
-						// $planData = $this->plan_model->getPlane($planId);
-						// $slack_planName= $planData->title;
-						// $slack_planCost= $planData->cost;
+						 $option= array (
+							'blocks' => 
+							array (
+							  0 => 
+							  array (
+								'type' => 'section',
+								'text' => 
+								array (
+								  'type' => 'mrkdwn',
+								  'text' => '*Payment Failure Notification:*
+'.$data['amount'].' ('.$slack_planName.')',
+								),
+							  ),
+							  1 => 
+							  array (
+								'type' => 'divider',
+							  ),
+							  2 => 
+							  array (
+								'type' => 'section',
+								'fields' => 
+								array (
+								  0 => 
+								  array (
+									'type' => 'mrkdwn',
+									'text' => '*Customer ID:*
+'.$slack_cid,
+								  ),
+								  1 => 
+								  array (
+									'type' => 'mrkdwn',
+									'text' => '*Name:*
+'.$slack_name,
+								  ),
+								  2 => 
+								  array (
+									'type' => 'mrkdwn',
+									'text' => '*Email ID:*
+'.$slack_email,
+								  ),
+								  3 => 
+								  array (
+									'type' => 'mrkdwn',
+									'text' => '*Phone:*
+'.$slack_phone,
+								  ),
+								  4 => 
+								  array (
+									'type' => 'mrkdwn',
+									'text' => '*Assigned to:*
+'.$slack_assign_name,
+								  ),
+								),
+							  ),
+							  3 => 
+							  array (
+								'type' => 'context',
+								'elements' => 
+								array (
+								  0 => 
+								  array (
+									'type' => 'image',
+									'image_url' => 'https://www.solutionbuggy.com/assets/img/cancel.png',
+									'alt_text' => 'cute cat',
+								  ),
+								  1 => 
+								  array (
+									'type' => 'mrkdwn',
+									'text' => 'Payment Failed',
+								  ),
+								),
+							  ),
+							),
+						  );
+					  
+	  
+					  $message = array('payload' => json_encode($option));
+			  
+			  $ch = curl_init("https://hooks.slack.com/services/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");
+			  
+	  
+			  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+			  curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
+			  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+			  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+			  $result = curl_exec($ch);
+			  curl_close($ch);
+						 
+
+
 
 					}
 					return View('payment_failed',['data' => json_encode($data)]);
