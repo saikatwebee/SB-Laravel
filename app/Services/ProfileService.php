@@ -217,14 +217,15 @@ class ProfileService implements ProfileInterface
                     ->get()
                     ->first();
 
-                  return  $data->assigned_to;
+        if($data!=null)
+            return  $data->assigned_to;
                   
                     
     }
 
    
 
-    public static function getAssignedNameByEmail($user_id){
+    public static function getAssignedName($user_id){
         $data = DB::table('user')
         ->select('firstname','lastname')
         ->where('user_id',$user_id)

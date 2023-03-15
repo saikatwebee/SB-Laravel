@@ -20,7 +20,9 @@ use Illuminate\Support\Facades\Route;
         Route::post('/adminTokenValidation',[AuthController::class, 'adminTokenValidation'])->withoutMiddleware(['jwt.verify']);
 
         //success page
-        Route::get('/paymentSuccess', [PlaneController::class, 'paymentSuccess'])->withoutMiddleware(['jwt.verify']);
+        Route::post('/paymentSuccess', [PlaneController::class, 'paymentSuccess'])->withoutMiddleware(['jwt.verify']);
+        Route::get('/api_check', [PlaneController::class, 'api_check'])->withoutMiddleware(['jwt.verify']);
+       
 
         //falied page
         Route::post('/paymentFailed', [PlaneController::class, 'paymentFailed'])->withoutMiddleware(['jwt.verify']);
