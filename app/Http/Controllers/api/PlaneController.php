@@ -188,7 +188,8 @@ class PlaneController extends Controller
 							InvoiceService::AddInvoice($invoice);
 						
 							//mail for users 
-
+							$customer_id = CommonService::getCidByEmail(auth()->user()->email);
+							Mail::to(auth()->user()->email)->send(new PaymentSuccess(auth()->user()->email));
 							
 							//for activity log
 
@@ -386,6 +387,13 @@ class PlaneController extends Controller
 					if ($hash == $posted_hash) {
 						
 						//email notification for failure
+						$customer_id = CommonService::getCidByEmail(auth()->user()->email);
+
+						$email_data['firstname']=$data['firstname'];
+						$email_data['ammount']= $data['amount'];
+						$email_data['txnid']= $data['txnid'];
+						
+						Mail::to(auth()->user()->email)->send(new PaymentFailure($email_data));
 
 						//slack notification for failure
 						$slack_cid=$data['udf1'];
