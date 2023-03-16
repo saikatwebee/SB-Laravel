@@ -22,3 +22,4 @@ class BugReport extends Mailable
         return $this->subject('Bug Report')->view('mails.bug_report');
     }
 }
+?>
