@@ -11,6 +11,8 @@ use App\Services\ProfileService;
 use App\Services\InvoiceService;
 use App\Services\PaymentService;
 use Illuminate\Support\Facades\Mail;
+use App\Mail\PaymentSuccess;
+use App\Mail\PaymentFailure;
 // use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
@@ -188,9 +190,14 @@ class PlaneController extends Controller
 							InvoiceService::AddInvoice($invoice);
 						
 							//mail for users 
-							$customer_id = CommonService::getCidByEmail(auth()->user()->email);
-							Mail::to(auth()->user()->email)->send(new PaymentSuccess(auth()->user()->email));
+							$customer_id = $data['udf1'];
 							
+							$email_data['firstname']=$data['firstname'];
+							$email_data['amount']= $data['amount'];
+							$email_data['txnid']= $data['txnid'];
+
+							Mail::to()->send(new PaymentSuccess($email_data));
+
 							//for activity log
 
 							
@@ -387,13 +394,13 @@ class PlaneController extends Controller
 					if ($hash == $posted_hash) {
 						
 						//email notification for failure
-						$customer_id = CommonService::getCidByEmail(auth()->user()->email);
+						$customer_id = $data['udf1'];
 
 						$email_data['firstname']=$data['firstname'];
-						$email_data['ammount']= $data['amount'];
+						$email_data['amount']= $data['amount'];
 						$email_data['txnid']= $data['txnid'];
-						
-						Mail::to(auth()->user()->email)->send(new PaymentFailure($email_data));
+
+						Mail::to($data['email'])->send(new PaymentFailure($email_data));
 
 						//slack notification for failure
 						$slack_cid=$data['udf1'];
