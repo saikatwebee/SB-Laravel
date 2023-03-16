@@ -197,7 +197,7 @@ class ProfileService implements ProfileInterface
         ->first();
         return $data->phone;
     }
-
+   
     public static function getAssignedToByCid($customer_id){
         $data = DB::table('database_complete')
                     ->select('assigned_to')
