@@ -191,12 +191,12 @@ class PlaneController extends Controller
 						
 							//mail for users 
 							$customer_id = $data['udf1'];
-							
+
 							$email_data['firstname']=$data['firstname'];
 							$email_data['amount']= $data['amount'];
 							$email_data['txnid']= $data['txnid'];
 
-							Mail::to()->send(new PaymentSuccess($email_data));
+							Mail::to($data['email'])->send(new PaymentSuccess($email_data));
 
 							//for activity log
 

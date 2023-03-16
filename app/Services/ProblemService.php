@@ -28,6 +28,7 @@ interface ProblemInterface
     public static function getCategoryDependent($ind);
     public static function getSkillDependent($ind);
     public static function proposal_insert($data1);
+    public static function getprotitle($problem_id);
    
 }
 
@@ -180,6 +181,14 @@ class ProblemService implements ProblemInterface{
         $affected_rows=Proposal::insert($data1);
         if($affected_rows > 0)
             return true;
+    }
+
+    public static function getprotitle($problem_id){
+        $data = DB::table('problem')
+                    ->select('title')
+                    ->where('id', $problem_id)
+                    ->get();
+                return $data->title;
     }
    
 }
