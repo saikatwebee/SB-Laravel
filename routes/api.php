@@ -231,6 +231,11 @@ use Illuminate\Support\Facades\Route;
               //referral insert
               Route::post('/referalInsert',[CustomerController::class, 'referalInsert']);
 
+               //Payment page visitor notification
+               Route::post('/membershipVisitorNotify',[PlaneController::class, 'membershipVisitorNotify']);
+
+              
+
          
         });
          
