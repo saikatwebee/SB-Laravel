@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Services\ProfileService;
 use App\Services\CommonService;
 use App\Services\ReferalService;
+use App\Services\InvoiceService;
+
 use App\Mail\BugReport;
 
 class CustomerController extends Controller
@@ -593,6 +595,52 @@ class CustomerController extends Controller
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }
+
+    public function getIndustryDashboard(){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $plan_check = InvoiceService::verifyCId($customer_id);
+
+        if($plan_check){
+           
+            $res = InvoiceService::getCustomerPlan($customer_id);
+            $data['current_plan'] = $res->title;
+            $data['expiry'] = $res->exp_plane;
+            $data['post_credit'] = $res->problem;
+        }
+        else{
+            $data['current_plan'] = 'NA';
+            $data['expiry'] = 'NA';
+            $data['post_credit'] = 'NA';
+            
+        }
+
+        return response()->json($data);
+        
+    }
+
+    public function getConsultantDashboard(){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $plan_check = InvoiceService::verifyCId($customer_id);
+        if($plan_check){
+            $res = InvoiceService::getCustomerPlan($customer_id);
+            
+            $data['current_plan'] = $res->title;
+            $data['expiry'] = $res->exp_plane;
+            $data['apply_credit'] = $res->apply;
+        }
+        else{
+
+            $data['current_plan'] = 'NA';
+            $data['expiry'] = 'NA';
+            $data['apply_credit'] = 'NA';
+        }
+
+        return response()->json($data);
+        
+        
+    }
+
+
 
 }
 ?>

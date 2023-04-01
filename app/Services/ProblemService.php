@@ -29,6 +29,12 @@ interface ProblemInterface
     public static function getSkillDependent($ind);
     public static function proposal_insert($data1);
     public static function getprotitle($problem_id);
+    public static function category_browse_sp($sub_cat);
+    public static function category_browse_ss($sub_cat,$customer_id);
+    public static function industry_browse_sp($industries);
+    public static function industry_browse_ss($industries,$customer_id);
+    public static function browse_sp($sub_cat,$industries);
+    public static function browse_ss($sub_cat,$industries,$customer_id);
    
 }
 
@@ -189,6 +195,103 @@ class ProblemService implements ProblemInterface{
                     ->where('id', $problem_id)
                     ->get();
                 return $data->title;
+    }
+
+    public static function category_browse_sp($sub_cat){
+        //example of raw query 
+
+        // $results = DB::select( DB::raw("SELECT * FROM some_table WHERE some_col = :somevariable"), array(
+        //     'somevariable' => $someVariable,
+        //   ));
+
+        $to = date('Y-m-d H:i:s');
+        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
+
+       // DB::enableQueryLog();
+        $data = DB::table('problem')
+                    ->select('*')
+                    ->where(['action'=>1,'sub_cat'=>$sub_cat])
+                    ->whereBetween('date_added', [$from, $to])
+                    //->toSql();
+                    ->get();
+
+                    //$query = DB::getQueryLog();
+
+                    return $data;
+        
+    }
+
+    public static function category_browse_ss($sub_cat,$customer_id){
+        $to = date('Y-m-d H:i:s');
+        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
+
+        $data = DB::table('problem')
+                    ->select('*')
+                    ->where(['action'=>1,'sub_cat'=>$sub_cat,'customer_id'=>$customer_id])
+                    ->whereBetween('date_added', [$from, $to])
+                    //->toSql();
+                    ->get();
+        return $data;
+    }
+
+
+    public static function industry_browse_sp($industries){
+        $to = date('Y-m-d H:i:s');
+        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
+
+
+        $data = DB::table('problem')
+                    ->select('*')
+                    ->where(['action'=>1,'industries'=>$industries])
+                    ->whereBetween('date_added', [$from, $to])
+                   // ->toSql();
+                    ->get();
+
+                    return $data;
+    }
+
+    public static function industry_browse_ss($industries,$customer_id){
+        $to = date('Y-m-d H:i:s');
+        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
+
+            $data = DB::table('problem')
+                    ->select('*')
+                    ->where(['action'=>1,'industries'=>$industries,'customer_id'=>$customer_id])
+                    ->whereBetween('date_added', [$from, $to])
+                   // ->toSql();
+                    ->get();
+            return $data;
+    }
+
+
+    public static function browse_sp($sub_cat,$industries){
+        $to = date('Y-m-d H:i:s');
+        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
+
+
+        $data = DB::table('problem')
+                    ->select('*')
+                    ->where(['action'=>1,'sub_cat'=>$sub_cat,'industries'=>$industries])
+                    ->whereBetween('date_added', [$from, $to])
+                   // ->toSql();
+                    ->get();
+
+                    return $data;
+    }
+
+    public static function browse_ss($sub_cat,$industries,$customer_id){
+        $to = date('Y-m-d H:i:s');
+        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
+
+
+        $data = DB::table('problem')
+                    ->select('*')
+                    ->where(['action'=>1,'sub_cat'=>$sub_cat,'industries'=>$industries,'customer_id'=>$customer_id])
+                    ->whereBetween('date_added', [$from, $to])
+                   // ->toSql();
+                    ->get();
+
+                    return $data;
     }
    
 }

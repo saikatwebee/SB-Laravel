@@ -19,6 +19,115 @@ use Illuminate\Support\Carbon;
 
 class PlaneController extends Controller
 {
+	public function membershipVisitorNotify(){
+		// $cid = trim($request->input('cid'));
+		// $email = trim($request->input('email'));
+
+		$cid =  CommonService::getCidByEmail(auth()->user()->email);
+
+		$slack_cid = $cid;
+		$slack_name = ProfileService::getFullName($slack_cid);
+		$slack_email = auth()->user()->email;
+		$slack_phone = ProfileService::getPhone($slack_cid);
+		$slack_assign_id = ProfileService::getAssignedTobyEmail($slack_email);
+						
+			if($slack_assign_id!=null){
+				//$slack_assign_id = ProfileService::getAssignedTobyCid($customer_id);
+				$slack_assign_name= ProfileService::getAssignedName($slack_assign_id);
+			}
+			else{
+				$slack_assign_name= "Not Assigned";
+			}
+
+			$option= array (
+				'blocks' => 
+				array (
+				  0 => 
+				  array (
+					'type' => 'section',
+					'text' => 
+					array (
+					  'type' => 'mrkdwn',
+					  'text' => '*Payment Page Visitor Notification:*',
+					),
+				  ),
+				  1 => 
+				  array (
+					'type' => 'divider',
+				  ),
+				  2 => 
+				  array (
+					'type' => 'section',
+					'fields' => 
+					array (
+					  0 => 
+					  array (
+						'type' => 'mrkdwn',
+						'text' => '*Customer ID:*
+'.$slack_cid,
+					  ),
+					  1 => 
+					  array (
+						'type' => 'mrkdwn',
+						'text' => '*Name:*
+'.$slack_name,
+					  ),
+					  2 => 
+					  array (
+						'type' => 'mrkdwn',
+						'text' => '*Email ID:*
+'.$slack_email,
+					  ),
+					  3 => 
+					  array (
+						'type' => 'mrkdwn',
+						'text' => '*Phone:*
+'.$slack_phone,
+					  ),
+					  4 => 
+					  array (
+						'type' => 'mrkdwn',
+						'text' => '*Assigned to:*
+'.$slack_assign_name,
+					  ),
+					),
+				  ),
+				  3 => 
+				  array (
+					'type' => 'context',
+					'elements' => 
+					array (
+					  0 => 
+					  array (
+						'type' => 'image',
+						'image_url' => 'https://www.solutionbuggy.com/assets/img/alert.jpg',
+						'alt_text' => 'cute cat',
+					  ),
+					  1 => 
+					  array (
+						'type' => 'mrkdwn',
+						'text' => 'Action required...',
+					  ),
+					),
+				  ),
+				),
+			  );
+		  
+	  
+		  $message = array('payload' => json_encode($option));
+	  
+		  $ch = curl_init("https://hooks.slack.com/services/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");
+	  
+	  
+	  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+	  curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
+	  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+	  $result = curl_exec($ch);
+	  // var_dump($result);
+	  curl_close($ch);
+
+	}
     public function getSubcriberPlane(Request $request){
         try {
             $plane_id = trim($request->input('id'));

@@ -114,6 +114,14 @@ use Illuminate\Support\Facades\Route;
         //insert and update in onboarding second form(requirement submisssion)
         Route::post('/reqSub',[OnboardingController::class, 'req_sub']);
 
+        //industry dashboard api data
+        Route::get('/getIndustryDashboard',[CustomerController::class, 'getIndustryDashboard']);
+
+        Route::post('/categoryBrowseSs',[ProblemController::class, 'categoryBrowseSs']);
+        Route::post('/industryBrowseSs',[ProblemController::class, 'industryBrowseSs']);
+        Route::post('/browseSs',[ProblemController::class, 'browseSs']);
+        
+        
         });
 
         ////Routes available to only SP(Consultant)////
@@ -164,6 +172,16 @@ use Illuminate\Support\Facades\Route;
         
         //proposal insert
         Route::post('/proposalInsert', [ProblemController::class, 'proposalInsert']);
+
+        //consultant dashboard api data
+        Route::get('/getConsultantDashboard',[CustomerController::class, 'getConsultantDashboard']);
+
+
+        Route::post('/categoryBrowseSp', [ProblemController::class, 'categoryBrowseSp']);
+        Route::post('/industryBrowseSp', [ProblemController::class, 'industryBrowseSp']);
+        Route::post('/browseSp', [ProblemController::class, 'browseSp']);
+        
+
         });
 
 
@@ -230,6 +248,11 @@ use Illuminate\Support\Facades\Route;
 
               //referral insert
               Route::post('/referalInsert',[CustomerController::class, 'referalInsert']);
+
+               //Payment page visitor notification
+               Route::get('/membershipVisitorNotify',[PlaneController::class, 'membershipVisitorNotify']);
+
+              
 
          
         });
