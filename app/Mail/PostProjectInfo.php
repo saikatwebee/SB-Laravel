@@ -22,3 +22,4 @@ class PostProjectInfo extends Mailable
         return $this->subject('New Problem Posted')->view('mails.post_project_info');
     }
 }
+?>

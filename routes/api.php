@@ -8,6 +8,7 @@ use App\Http\Controllers\api\ProblemController;
 use App\Http\Controllers\api\InvoiceController;
 use App\Http\Controllers\api\PlaneController;
 use App\Http\Controllers\api\AdminController;
+use App\Http\Controllers\api\OnboardingController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -17,6 +18,15 @@ use Illuminate\Support\Facades\Route;
         Route::post('/loginWithOtp', [AuthController::class, 'loginWithOtp'])->withoutMiddleware(['jwt.verify']);
         Route::post('/adminLogin', [AuthController::class, 'admin_login'])->withoutMiddleware(['jwt.verify']);
         Route::post('/adminTokenValidation',[AuthController::class, 'adminTokenValidation'])->withoutMiddleware(['jwt.verify']);
+
+        //success page
+        Route::post('/paymentSuccess', [PlaneController::class, 'paymentSuccess'])->withoutMiddleware(['jwt.verify']);
+        Route::get('/api_check', [PlaneController::class, 'api_check'])->withoutMiddleware(['jwt.verify']);
+       
+
+        //falied page
+        Route::post('/paymentFailed', [PlaneController::class, 'paymentFailed'])->withoutMiddleware(['jwt.verify']);
+     
        
         Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['jwt.verify']);
         Route::post('/logout', [AuthController::class, 'logout']);
@@ -103,9 +113,17 @@ use Illuminate\Support\Facades\Route;
         Route::post('/skillDepDropdown',[ProblemController::class, 'skillDepDropdown']);
 
         //Project related routes of SS end
+        //insert and update in onboarding second form(requirement submisssion)
+        Route::post('/reqSub',[OnboardingController::class, 'req_sub']);
 
+        //industry dashboard api data
+        Route::get('/getIndustryDashboard',[CustomerController::class, 'getIndustryDashboard']);
 
-
+        Route::post('/categoryBrowseSs',[ProblemController::class, 'categoryBrowseSs']);
+        Route::post('/industryBrowseSs',[ProblemController::class, 'industryBrowseSs']);
+        Route::post('/browseSs',[ProblemController::class, 'browseSs']);
+        
+        
         });
 
         ////Routes available to only SP(Consultant)////
@@ -156,9 +174,19 @@ use Illuminate\Support\Facades\Route;
         
         //proposal insert
         Route::post('/proposalInsert', [ProblemController::class, 'proposalInsert']);
+
+        //consultant dashboard api data
+        Route::get('/getConsultantDashboard',[CustomerController::class, 'getConsultantDashboard']);
+
+
+        Route::post('/categoryBrowseSp', [ProblemController::class, 'categoryBrowseSp']);
+        Route::post('/industryBrowseSp', [ProblemController::class, 'industryBrowseSp']);
+        Route::post('/browseSp', [ProblemController::class, 'browseSp']);
+        
+
         });
 
-});
+
 
 
 
@@ -213,21 +241,24 @@ use Illuminate\Support\Facades\Route;
 
               //get plan details from subscriberplane table
               Route::post('/getPlan', [InvoiceController::class, 'getPlan']);
+              
               // plane checkout details
               Route::post('/getSubcriberPlane', [PlaneController::class, 'getSubcriberPlane']);
               
               //bug report
               Route::post('/bugReport', [CustomerController::class, 'bugReport']);
 
-              //success page
-              Route::post('/paymentSuccess', [PlaneController::class, 'paymentSuccess']);
+              //referral insert
+              Route::post('/referalInsert',[CustomerController::class, 'referalInsert']);
 
-               //falied page
-               Route::post('/paymentFailed', [PlaneController::class, 'paymentFailed']);
+               //Payment page visitor notification
+               Route::get('/membershipVisitorNotify',[PlaneController::class, 'membershipVisitorNotify']);
 
-               //referal page
-               Route::post('/referalInsert', [CustomerController::class, 'referalInsert']);
+              
+
          
         });
+         
+});
 
 

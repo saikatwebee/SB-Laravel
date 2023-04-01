@@ -19,6 +19,8 @@ interface InvoiceInterface
     public static function verifyCId($customer_id);
     public static function getPlandetails($plan_id);
     public static function updatePlandetails($data,$customer_id);
+    public static function AddPlandetails($data);
+    public static function getCustomerPlan($customer_id);
 
 }
 
@@ -79,6 +81,18 @@ class InvoiceService implements InvoiceInterface
         $affectedRows = CustomerPlane::insert($data);
         if($affectedRows > 0)
         return true;
+    }
+
+    public static function getCustomerPlan($customer_id){
+        $res = DB::table('customer_plane')
+        ->leftJoin('subscriberplane', 'subscriberplane.id', '=','customer_plane.subscriberplane_id' )
+        ->select('*')
+        ->where('customer_id',$customer_id)
+        ->get()
+        ->first();
+
+        return $res;
+
     }
      
 }

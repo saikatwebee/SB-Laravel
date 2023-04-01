@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\api\CustomerController;
 use App\Mail\PostProject;
 use App\Mail\PostProjectInfo;
+use App\Mail\awardIndustryProject;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Exception;
@@ -15,6 +16,7 @@ use App\Models\Problem;
 // use APP\Models\Category;
 use App\Services\CommonService;
 use App\Services\ProblemService;
+use App\Services\ProfileService;
 use Illuminate\Support\Facades\Mail;
 // use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -620,16 +622,30 @@ public function notawardedExecution(){
                 $datas['date_added'] = date('Y-m-d H:i:s');
                 $res1 = ProblemService::updateProblemToProvider($datas,$provider_id,$problem_id);
                 if ($res1) {
+
+                    $cid = CommonService::getCidByEmail(auth()->user()->email);
+
+                    $email_data['pfullname'] = ProfileService::getFullName($provider_id);
+                    $email_data['ifullname'] = ProfileService::getFullName($cid);
+                    $email_data['iemail'] = auth()->user()->email;
+                    $email_data['iphone'] = ProfileService::getPhone($cid);
+                    //$email_data['proTitle'] = ProblemService::getprotitle($problem_id);
+
+                    //sending email 
+                    Mail::to($email_data['iemail'])->send(new awardIndustryProject($email_data));
+                    
                     return response()->json(
                         [
                             'success' => true,
                             'message' => 'Awarded Successfully',
                             'status' => '200',
+                            'cid'  => $cid,
+                            'email_data' => $email_data
                         ],
                         Response::HTTP_OK
                     );
                 }
-            }
+           }
             
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 404);
@@ -640,7 +656,7 @@ public function notawardedExecution(){
     public function ReferProject(Request $request)
     {
         try {
-            $data['problem_id'] = trim($request->input('problem_id'));
+            $email_data['problem_id'] = trim($request->input('problem_id'));
             $data['name'] = trim($request->input('name'));
             $data['email'] = trim($request->input('email'));
             $data['phone'] = trim($request->input('phone'));
@@ -828,6 +844,71 @@ public function notawardedExecution(){
         
         if ($file->move(public_path('proposal/'.$customer_id), $fileName)) {
             return $fileName;
+        }
+    }
+
+    public function categoryBrowseSp(Request $request){
+        //$customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $sub_cat = $request->input('sub_cat');
+
+        if($sub_cat!=""){
+            $res=ProblemService::category_browse_sp($sub_cat);
+            return response()->json($res);
+        }
+
+    }
+
+    public function categoryBrowseSs(Request $request){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $sub_cat = $request->input('sub_cat');
+
+        if($sub_cat!=""){
+            $res=ProblemService::category_browse_ss($sub_cat,$customer_id);
+            return response()->json($res);
+        }
+
+    }
+
+
+    public function industryBrowseSp(Request $request){
+        //$customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $industries = $request->input('industries');
+
+        if($industries!=""){
+            $res=ProblemService::industry_browse_sp($industries);
+            return response()->json($res);
+        }
+    }
+
+    public function industryBrowseSs(Request $request){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $industries = $request->input('industries');
+
+        if($industries!=""){
+            $res=ProblemService::industry_browse_ss($industries,$customer_id);
+            return response()->json($res);
+        }
+    }
+
+    public function browseSp(Request $request){
+        //$customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $sub_cat = $request->input('sub_cat');
+        $industries = $request->input('industries');
+
+        if($sub_cat!="" && $industries!="" ){
+            $res=ProblemService::browse_sp($sub_cat,$industries);
+            return response()->json($res);
+        }
+    }
+
+    public function browseSs(Request $request){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $sub_cat = $request->input('sub_cat');
+        $industries = $request->input('industries');
+
+        if($sub_cat!="" && $industries!="" ){
+            $res=ProblemService::browse_ss($sub_cat,$industries,$customer_id);
+            return response()->json($res);
         }
     }
 

@@ -14,6 +14,7 @@ interface CommonInterface
     //for customers (including SS & SP)
     public static function getCidByEmail($email);
     public static function getCphByEmail($email);
+    public static function getRoleByEmail($email);
     public static function getRowByCid($customer_id);
     public static function getAuthIdByEmail($email);
 
@@ -38,6 +39,11 @@ class CommonService implements CommonInterface{
     public static function getCphByEmail($email){
         $customer = Customer::where('email',$email)->first();
         return $customer->phone;
+    }
+
+    public static function getRoleByEmail($email){
+        $auth = Auth::where('email',$email)->first();
+        return $auth->role;
     }
 
     public static function getRowByCid($customer_id){
