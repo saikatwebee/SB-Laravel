@@ -68,8 +68,26 @@ class AdminController extends Controller
         $AdminObject->put('lastmonth_sales',AdminService::sales($lastmonth));
         $AdminObject->put('lastmonth_project_sales',AdminService::project_sales($lastmonth));
 
+        return $AdminObject;
+    }
+
+    public function sales_dashboard(){
+        $AdminObject = collect(['sales_count' => AdminService::sales_count()]);
+
+        //This month sales
+        $thismonth = Carbon::today()->format('Y-m');
+        $AdminObject->put('thismonth_sales',AdminService::sales_by_person($thismonth));
+
+        //Last month sales
+        $lastmonth = Carbon::today()->subMonth()->format('Y-m');
+        $AdminObject->put('lastmonth_sales',AdminService::sales_by_person($lastmonth));
+
+        //2 months back sales
+        $last_2_month = Carbon::today()->subMonths(2)->format('Y-m');
+        $AdminObject->put('last_2_month_sales',AdminService::sales_by_person($last_2_month));
 
         return $AdminObject;
+
     }
 
     

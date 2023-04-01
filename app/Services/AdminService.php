@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\Customer;
 use App\Models\Problem;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 
 interface AdminInterface
 {
@@ -20,6 +21,8 @@ interface AdminInterface
    public static function plantaken($date);
    public static function sales($date);
    public static function project_sales($date);
+   public static function sales_count();
+   public static function sales_by_person($date);
   
   }
 
@@ -127,6 +130,32 @@ class AdminService implements AdminInterface{
         ->where('customer.date_added','LIKE','%'.$date.'%')
         ->sum('invoice.totalcost');
         return $count/1.18;
+    }
+
+    public static function sales_count(){
+        $thismonth = Carbon::today()->format('Y-m');
+        $query = DB::table('user')
+        ->leftJoin('database_complete', 'database_complete.assigned_to', '=','user.user_id' )
+        ->leftJoin('customer_plane', 'customer_plane.customer_id', '=','database_complete.customer_id' )
+        ->select('user.user_id','user.firstname', DB::raw('count(customer_plane.id) as sales_count'))
+        ->where('customer_plane.date_updated','LIKE','%'.$thismonth.'%')
+        ->where('user.status','=',1)
+        ->groupBy('user.user_id')
+        ->get();
+        return $query;
+    }
+
+    public static function sales_by_person($date){
+        $query = DB::table('user')
+        ->leftJoin('database_complete', 'database_complete.assigned_to', '=','user.user_id' )
+        ->leftJoin('invoice', 'invoice.customer_id', '=','database_complete.customer_id' )
+        ->select('user.user_id','user.firstname', DB::raw('sum(invoice.totalcost)/1.18 as sales'))
+        ->where('invoice.date','LIKE','%'.$date.'%')
+        ->where('invoice.plan_id','!=',30)
+        ->where('user.status','=',1)
+        ->groupBy('user.user_id')
+        ->get();
+        return $query;
     }
 
     
