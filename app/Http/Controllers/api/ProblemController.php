@@ -847,6 +847,71 @@ public function notawardedExecution(){
         }
     }
 
+    public function categoryBrowseSp(Request $request){
+        //$customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $sub_cat = $request->input('sub_cat');
+
+        if($sub_cat!=""){
+            $res=ProblemService::category_browse_sp($sub_cat);
+            return response()->json($res);
+        }
+
+    }
+
+    public function categoryBrowseSs(Request $request){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $sub_cat = $request->input('sub_cat');
+
+        if($sub_cat!=""){
+            $res=ProblemService::category_browse_ss($sub_cat,$customer_id);
+            return response()->json($res);
+        }
+
+    }
+
+
+    public function industryBrowseSp(Request $request){
+        //$customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $industries = $request->input('industries');
+
+        if($industries!=""){
+            $res=ProblemService::industry_browse_sp($industries);
+            return response()->json($res);
+        }
+    }
+
+    public function industryBrowseSs(Request $request){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $industries = $request->input('industries');
+
+        if($industries!=""){
+            $res=ProblemService::industry_browse_ss($industries,$customer_id);
+            return response()->json($res);
+        }
+    }
+
+    public function browseSp(Request $request){
+        //$customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $sub_cat = $request->input('sub_cat');
+        $industries = $request->input('industries');
+
+        if($sub_cat!="" && $industries!="" ){
+            $res=ProblemService::browse_sp($sub_cat,$industries);
+            return response()->json($res);
+        }
+    }
+
+    public function browseSs(Request $request){
+        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+        $sub_cat = $request->input('sub_cat');
+        $industries = $request->input('industries');
+
+        if($sub_cat!="" && $industries!="" ){
+            $res=ProblemService::browse_ss($sub_cat,$industries,$customer_id);
+            return response()->json($res);
+        }
+    }
+
 
 }
 ?>

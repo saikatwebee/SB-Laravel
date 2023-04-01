@@ -19,12 +19,15 @@ use Illuminate\Support\Carbon;
 
 class PlaneController extends Controller
 {
-	public function membershipVisitorNotify(Request $request){
-		$cid = trim($request->input('cid'));
-		$email = trim($request->input('email'));
+	public function membershipVisitorNotify(){
+		// $cid = trim($request->input('cid'));
+		// $email = trim($request->input('email'));
+
+		$cid =  CommonService::getCidByEmail(auth()->user()->email);
+
 		$slack_cid = $cid;
 		$slack_name = ProfileService::getFullName($slack_cid);
-		$slack_email = $email;
+		$slack_email = auth()->user()->email;
 		$slack_phone = ProfileService::getPhone($slack_cid);
 		$slack_assign_id = ProfileService::getAssignedTobyEmail($slack_email);
 						
