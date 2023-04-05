@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Services\AuthService;
 use App\Services\CommonService;
 use App\Services\ProfileService;
+use App\Mail\OtpSent;
 
 
 
@@ -35,10 +36,13 @@ class AuthController extends Controller
             $password = trim($request->input('password'));
             $role = trim($request->input('role'));
             $status = trim($request->input('status'));
+            
+
+
             $rules = [
                 "firstname" => "required|min:3",
                 "email" => "required|email|unique:auth",
-                "password"=>"required|min:5|max:15",
+                //"password"=>"required|min:5|max:15",
                 "phone"=>"required|numeric|min:10",
                 "role"=>"required"
             ];
@@ -66,7 +70,26 @@ class AuthController extends Controller
                                 $res = AuthService::customer_insert($firstname,$email,$phone,$role,$howsb,$reg_url);
                                 if($res){
                                     //return response()->json(["Customer Registration Successful"]);
-                                    return response()->json(['success' => true,'message' => 'Customer Registration Successful','status'=>'200'], Response::HTTP_OK);
+
+                                    $rules2 = [
+                                        "email" => "required|email|unique:auth",
+                                        "password"=>"required|min:5|max:15",
+                                         ];
+                             
+                                        
+                                     $validator2 = Validator::make($request->all(), $rules2);
+                                     if ($validator2->fails()) {
+                                         return response()->json(['info' => $validator2->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);
+                                     }
+                                     
+                                    if(!$token = JWTAuth::attempt($validator2->validated())){
+                                        return response()->json(['message'=>"Unauthorized User!"],401);
+                                        
+                                     }
+                             
+                                     return  $this->createNewToken($token);
+
+                                    //return response()->json(['success' => true,'message' => 'Customer Registration Successful','status'=>'200'], Response::HTTP_OK);
                                 }
                             }
                             else{
@@ -164,7 +187,14 @@ class AuthController extends Controller
 
 						curl_close($ch);
 
-                        $otpData = ['otp'=>$otp];
+                        //sending email 
+                        $email_data['otp'] = $otp;
+                        Mail::to($email)->send(new OtpSent($email_data));
+
+
+
+
+                        $otpData = ['otp'=>bcrypt($otp)];
                         $row = AuthService::auth_update($otpData,$auth_id);
 
                         return response()->json(['message' => 'Otp has been sent successfully','res'=>$result,'err'=>$error,'row'=>$row]);
@@ -180,6 +210,34 @@ class AuthController extends Controller
                 }
             }
          }
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
+        }
+    }
+
+    public function checkOtp(Request $request){
+        try{
+            $data['otp'] = trim($request->input('otp'));
+            $data['email'] = auth()->user()->email;
+            $rules = [
+                "email"  => "required",
+                "otp" => "required|numeric",
+                
+               ];
+    
+            $validator = Validator::make($data,$rules);
+             if ($validator->fails()) {
+                 return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);
+             }
+             else{
+                if(!$token = JWTAuth::attempt($validator->validated())){
+                    return response()->json(['message'=>"Unauthorized User!"],401);
+                    
+                 }
+         
+                 return  $this->createNewToken($token);
+             }
         }
         catch (Exception $e){
             return response()->json(['message' => $e->getMessage()], 404);
