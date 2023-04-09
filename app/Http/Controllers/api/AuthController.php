@@ -190,8 +190,8 @@ class AuthController extends Controller
 						curl_close($ch);
 
                         //sending email otp
-                        $email_data['otp'] = $otp;
-                        Mail::to($email)->send(new otpSent($email_data));
+                        //$email_data['otp'] = $otp;
+                        //Mail::to($email)->send(new otpSent($email_data));
 
                         //wati sms for otp
 
