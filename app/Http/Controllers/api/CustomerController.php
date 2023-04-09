@@ -10,6 +10,7 @@ use App\Services\ProfileService;
 use App\Services\CommonService;
 use App\Services\ReferalService;
 use App\Services\InvoiceService;
+use Illuminate\Support\Facades\Mail;
 
 use App\Mail\BugReport;
 
@@ -546,9 +547,9 @@ class CustomerController extends Controller
             if ($validator->fails()) {
                 return response()->json($validator->errors()->toJson(), 400);
             } else {
-                // Mail::to('saikatsb10@gmail.com')->send(
-                //     new BugReport('saikatsb10@gmail.com')
-                // );
+                Mail::to('saikatsb10@gmail.com')->send(
+                    new BugReport('saikatsb10@gmail.com')
+                );
                 return response()->json(
                     [
                         'success' => true,
