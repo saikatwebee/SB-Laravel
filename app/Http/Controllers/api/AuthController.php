@@ -5,7 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Exception;
-
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth ;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Auth as AuthModel;
@@ -16,7 +16,7 @@ use App\Models\User;
 use App\Services\AuthService;
 use App\Services\CommonService;
 use App\Services\ProfileService;
-use App\Mail\OtpSent;
+use App\Mail\otpSent;
 
 
 
@@ -140,6 +140,8 @@ class AuthController extends Controller
         $rules = [
             "email" => "required|email",
            ];
+           
+
 
         $validator = Validator::make($request->all(), $rules);
          if ($validator->fails()) {
@@ -187,14 +189,41 @@ class AuthController extends Controller
 
 						curl_close($ch);
 
-                        //sending email 
+                        //sending email otp
                         $email_data['otp'] = $otp;
-                        Mail::to($email)->send(new OtpSent($email_data));
+                        Mail::to($email)->send(new otpSent($email_data));
+
+                        //wati sms for otp
+
+                        $body = [
+                            "parameters" => [
+                                  [
+                                     "name" => "otp", 
+                                     "value" => $otp
+                                  ],
+                                  
+                               ], 
+                            "template_name" => 'registration_otp', 
+                            "broadcast_name" => "sb-otp" 
+                         ]; 
+                          
+                        
+                        $msg = json_encode($body);
+                        
+                        $ch2 = curl_init("https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber=".$ph);
+                            
+                        $authorization = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDczODQzNy0zMDVjLTQ5NDctOGI1MC0zMzllMWRhNjIxNGIiLCJ1bmlxdWVfbmFtZSI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwibmFtZWlkIjoiYWRtaW5Ac29sdXRpb25idWdneS5jb20iLCJlbWFpbCI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwiYXV0aF90aW1lIjoiMDEvMTcvMjAyMiAxMDoyMTo1OCIsImRiX25hbWUiOiI2ODA0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQURNSU5JU1RSQVRPUiIsImV4cCI6MjUzNDAyMzAwODAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.Y_KsRhEnu_NKsxOf0U5HfHRILpnENXShJsgjjTbL5Ss"; // Prepare the authorisation token
+                            
+                            curl_setopt($ch2, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization )); // Inject the token into the header
+                            curl_setopt($ch2, CURLOPT_CUSTOMREQUEST, 'POST');
+                            curl_setopt($ch2, CURLOPT_POSTFIELDS, $msg);
+                            curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+                            curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+                            $result2 = curl_exec($ch2);
+                            curl_close($ch2);
 
 
-
-
-                        $otpData = ['otp'=>bcrypt($otp)];
+                        $otpData = ['password'=>bcrypt($otp)];
                         $row = AuthService::auth_update($otpData,$auth_id);
 
                         return response()->json(['message' => 'Otp has been sent successfully','res'=>$result,'err'=>$error,'row'=>$row]);
@@ -218,13 +247,16 @@ class AuthController extends Controller
 
     public function checkOtp(Request $request){
         try{
-            $data['otp'] = trim($request->input('otp'));
-            $data['email'] = auth()->user()->email;
+            $data['password'] = trim($request->input('password'));
+            //$data['email'] = auth()->user()->email;
+            $data['email'] = trim($request->input('email'));
             $rules = [
                 "email"  => "required",
-                "otp" => "required|numeric",
+                "password" => "required",
                 
                ];
+
+             
     
             $validator = Validator::make($data,$rules);
              if ($validator->fails()) {
@@ -234,7 +266,7 @@ class AuthController extends Controller
                 if(!$token = JWTAuth::attempt($validator->validated())){
                     return response()->json(['message'=>"Unauthorized User!"],401);
                     
-                 }
+                }
          
                  return  $this->createNewToken($token);
              }
