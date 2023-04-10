@@ -37,17 +37,13 @@ class AuthController extends Controller
             $role = trim($request->input('role'));
             $status = trim($request->input('status'));
             
-
-
             $rules = [
                 "firstname" => "required|min:3",
                 "email" => "required|email|unique:auth",
-                //"password"=>"required|min:5|max:15",
+                "password"=>"required|min:5|max:15",
                 "phone"=>"required|numeric|min:10",
                 "role"=>"required"
             ];
-
-           
 
             if($email!=''){
                $check_email= AuthService::check_email($email);
@@ -71,22 +67,63 @@ class AuthController extends Controller
                                 if($res){
                                     //return response()->json(["Customer Registration Successful"]);
 
-                                    $rules2 = [
-                                        "email" => "required|email|unique:auth",
-                                        "password"=>"required|min:5|max:15",
-                                         ];
+                                    $cid = AuthService::get_cid_reg($email);
+
+                                    $trackingdata = array (
+                                        'customer_id' => $cid,
+                                        'sb_first_typ' => $request->input('sb_first_typ'),
+                                        'sb_first_src' => $request->input('sb_first_src'),
+                                        'sb_first_mdm' => $request->input('sb_first_mdm'),
+                                        'sb_first_cmp' => $request->input('sb_first_cmp'),
+                                        'sb_first_cnt' => $request->input('sb_first_cnt'),
+                                        'sb_first_trm' => $request->input('sb_first_trm'),
+                                        'sb_current_typ' => $request->input('sb_current_typ'),
+                                        'sb_current_src' => $request->input('sb_current_src'),
+                                        'sb_current_mdm' => $request->input('sb_current_mdm'),
+                                        'sb_current_cmp' => $request->input('sb_current_cmp'),
+                                        'sb_current_cnt' => $request->input('sb_current_cnt'),
+                                        'sb_current_trm' => $request->input('sb_current_trm'),
+                                        'sb_first_add_fd' => $request->input('sb_first_add_fd'),
+                                        'sb_first_add_ep' => $request->input('sb_first_add_ep'),
+                                        'sb_first_add_rf' => $request->input('sb_first_add_rf'),
+                                        'sb_current_add_fd' => $request->input('sb_current_add_fd'),
+                                        'sb_current_add_ep' => $request->input('sb_current_add_ep'),
+                                        'sb_current_add_rf' => $request->input('sb_current_add_rf'),
+                                        'sb_session_pgs' => $request->input('sb_session_pgs'),
+                                        'sb_session_cpg' => $request->input('sb_session_cpg'),
+                                        'sb_udata_vst' => $request->input('sb_udata_vst'),
+                                        'sb_udata_uip' => $request->input('sb_udata_uip')	
+                                    );
+
+
+                                    AuthService::addTracking($trackingdata);
+
+                                    // $rules2 = [
+                                    //     "email" => "required|email",
+                                    //     "password"=>"required|min:5|max:15",
+                                    // ];
                              
                                         
-                                     $validator2 = Validator::make($request->all(), $rules2);
-                                     if ($validator2->fails()) {
-                                         return response()->json(['info' => $validator2->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);
-                                     }
+                                    //  $validator2 = Validator::make($request->all(), $rules2);
+                                    //  if ($validator2->fails()) {
+                                    //      return response()->json(['info' => $validator2->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);
+                                    //  }
                                      
-                                    if(!$token = JWTAuth::attempt($validator2->validated())){
+                                    // if(!$token = JWTAuth::attempt($validator2->validated())){
+                                    //     return response()->json(['message'=>"Unauthorized User!"],401);
+                                        
+                                    //  }
+                                    $jwtarr=[
+                                        'email'=>$email,
+                                        'password'=>$password
+                                    ];
+
+                                     if(!$token = JWTAuth::attempt($jwtarr)){
                                         return response()->json(['message'=>"Unauthorized User!"],401);
                                         
                                      }
-                             
+
+                                   
                                      return  $this->createNewToken($token);
 
                                     //return response()->json(['success' => true,'message' => 'Customer Registration Successful','status'=>'200'], Response::HTTP_OK);
