@@ -10,6 +10,7 @@ use App\Models\CustomerCategory;
 use App\Models\CustomerSkill;
 use App\Models\ReferalDatabase;
 use App\Models\DatabaseComplete;
+use App\Models\ConsultantReq;
 use Illuminate\Support\Facades\DB;
 
 interface ProfileInterface
@@ -24,12 +25,15 @@ interface ProfileInterface
     public static function getCustomerSkill($customer_id);
     public static function getFullName($customer_id);
     public static function getPhone($customer_id);
+    public static function getStep($customer_id);
     public static function getAssignedToByCid($customer_id);
     public static function getAssignedToByEmail($email);
     public static function getAssignedName($user_id);
     public static function CheckActivation($email);
-
-
+    public static function insertOnboardingPreference($data);
+    public static function updateStep($data,$cid);
+    
+    
 }
 
 class ProfileService implements ProfileInterface
@@ -236,6 +240,29 @@ class ProfileService implements ProfileInterface
 
       return  $assigned_name;
       
+    }
+
+    public static function getStep($customer_id){
+        $data = DB::table('customer')
+        ->select('step')
+        ->where('customer_id',$customer_id)
+        ->get()
+        ->first();
+
+        $step = $data->step;
+        return  $step;
+    }
+
+    public static function insertOnboardingPreference($data){
+        $affectedRows = ConsultantReq::insert($data);
+        if($affectedRows > 0)
+        return true;
+    }
+
+    public static function updateStep($data,$cid){
+        $rows =  Customer::where(['customer_id'=>$cid])->update($data);
+        if ($rows > 0)
+          return true;
     }
 
     

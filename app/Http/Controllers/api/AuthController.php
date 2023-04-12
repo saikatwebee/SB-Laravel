@@ -304,7 +304,18 @@ class AuthController extends Controller
                     return response()->json(['message'=>"Unauthorized User!"],401);
                     
                 }
-         
+                
+                //update step if it is less than 3
+
+                $customer_id = CommonService::getCidByEmail($data['email']);
+                $row = CommonService::getRowByCid($customer_id);
+                $step = $row->step;
+                if($step < 3){
+                    //update step as 2
+                    $stepData['step']=2;
+                    AuthService::updateStep($stepData,$customer_id);
+                }
+                
                  return  $this->createNewToken($token);
              }
         }
