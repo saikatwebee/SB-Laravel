@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('name')->default('');
             $table->string('email', 96)->default('')->unique('email');
             $table->string('password')->default('');
-            $table->integer('otp')->nullable();
+            $table->string('otp', 450)->nullable();
             $table->string('code', 450)->nullable();
             $table->integer('Status')->nullable();
             $table->timestamps();

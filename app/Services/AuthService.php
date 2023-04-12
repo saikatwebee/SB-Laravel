@@ -24,6 +24,7 @@ interface AuthInterface
     public static function get_skill_list();
     public static function get_cid_reg($email);
     public static function addTracking($data);
+    public static function updateStep($data,$cid);
     
   }
 
@@ -177,7 +178,11 @@ class AuthService implements AuthInterface{
         return true;
     }
 
-
+    public static function updateStep($data,$cid){
+        $rows =  Customer::where(['customer_id'=>$cid])->update($data);
+        if ($rows > 0)
+          return true;
+    }
 
   
 

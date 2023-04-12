@@ -126,7 +126,7 @@ use Illuminate\Support\Facades\Route;
         
         });
 
-        ////Routes available to only SP(Consultant)////
+        //Routes available to only SP(Consultant)//
 
         Route::middleware(['role:SP'])->prefix('customer')->group(function () {
       
@@ -178,10 +178,14 @@ use Illuminate\Support\Facades\Route;
         //consultant dashboard api data
         Route::get('/getConsultantDashboard',[CustomerController::class, 'getConsultantDashboard']);
 
-
+        //sp browsw project
         Route::post('/categoryBrowseSp', [ProblemController::class, 'categoryBrowseSp']);
         Route::post('/industryBrowseSp', [ProblemController::class, 'industryBrowseSp']);
         Route::post('/browseSp', [ProblemController::class, 'browseSp']);
+
+        Route::post('/OnboardingPreference', [CustomerController::class, 'OnboardingPreference']);
+        Route::post('/updateOnboardingExperience', [CustomerController::class, 'updateOnboardingExperience']);
+        
         
 
         });
@@ -254,7 +258,11 @@ use Illuminate\Support\Facades\Route;
                //Payment page visitor notification
                Route::get('/membershipVisitorNotify',[PlaneController::class, 'membershipVisitorNotify']);
 
-              
+                //get onboarding step
+                Route::get('/getOnboardingstep',[CustomerController::class, 'getOnboardingstep']);
+
+
+               
 
          
         });

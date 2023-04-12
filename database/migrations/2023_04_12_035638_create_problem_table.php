@@ -15,18 +15,18 @@ return new class extends Migration
     {
         Schema::create('problem', function (Blueprint $table) {
             $table->integer('id', true);
-            $table->integer('customer_id')->nullable()->index('problem_ibfk_1')->comment('link with customer table');
+            $table->integer('customer_id')->index('problem_ibfk_1')->comment('link with customer table');
             $table->string('title')->nullable();
-            $table->integer('industries')->nullable()->index('problem_ibfk_2')->comment('link with industries table');
-            $table->integer('sub_cat')->nullable()->index('problem_ibfk_3')->comment('link with category table');
-            $table->integer('skills')->nullable()->index('problem_ibfk_4')->comment('link with skill table');
+            $table->integer('industries')->index('problem_ibfk_2')->comment('link with industries table');
+            $table->integer('sub_cat')->index('problem_ibfk_3')->comment('link with category table');
+            $table->integer('skills')->index('problem_ibfk_4')->comment('link with skill table');
             $table->text('describe')->nullable();
-            $table->integer('time_limit')->default(1)->comment('1- < 1 month,
+            $table->integer('time_limit')->default(0)->comment('1- < 1 month,
 2- 1 month – 3 months,
 3- 3 months – 6 months,
 4- > 6 months');
             $table->string('files', 250)->nullable();
-            $table->integer('status')->nullable()->default(0);
+            $table->integer('status')->default(0);
             $table->string('industries_other')->nullable();
             $table->string('category_other')->nullable();
             $table->integer('typeofproject')->nullable()->comment('1- Onsite,
@@ -47,7 +47,7 @@ return new class extends Migration
             $table->dateTime('assigned_date')->nullable();
             $table->integer('assigned_to')->nullable()->index('problem_ibfk_7');
             $table->integer('assigned_to_1')->nullable()->index('problem_ibfk_8');
-            $table->integer('execution')->nullable()->comment('0- Not Assigned
+            $table->integer('execution')->default(0)->comment('0- Not Defined
 1- Normal Project
 2- Execution Project');
             $table->string('slug')->nullable();
