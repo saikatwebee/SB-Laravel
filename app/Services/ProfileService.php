@@ -31,7 +31,7 @@ interface ProfileInterface
     public static function getAssignedName($user_id);
     public static function CheckActivation($email);
     public static function insertOnboardingPreference($data);
-  
+    public static function updateStep($data,$cid);
 
     
 }
@@ -259,7 +259,13 @@ class ProfileService implements ProfileInterface
         return true;
     }
 
-    
+
+    public static function updateStep($data,$cid){
+        $rows =  Customer::where(['customer_id'=>$cid])->update($data);
+        if ($rows > 0)
+          return true;
+    }
+
 
     
 }

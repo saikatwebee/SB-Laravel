@@ -184,10 +184,10 @@ use Illuminate\Support\Facades\Route;
         Route::post('/industryBrowseSp', [ProblemController::class, 'industryBrowseSp']);
         Route::post('/browseSp', [ProblemController::class, 'browseSp']);
 
+
         Route::post('/OnboardingPreference', [OnboardingController::class, 'OnboardingPreference']);
         Route::post('/updateOnboardingExperience', [OnboardingController::class, 'updateOnboardingExperience']);
-        
-        
+
 
         });
 
@@ -268,6 +268,7 @@ use Illuminate\Support\Facades\Route;
                 //otp verification for onboarding step 1
                 Route::post('/otpVerification',[OnboardingController::class, 'otpVerification']);
                 
+
 
                
 
