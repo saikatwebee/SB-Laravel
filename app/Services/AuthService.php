@@ -3,6 +3,7 @@
 namespace App\Services;
 use App\Models\Auth;
 use App\Models\Customer;
+use App\Models\AnalyticsTracking;
 use App\Models\User;
 use App\Models\Mac;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +22,10 @@ interface AuthInterface
     public static function get_industry_list();
     public static function get_category_list();
     public static function get_skill_list();
-  
+    public static function get_cid_reg($email);
+    public static function addTracking($data);
+    public static function updateStep($data,$cid);
+    
   }
 
 class AuthService implements AuthInterface{
@@ -163,6 +167,22 @@ class AuthService implements AuthInterface{
     }
 
 
+    public static function get_cid_reg($email){
+        $customer = Customer::where('email',$email)->first();
+        return $customer->customer_id;
+    }
+
+    public static function addTracking($data){
+        $affectedRows = AnalyticsTracking::insert($data);
+        if($affectedRows > 0)
+        return true;
+    }
+
+    public static function updateStep($data,$cid){
+        $rows =  Customer::where(['customer_id'=>$cid])->update($data);
+        if ($rows > 0)
+          return true;
+    }
 
   
 

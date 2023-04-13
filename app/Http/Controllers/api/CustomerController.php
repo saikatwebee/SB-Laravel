@@ -10,6 +10,8 @@ use App\Services\ProfileService;
 use App\Services\CommonService;
 use App\Services\ReferalService;
 use App\Services\InvoiceService;
+use App\Models\CustomerIndustries;
+use App\Models\CustomerSkill;
 use Illuminate\Support\Facades\Mail;
 
 use App\Mail\BugReport;
@@ -21,7 +23,7 @@ class CustomerController extends Controller
     {
         try {
             $data['firstname'] = trim($request->input('firstname'));
-            $data['lastname'] = trim($request->input('firstname'));
+            $data['lastname'] = trim($request->input('lastname'));
             $data['email'] = trim($request->input('email'));
             $data['phone'] = trim($request->input('phone'));
             $data['companyname'] = trim($request->input('companyname'));
@@ -640,6 +642,8 @@ class CustomerController extends Controller
         
         
     }
+
+
 
 
 

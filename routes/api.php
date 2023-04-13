@@ -31,6 +31,8 @@ use Illuminate\Support\Facades\Route;
      
        
         Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['jwt.verify']);
+        //registration for ads page
+        Route::post('/adsRegister', [AuthController::class, 'adsRegister'])->withoutMiddleware(['jwt.verify']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/profile', [AuthController::class, 'userProfile']);
@@ -128,7 +130,7 @@ use Illuminate\Support\Facades\Route;
         
         });
 
-        ////Routes available to only SP(Consultant)////
+        //Routes available to only SP(Consultant)//
 
         Route::middleware(['role:SP'])->prefix('customer')->group(function () {
       
@@ -180,11 +182,15 @@ use Illuminate\Support\Facades\Route;
         //consultant dashboard api data
         Route::get('/getConsultantDashboard',[CustomerController::class, 'getConsultantDashboard']);
 
-
+        //sp browsw project
         Route::post('/categoryBrowseSp', [ProblemController::class, 'categoryBrowseSp']);
         Route::post('/industryBrowseSp', [ProblemController::class, 'industryBrowseSp']);
         Route::post('/browseSp', [ProblemController::class, 'browseSp']);
-        
+
+
+        Route::post('/OnboardingPreference', [OnboardingController::class, 'OnboardingPreference']);
+        Route::post('/updateOnboardingExperience', [OnboardingController::class, 'updateOnboardingExperience']);
+
 
         });
 
@@ -256,7 +262,18 @@ use Illuminate\Support\Facades\Route;
                //Payment page visitor notification
                Route::get('/membershipVisitorNotify',[PlaneController::class, 'membershipVisitorNotify']);
 
-              
+                //get onboarding step
+                Route::get('/getOnboardingstep',[OnboardingController::class, 'getOnboardingstep']);
+
+                //get onboarding otp
+                Route::get('/sentOtp',[OnboardingController::class, 'sentOtp']);
+                
+                //otp verification for onboarding step 1
+                Route::post('/otpVerification',[OnboardingController::class, 'otpVerification']);
+                
+
+
+               
 
          
         });

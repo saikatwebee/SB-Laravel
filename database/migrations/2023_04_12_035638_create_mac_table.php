@@ -13,8 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('project_files', function (Blueprint $table) {
-            $table->foreign(['pid'], 'project_files_ibfk_1')->references(['id'])->on('problem')->onUpdate('CASCADE')->onDelete('CASCADE');
+        Schema::create('mac', function (Blueprint $table) {
+            $table->integer('id', true);
+            $table->string('mac', 100)->nullable();
+            $table->string('name', 50)->nullable();
+            $table->integer('user_id')->nullable()->index('user_id');
+            $table->timestamp('date_added')->nullable()->useCurrent();
         });
     }
 
@@ -25,8 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('project_files', function (Blueprint $table) {
-            $table->dropForeign('project_files_ibfk_1');
-        });
+        Schema::dropIfExists('mac');
     }
 };

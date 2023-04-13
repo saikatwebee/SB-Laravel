@@ -63,26 +63,29 @@ class ProblemController extends Controller
                 if ($res) {
                     //Email sending code ...
                     //mail to industry
-                    Mail::to(auth()->user()->email)->send(
-                        new PostProject(auth()->user()->email)
-                    );
-                     //mail to info@solutionbuggy.com
-                    Mail::to('saikatsb10@gmail.com')->send(
-                        new PostProjectInfo('saikatsb10@gmail.com')
-                    );
+                    // Mail::to(auth()->user()->email)->send(
+                    //     new PostProject(auth()->user()->email)
+                    // );
+                    //  //mail to info@solutionbuggy.com
+                    // Mail::to('saikatsb10@gmail.com')->send(
+                    //     new PostProjectInfo('saikatsb10@gmail.com')
+                    // );
 
                    //Substract Problem count code ...
                     //step:1 verify plane Id
                     $verify = ProblemService::verifyPlanId($customer_id);
+                    
                     if ($verify) {
                         //step:2 get the plan expiry date
                         $exp_date = ProblemService::getExpDate($customer_id);
-                        
+
                         $today = date('Y-m-d H:i:s');
                         //step:3 get the problem credit
                         $problem_count = ProblemService::getProblemCount(
                             $customer_id
                         );
+                      
+                       
                         //step:4 check expiry date and problem credit count
                         if ($exp_date > $today) {
                             if ($problem_count > 0) {
