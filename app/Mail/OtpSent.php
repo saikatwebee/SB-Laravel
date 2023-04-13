@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class otpSent extends Mailable
+class OtpSent extends Mailable
 {
     use Queueable, SerializesModels;
 
