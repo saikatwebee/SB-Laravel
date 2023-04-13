@@ -63,13 +63,13 @@ class ProblemController extends Controller
                 if ($res) {
                     //Email sending code ...
                     //mail to industry
-                    Mail::to(auth()->user()->email)->send(
-                        new PostProject(auth()->user()->email)
-                    );
-                     //mail to info@solutionbuggy.com
-                    Mail::to('saikatsb10@gmail.com')->send(
-                        new PostProjectInfo('saikatsb10@gmail.com')
-                    );
+                    // Mail::to(auth()->user()->email)->send(
+                    //     new PostProject(auth()->user()->email)
+                    // );
+                    //  //mail to info@solutionbuggy.com
+                    // Mail::to('saikatsb10@gmail.com')->send(
+                    //     new PostProjectInfo('saikatsb10@gmail.com')
+                    // );
 
                    //Substract Problem count code ...
                     //step:1 verify plane Id

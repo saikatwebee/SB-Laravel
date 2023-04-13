@@ -68,8 +68,7 @@ class AuthController extends Controller
                                     //return response()->json(["Customer Registration Successful"]);
 
                                     $cid = AuthService::get_cid_reg($email);
-
-                                    $trackingdata = array (
+                                        $trackingdata = array (
                                         'customer_id' => $cid,
                                         'sb_first_typ' => $request->input('sb_first_typ'),
                                         'sb_first_src' => $request->input('sb_first_src'),
@@ -95,24 +94,10 @@ class AuthController extends Controller
                                         'sb_udata_uip' => $request->input('sb_udata_uip')	
                                     );
 
-
                                     AuthService::addTracking($trackingdata);
 
-                                    // $rules2 = [
-                                    //     "email" => "required|email",
-                                    //     "password"=>"required|min:5|max:15",
-                                    // ];
-                             
-                                        
-                                    //  $validator2 = Validator::make($request->all(), $rules2);
-                                    //  if ($validator2->fails()) {
-                                    //      return response()->json(['info' => $validator2->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);
-                                    //  }
-                                     
-                                    // if(!$token = JWTAuth::attempt($validator2->validated())){
-                                    //     return response()->json(['message'=>"Unauthorized User!"],401);
-                                        
-                                    //  }
+                                    //generating token after successfully register to solutionbuggy portal.
+
                                     $jwtarr=[
                                         'email'=>$email,
                                         'password'=>$password
@@ -123,8 +108,7 @@ class AuthController extends Controller
                                         
                                      }
 
-                                   
-                                     return  $this->createNewToken($token);
+                                   return  $this->createNewToken($token);
 
                                     //return response()->json(['success' => true,'message' => 'Customer Registration Successful','status'=>'200'], Response::HTTP_OK);
                                 }
@@ -145,6 +129,94 @@ class AuthController extends Controller
                }
             }
         } catch (Exception $e) {
+            return $e->getMessage();
+        }
+    }
+
+    public function adsRegister(Request $request){
+        try{
+            $firstname = trim($request->input('firstname'));
+            $email = trim($request->input('email'));
+            $phone = trim($request->input('phone'));
+            $password = trim($request->input('password'));
+            $role = trim($request->input('role'));
+            $status = trim($request->input('status'));
+            
+            $rules = [
+                "firstname" => "required|min:3",
+                "email" => "required|email|unique:auth",
+                "password"=>"required|min:5|max:15",
+                "phone"=>"required|numeric|min:10",
+                "role"=>"required"
+            ];
+
+            if($email!=''){
+                $check_email= AuthService::check_email($email);
+                if(!$check_email){
+                     //for new user
+
+                     $validator = Validator::make($request->all(), $rules);
+
+                     if ($validator->fails()) {
+                        return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+                     }
+                     else{
+                         $data = AuthService::auth_insert($firstname,$email,$password,$role,$status);
+                         if($data){
+                             $role = $data['role'];
+                             if($role=="SS" || $role=="SP"){   
+                                //insert into customer
+
+                                $howsb = trim($request->input('howsb'));
+                                $reg_url = trim($request->input('reg_url'));
+                                $res = AuthService::customer_insert($firstname,$email,$phone,$role,$howsb,$reg_url);
+                                if($res){
+
+                                    $cid = AuthService::get_cid_reg($email);
+                                        $trackingdata = array (
+                                        'customer_id' => $cid,
+                                        'sb_first_typ' => $request->input('sb_first_typ'),
+                                        'sb_first_src' => $request->input('sb_first_src'),
+                                        'sb_first_mdm' => $request->input('sb_first_mdm'),
+                                        'sb_first_cmp' => $request->input('sb_first_cmp'),
+                                        'sb_first_cnt' => $request->input('sb_first_cnt'),
+                                        'sb_first_trm' => $request->input('sb_first_trm'),
+                                        'sb_current_typ' => $request->input('sb_current_typ'),
+                                        'sb_current_src' => $request->input('sb_current_src'),
+                                        'sb_current_mdm' => $request->input('sb_current_mdm'),
+                                        'sb_current_cmp' => $request->input('sb_current_cmp'),
+                                        'sb_current_cnt' => $request->input('sb_current_cnt'),
+                                        'sb_current_trm' => $request->input('sb_current_trm'),
+                                        'sb_first_add_fd' => $request->input('sb_first_add_fd'),
+                                        'sb_first_add_ep' => $request->input('sb_first_add_ep'),
+                                        'sb_first_add_rf' => $request->input('sb_first_add_rf'),
+                                        'sb_current_add_fd' => $request->input('sb_current_add_fd'),
+                                        'sb_current_add_ep' => $request->input('sb_current_add_ep'),
+                                        'sb_current_add_rf' => $request->input('sb_current_add_rf'),
+                                        'sb_session_pgs' => $request->input('sb_session_pgs'),
+                                        'sb_session_cpg' => $request->input('sb_session_cpg'),
+                                        'sb_udata_vst' => $request->input('sb_udata_vst'),
+                                        'sb_udata_uip' => $request->input('sb_udata_uip')	
+                                    );
+
+                                    AuthService::addTracking($trackingdata);
+
+                                    //redirecting to thank-you page
+                                    header('Location: https://solutionbuggy.com/register/thanks/'.$cid);
+                                }
+
+                             }
+                        }
+                    }
+                 }
+                else{
+                    //existing warning
+                    return response()->json(['success' => true,'message' => 'Email is already exist!','status'=>'210'], Response::HTTP_OK);
+                }
+            }
+
+        }
+        catch (Exception $e) {
             return $e->getMessage();
         }
     }
@@ -172,15 +244,12 @@ class AuthController extends Controller
 
     public function loginWithOtp(Request $request){
         try{
-
         $email = trim($request->input('email'));
         $rules = [
             "email" => "required|email",
            ];
            
-
-
-        $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(),$rules);
          if ($validator->fails()) {
              return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);
          }
@@ -227,8 +296,8 @@ class AuthController extends Controller
 						curl_close($ch);
 
                         //sending email otp
-                        //$email_data['otp'] = $otp;
-                        //Mail::to($email)->send(new otpSent($email_data));
+                        $email_data['otp'] = $otp;
+                        Mail::to($email)->send(new otpSent($email_data));
 
                         //wati sms for otp
 
@@ -293,8 +362,6 @@ class AuthController extends Controller
                 
                ];
 
-             
-    
             $validator = Validator::make($data,$rules);
              if ($validator->fails()) {
                  return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);

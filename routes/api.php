@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Route;
      
        
         Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['jwt.verify']);
+        Route::post('/adsRegister', [AuthController::class, 'adsRegister'])->withoutMiddleware(['jwt.verify']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
         Route::get('/profile', [AuthController::class, 'userProfile']);
@@ -183,10 +184,10 @@ use Illuminate\Support\Facades\Route;
         Route::post('/industryBrowseSp', [ProblemController::class, 'industryBrowseSp']);
         Route::post('/browseSp', [ProblemController::class, 'browseSp']);
 
-        Route::post('/OnboardingPreference', [CustomerController::class, 'OnboardingPreference']);
-        Route::post('/updateOnboardingExperience', [CustomerController::class, 'updateOnboardingExperience']);
-        
-        
+
+        Route::post('/OnboardingPreference', [OnboardingController::class, 'OnboardingPreference']);
+        Route::post('/updateOnboardingExperience', [OnboardingController::class, 'updateOnboardingExperience']);
+
 
         });
 
@@ -259,7 +260,14 @@ use Illuminate\Support\Facades\Route;
                Route::get('/membershipVisitorNotify',[PlaneController::class, 'membershipVisitorNotify']);
 
                 //get onboarding step
-                Route::get('/getOnboardingstep',[CustomerController::class, 'getOnboardingstep']);
+                Route::get('/getOnboardingstep',[OnboardingController::class, 'getOnboardingstep']);
+
+                //get onboarding otp
+                Route::get('/sentOtp',[OnboardingController::class, 'sentOtp']);
+                
+                //otp verification for onboarding step 1
+                Route::post('/otpVerification',[OnboardingController::class, 'otpVerification']);
+                
 
 
                
