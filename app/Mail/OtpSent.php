@@ -18,6 +18,6 @@ class OtpSent extends Mailable
     }
     public function build()
     {
-        return $this->subject('One Time Password')->view('mails.otp_mail')->with(['email_data' => $this->email_data]);
+        return $this->subject('One Time Password')->view('mail.otp_mail')->with(['email_data' => $this->email_data]);
     }
 }
