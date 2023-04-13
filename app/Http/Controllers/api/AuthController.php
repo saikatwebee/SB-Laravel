@@ -16,7 +16,7 @@ use App\Models\User;
 use App\Services\AuthService;
 use App\Services\CommonService;
 use App\Services\ProfileService;
-use App\Mail\otpSent;
+use App\Mail\OtpSent;
 
 
 
