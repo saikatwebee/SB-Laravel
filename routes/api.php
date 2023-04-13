@@ -31,6 +31,7 @@ use Illuminate\Support\Facades\Route;
      
        
         Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['jwt.verify']);
+        //registration for ads page
         Route::post('/adsRegister', [AuthController::class, 'adsRegister'])->withoutMiddleware(['jwt.verify']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/refresh', [AuthController::class, 'refresh']);
