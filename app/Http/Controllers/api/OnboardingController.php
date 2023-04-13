@@ -143,6 +143,8 @@ public function sentOtp(){
     public function req_sub(Request $request){
         try{
             $cid=trim($request->input('cid'));
+
+            
             if(CustomerReq::where('cid',$cid)->exists()){
                 //when cid found update data
                 $data['industry_type']=trim($request->input('industry_type'));

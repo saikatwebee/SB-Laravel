@@ -58,14 +58,14 @@ class ProblemService implements ProblemInterface{
     }
 
     public static function getProblemCount($customer_id){
-        $row = CustomerPlane::select("problem")->where('customer_id',$customer_id)->get();
-        return $row->problem;
+        $row = CustomerPlane::select("problem")->where('customer_id',$customer_id)->first();
+        return $row;
     }
 
     public static function subProblemCount($customer_id){
-        $problem_count = CustomerPlane::select("problem")->where('customer_id',$customer_id)->get();
-        if($problem_count->problem > 0){
-            $problem = $problem_count->problem - 1;
+        $problem_count = CustomerPlane::select("problem")->where('customer_id',$customer_id)->first();
+        if($problem_count > 0){
+            $problem = $problem_count - 1;
             $affectedRows = CustomerPlane::where("customer_id",$customer_id)->update(['problem'=>$problem]);
             if($affectedRows > 0)
             return true;
@@ -74,8 +74,8 @@ class ProblemService implements ProblemInterface{
 
     public static function subApplyCount($customer_id){
         $apply_count = CustomerPlane::select("apply")->where('customer_id',$customer_id)->first();
-        if($apply_count->apply > 0){
-            $apply = $apply_count->apply - 1;
+        if($apply_count > 0){
+            $apply = $apply_count - 1;
             $affectedRows = CustomerPlane::where("customer_id",$customer_id)->update(['apply'=>$apply]);
             if($affectedRows > 0)
             return true;
