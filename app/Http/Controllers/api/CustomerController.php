@@ -549,9 +549,9 @@ class CustomerController extends Controller
             if ($validator->fails()) {
                 return response()->json($validator->errors()->toJson(), 400);
             } else {
-                Mail::to('saikatsb10@gmail.com')->send(
-                    new BugReport('saikatsb10@gmail.com')
-                );
+                // Mail::to('saikatsb10@gmail.com')->send(
+                //     new BugReport('saikatsb10@gmail.com')
+                // );
                 return response()->json(
                     [
                         'success' => true,

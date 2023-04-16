@@ -135,6 +135,10 @@ class PlaneController extends Controller
             $wallet = 0;
             $code = "";
             $data['planeInfo'] = InvoiceService::getPlandetails($plane_id);
+
+			// var_dump($plane_id);
+			// die;
+
             $discount = $data['planeInfo']->discount;
             $cost = $data['planeInfo']->cost;
             $maxwallet = $data['planeInfo']->refer_discount;
