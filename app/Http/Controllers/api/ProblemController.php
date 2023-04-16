@@ -635,7 +635,7 @@ public function notawardedExecution(){
                     //$email_data['proTitle'] = ProblemService::getprotitle($problem_id);
 
                     //sending email 
-                    Mail::to($email_data['iemail'])->send(new awardIndustryProject($email_data));
+                  //  Mail::to($email_data['iemail'])->send(new awardIndustryProject($email_data));
                     
                     return response()->json(
                         [

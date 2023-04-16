@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Models\CustomerReq;
+use App\Models\DatabaseComplete;
 use App\Services\CommonService;
 use App\Services\AuthService;
 use App\Services\OnboardingService;
@@ -150,104 +151,298 @@ public function sentOtp(){
                 //when cid found update data
                 $data['industry_type']=trim($request->input('industry_type'));
                 $data['industries']=trim($request->input('industries'));
-           
-                 if($request->input('other_cat')!=""){
-                     $data['category']=trim($request->input('other_cat'));
-                }
-                else{
-					
-                    if($data['industries']=='9' || $data['industries']=='18'){
-                        $data['category']=trim($request->input('sub_cat'));
-                    }
-                    else{
-                        $data['category']='';
-                    }
-                }
-                if($request->input('other_req')!=""){
-                    $data['requirement']=trim($request->input('other_req'));
-                }
-                else{
-                    $data['requirement']=trim($request->input('req'));
-                }
-
+                $data['requirement']=trim($request->input('req'));
                 $data['desc']=trim($request->input('desc'));
-                $data['budget']=trim($request->input('budget'));
-                $data['location']=trim($request->input('location'));
-
-                if($request->input('land')){
-                    $data['land']=trim($request->input('land'));
-                }
-                else{
-                    $data['land']='';
-                }
-
                 $data['start_within']=trim($request->input('start_within'));
 
-                $res=OnboardingService::update_req($data, $cid);
-                if($res){
-                    return response()->json(
-                    [
-                    'success' => true,
-                    'message' => 'Update Successfull',
-                    'status' => '200',
-                    ],
-                    Response::HTTP_OK);
+
+                if($request->input('sub_cat')!=""){
+                    $data['category']=trim($request->input('sub_cat'));
                 }
+                if($request->input('budget')!=""){
+                    $data['budget']=trim($request->input('budget'));
+                }
+                if($request->input('state') !=""){
+                    $data['location']=trim($request->input('state'));
+                }
+                if($request->input('land')!=""){
+                    $data['land']=trim($request->input('land'));
+                }
+                
+                $res=OnboardingService::update_req($data, $cid);
             }
         else{
             //when cid not found then insert data
             $data['cid']=$cid;
             $data['industry_type']=trim($request->input('industry_type'));
             $data['industries']=trim($request->input('industries'));
-           
-            if($request->input('other_cat')!=""){
-                $data['category']=trim($request->input('other_cat'));
-            }
-            else{
-				if($data['industries']=='9' || $data['industries']=='18'){
-                $data['category']=trim($request->input('sub_cat'));
-                }
-                else{
-                $data['category']='';
-                }
-            }
-            if($request->input('other_req')!=""){
-                $data['requirement']=trim($request->input('other_req'));
-            }
-            else{
-                $data['requirement']=trim($request->input('req'));
-            }
-
+            $data['requirement']=trim($request->input('req'));
             $data['desc']=trim($request->input('desc'));
-            $data['budget']=trim($request->input('budget'));
-            $data['location']=trim($request->input('location'));
-
-            if($request->input('land')){
+            $data['start_within']=trim($request->input('start_within'));
+            
+            if($request->input('sub_cat')!=""){
+                $data['category']=trim($request->input('sub_cat'));
+            }
+            if($request->input('budget')!=""){
+                $data['budget']=trim($request->input('budget'));
+            }
+            if($request->input('state') !=""){
+                $data['location']=trim($request->input('state'));
+            }
+            if($request->input('land')!=""){
                 $data['land']=trim($request->input('land'));
             }
-            else{
-                $data['land']='';
-            }
 
-            $data['start_within']=trim($request->input('start_within'));
-            // var_dump($data);
-            // die;
             $res=OnboardingService::add_req($data);
-                if($res){
-                    return response()->json(
-                    [
-                    'success' => true,
-                    'message' => 'Update Successfull',
-                    'status' => '200',
-                    ],
-                    Response::HTTP_OK);
-                }
-
         }
+
+        if($res){
+            //update as prequlified  and step update as 3
+            $cdata['pre_qualified'] = 1;
+            $cdata['step']=3;
+            ProfileService::editCustomerProfile($cdata, $cid);
+
+            //slack notification for requirement submission
+
+            //slack notification for Get Consultant page visitor
+
+		$slack_cid = $cid;
+		$slack_name = ProfileService::getFullName($slack_cid);
+		$slack_email= $email;
+		$slack_phone = ProfileService::getPhone($slack_cid);
+		$req_data= OnboardingService::getReq($slack_cid);
+        $brief = $req_data->requirement;
+
+		$option= array (
+		  'blocks' => 
+		  array (
+			0 => 
+			array (
+			  'type' => 'section',
+			  'text' => 
+			  array (
+				'type' => 'mrkdwn',
+				'text' => '*Customer Onboarding - Prequalified Notification: *',
+			  ),
+			),
+			1 => 
+			array (
+			  'type' => 'divider',
+			),
+			2 => 
+			array (
+			  'type' => 'section',
+			  'fields' => 
+			  array (
+				0 => 
+				array (
+				  'type' => 'mrkdwn',
+				  'text' => '*Customer ID:*
+'.$slack_cid,
+				),
+				1 => 
+				array (
+				  'type' => 'mrkdwn',
+				  'text' => '*Name:*
+'.$slack_name,
+				),
+				2 => 
+				array (
+				  'type' => 'mrkdwn',
+				  'text' => '*Email ID:*
+'.$slack_email,
+				),
+				3 => 
+				array (
+				  'type' => 'mrkdwn',
+				  'text' => '*Phone:*
+'.$slack_phone,
+				),
+				4 => 
+				array (
+				  'type' => 'mrkdwn',
+				  'text' => '*Brief Details:*
+Required Consultant for '.$brief,
+				),
+			  ),
+			),
+			3 => 
+			array (
+			  'type' => 'context',
+			  'elements' => 
+			  array (
+				0 => 
+				array (
+				  'type' => 'image',
+				  'image_url' => 'https://www.solutionbuggy.com/assets/img/alert.jpg',
+				  'alt_text' => 'cute cat',
+				),
+				1 => 
+				array (
+				  'type' => 'mrkdwn',
+				  'text' => 'Action required...',
+				),
+			  ),
+			),
+		  ),
+		);
+	
+
+	$message = array('payload' => json_encode($option));
+
+	$ch = curl_init("https://hooks.slack.com/services/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");
+
+
+curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+$result = curl_exec($ch);
+curl_close($ch);
+
+
+
+        //create contact 
+        $msg =  $this->createContact($email,$cid);
+          
+        return response()->json($msg,Response::HTTP_OK);
+    }
     }
     catch(Exception $e){
         return response()->json(['message' => $e->getMessage()], 404);
     }
+}
+
+public function createContact($email,$cid){
+
+            $pre_data=OnboardingService::getReq($cid);
+            
+            if(DatabaseComplete::where('email',$email)->exists()){
+                //existing lead
+
+                $companyDetails = OnboardingService::companyDetails($email);
+                if($companyDetails->customer_id == null || $companyDetails->customer_id < 1){
+					$cdata['customer_id']=$cid;
+                    $res=OnboardingService::updateCompany($cdata,$email); 
+
+                } 
+                    
+                       
+                        //creating note for pre-qualified
+                        $cus_id=$companyDetails->id;
+						
+						if($pre_data){
+                            $pre_ind_id = $pre_data->industries;
+							$pre_loc_id = $pre_data->location;
+
+							$ind_nm=OnboardingService::getIndustriesName($pre_ind_id);
+							$location=OnboardingService::getStatesName($pre_loc_id);
+
+							if($pre_data->requirement !=''){ $req = $pre_data->requirement;}else{$req ='NA';}
+
+							if($pre_data->industry_type !=''){ $industry_type = $pre_data->industry_type;}else{$industry_type ='NA';}
+
+							if($pre_data->desc !=''){ $desc = $pre_data->desc;}else{$desc ='NA';}
+
+							if($pre_data->budget !=''){ $budget = $pre_data->budget;}else{$budget ='NA';}
+									
+                            if($pre_data->land !=''){ $land = $pre_data->land;}else{$land ='NA';}
+
+							if($pre_data->start_within !=''){ $start_within = $pre_data->start_within;}else{$start_within ='NA';}
+				
+							$comments='<p><span style="color:#fb483a;">Prequalified Lead-Customer Onboarding</span> <br/> Required Consultant for : '.$req.' <br/> Industry Type : '.$industry_type.'<br/> Industry : '.$ind_nm.'<br/> Description : '.$desc.'<br/> Budget : '.$budget.'<br/> Location : '.$location.'<br/> Land : '.$land.'<br/> Start Within : '.$start_within.'</p>';
+										
+                            // add note
+										
+                            $crm['cus_id']=$cus_id;
+			 			    $crm['user_id']=1;
+			 				$crm['activity']=2;
+			 				$crm['type']=0;
+			 				$crm['call_outcome']=0;
+			 				$crm['comments']=$comments;
+			 				$crm['date']=date('Y-m-d H:i:s');
+
+			 				$log = OnboardingService::addLog($crm);
+
+                            if($log){
+                                $msg=['message'=>'Lead updated and Note created successfully'];
+                                return $msg;
+                            }
+                            
+                            
+                        }
+			
+                
+            }
+            else{
+                //new lead
+
+               $customer = CommonService::getRowByCid($cid);
+
+                if($pre_data ){
+
+                    //if prequalified lead then create note and insert into database_complete as new lead
+			
+				$data['name'] = $customer->firstname;
+				$data['email'] = $customer->email;
+				$data['mobile'] = $customer->phone;
+				$data['customer_id'] = $customer->customer_id;
+				$data['create_date'] = $customer->date_added;
+				$data['grade'] = 'P1-Prequalified';
+                $data['created_by']=1;
+                $data['assigned_to']=28;
+                $data['previously_assigned']=1;
+
+
+				$cus_id=OnboardingService::addCompany($data);
+
+                 //creating note for pre-qualified
+
+                $pre_ind_id = $pre_data->industries;
+				$pre_loc_id = $pre_data->location;
+
+				$ind_nm=OnboardingService::getIndustriesName($pre_ind_id);
+				$location=OnboardingService::getStatesName($pre_loc_id);
+
+				if($pre_data->requirement !=''){ $req = $pre_data->requirement;}else{$req ='NA';}
+
+				if($pre_data->industry_type !=''){ $industry_type = $pre_data->industry_type;}else{$industry_type ='NA';}
+
+				if($pre_data->desc !=''){ $desc = $pre_data->desc;}else{$desc ='NA';}
+
+				if($pre_data->budget !=''){ $budget = $pre_data->budget;}else{$budget ='NA';}
+
+				if($pre_data->land !=''){ $land = $pre_data->land;}else{$land ='NA';}
+
+				if($pre_data->start_within !=''){ $start_within = $pre_data->start_within;}else{$start_within ='NA';}
+
+					$comments='<p><span style="color:#fb483a;">Prequalified Lead-Customer Onboarding</span> <br/> Required Consultant for : '.$req.' <br/> Industry Type : '.$industry_type.'<br/> Industry : '.$ind_nm.'<br/> Description : '.$desc.'<br/> Budget : '.$budget.'<br/> Location : '.$location.'<br/> Land : '.$land.'<br/> Start Within : '.$start_within.'</p>';
+					
+                    // add note
+					$crm['cus_id']=$cus_id;
+					$crm['user_id']=1;
+					$crm['activity']=2;
+					$crm['type']=0;
+					$crm['call_outcome']=0;
+					$crm['comments']=$comments;
+					$crm['date']=date('Y-m-d H:i:s');
+					 
+                    $log = OnboardingService::addLog($crm);
+
+                    if($log){
+                        $msg=['message'=>'Lead inserted and Note created successfully'];
+                        return $msg;
+                    }
+                   
+
+            }
+           
+    
+        }
+    
+
+
+
 }
 
 
@@ -371,6 +566,283 @@ public function updateOnboardingExperience(Request $request){
 
             return response()->json($res);
         }
+    }
+    catch (Exception $e) {
+        return response()->json(['message' => $e->getMessage()], 404);
+    }
+}
+
+public function getInfo(){
+
+    try{
+        $digits1 = 1;
+        $data1 = rand(pow(10, $digits1-1), pow(10, $digits1)-1);
+    
+        $digits2 = 2;
+        $data2 = rand(pow(10, $digits2-1), pow(10, $digits2)-1);
+    
+        $digits3 = 3;
+        $data3 = rand(pow(10, $digits3-1), pow(10, $digits3)-1);
+    
+        $digits4 = 4;
+        $data4 = rand(pow(10, $digits4-1), pow(10, $digits4)-1);
+    
+    
+        $email = auth()->user()->email;
+        $customer_id = CommonService::getCidByEmail($email);
+        $req= OnboardingService::getReq($customer_id);
+    
+        $data['requirement']=$req->requirement;
+        $ind_nm=OnboardingService::getIndustriesName($req->industries);
+        $data['industry']= $ind_nm;
+        $data['oneDigit']=$data1;
+        $data['twoDigit']=$data2;
+        $data['threeDigit']=$data3;
+        $data['fourDigit']=$data4;
+
+        return response()->json($data);
+    }
+    catch (Exception $e) {
+        return response()->json(['message' => $e->getMessage()], 404);
+    }
+
+}
+
+public function OnboardingPaymentNotifySS(){
+    try{
+        $email = auth()->user()->email;
+        $customer_id = CommonService::getCidByEmail($email);
+        //update step as 4
+        $stepData['step']=4;
+        $res = ProfileService::editCustomerProfile($stepData,$customer_id);
+
+        //onboarding payment page visitor notification
+    
+//         $slack_cid = $customer_id;
+// 		$slack_name = ProfileService::getFullName($slack_cid);
+// 		$slack_email = $email;
+// 		$slack_phone = ProfileService::getPhone($slack_cid);
+// 		$slack_assign_id = ProfileService::getAssignedTobyEmail($slack_email);
+						
+// 			if($slack_assign_id!=null){
+// 				//$slack_assign_id = ProfileService::getAssignedTobyCid($customer_id);
+// 				$slack_assign_name= ProfileService::getAssignedName($slack_assign_id);
+// 			}
+// 			else{
+// 				$slack_assign_name= "Not Assigned";
+// 			}
+
+// 			$option= array (
+// 				'blocks' => 
+// 				array (
+// 				  0 => 
+// 				  array (
+// 					'type' => 'section',
+// 					'text' => 
+// 					array (
+// 					  'type' => 'mrkdwn',
+// 					  'text' => '*Onboarding Payment Page Visitor Notification:*',
+// 					),
+// 				  ),
+// 				  1 => 
+// 				  array (
+// 					'type' => 'divider',
+// 				  ),
+// 				  2 => 
+// 				  array (
+// 					'type' => 'section',
+// 					'fields' => 
+// 					array (
+// 					  0 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => '*Customer ID:*
+// '.$slack_cid,
+// 					  ),
+// 					  1 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => '*Name:*
+// '.$slack_name,
+// 					  ),
+// 					  2 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => '*Email ID:*
+// '.$slack_email,
+// 					  ),
+// 					  3 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => '*Phone:*
+// '.$slack_phone,
+// 					  ),
+// 					  4 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => '*Assigned to:*
+// '.$slack_assign_name,
+// 					  ),
+// 					),
+// 				  ),
+// 				  3 => 
+// 				  array (
+// 					'type' => 'context',
+// 					'elements' => 
+// 					array (
+// 					  0 => 
+// 					  array (
+// 						'type' => 'image',
+// 						'image_url' => 'https://www.solutionbuggy.com/assets/img/alert.jpg',
+// 						'alt_text' => 'cute cat',
+// 					  ),
+// 					  1 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => 'Action required...',
+// 					  ),
+// 					),
+// 				  ),
+// 				),
+// 			  );
+		  
+	  
+// 		  $message = array('payload' => json_encode($option));
+	  
+// 		  $ch = curl_init("https://hooks.slack.com/services/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");
+	  
+	  
+// 	  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+// 	  curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
+// 	  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+// 	  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+// 	  $result = curl_exec($ch);
+// 	  // var_dump($result);
+// 	  curl_close($ch);
+
+        return response()->json(['message'=>'Paymennt Notification sent successfully'],Response::HTTP_OK);
+  
+    }
+    catch (Exception $e) {
+        return response()->json(['message' => $e->getMessage()], 404);
+    }
+}
+
+
+public function OnboardingPaymentNotifySP(){
+    try{
+        $email = auth()->user()->email;
+        $customer_id = CommonService::getCidByEmail($email);
+        //update step as 5
+        $stepData['step']=5;
+        $res = ProfileService::editCustomerProfile($stepData,$customer_id);
+
+        //onboarding payment page visitor notification
+    
+//         $slack_cid = $customer_id;
+// 		$slack_name = ProfileService::getFullName($slack_cid);
+// 		$slack_email = $email;
+// 		$slack_phone = ProfileService::getPhone($slack_cid);
+// 		$slack_assign_id = ProfileService::getAssignedTobyEmail($slack_email);
+						
+// 			if($slack_assign_id!=null){
+// 				//$slack_assign_id = ProfileService::getAssignedTobyCid($customer_id);
+// 				$slack_assign_name= ProfileService::getAssignedName($slack_assign_id);
+// 			}
+// 			else{
+// 				$slack_assign_name= "Not Assigned";
+// 			}
+
+// 			$option= array (
+// 				'blocks' => 
+// 				array (
+// 				  0 => 
+// 				  array (
+// 					'type' => 'section',
+// 					'text' => 
+// 					array (
+// 					  'type' => 'mrkdwn',
+// 					  'text' => '*Onboarding Payment Page Visitor Notification:*',
+// 					),
+// 				  ),
+// 				  1 => 
+// 				  array (
+// 					'type' => 'divider',
+// 				  ),
+// 				  2 => 
+// 				  array (
+// 					'type' => 'section',
+// 					'fields' => 
+// 					array (
+// 					  0 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => '*Customer ID:*
+// '.$slack_cid,
+// 					  ),
+// 					  1 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => '*Name:*
+// '.$slack_name,
+// 					  ),
+// 					  2 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => '*Email ID:*
+// '.$slack_email,
+// 					  ),
+// 					  3 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => '*Phone:*
+// '.$slack_phone,
+// 					  ),
+// 					  4 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => '*Assigned to:*
+// '.$slack_assign_name,
+// 					  ),
+// 					),
+// 				  ),
+// 				  3 => 
+// 				  array (
+// 					'type' => 'context',
+// 					'elements' => 
+// 					array (
+// 					  0 => 
+// 					  array (
+// 						'type' => 'image',
+// 						'image_url' => 'https://www.solutionbuggy.com/assets/img/alert.jpg',
+// 						'alt_text' => 'cute cat',
+// 					  ),
+// 					  1 => 
+// 					  array (
+// 						'type' => 'mrkdwn',
+// 						'text' => 'Action required...',
+// 					  ),
+// 					),
+// 				  ),
+// 				),
+// 			  );
+		  
+	  
+// 		  $message = array('payload' => json_encode($option));
+	  
+// 		  $ch = curl_init("https://hooks.slack.com/services/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");
+	  
+	  
+// 	  curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+// 	  curl_setopt($ch, CURLOPT_POSTFIELDS, $message);
+// 	  curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+// 	  curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+// 	  $result = curl_exec($ch);
+// 	  // var_dump($result);
+// 	  curl_close($ch);
+
+        return response()->json(['message'=>'Paymennt Notification sent successfully'],Response::HTTP_OK);
+  
     }
     catch (Exception $e) {
         return response()->json(['message' => $e->getMessage()], 404);

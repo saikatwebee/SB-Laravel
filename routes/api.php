@@ -25,6 +25,7 @@ use Illuminate\Support\Facades\Route;
         Route::post('/paymentSuccess', [PlaneController::class, 'paymentSuccess'])->withoutMiddleware(['jwt.verify']);
         Route::get('/api_check', [PlaneController::class, 'api_check'])->withoutMiddleware(['jwt.verify']);
        
+        
 
         //falied page
         Route::post('/paymentFailed', [PlaneController::class, 'paymentFailed'])->withoutMiddleware(['jwt.verify']);
@@ -126,6 +127,9 @@ use Illuminate\Support\Facades\Route;
         Route::post('/categoryBrowseSs',[ProblemController::class, 'categoryBrowseSs']);
         Route::post('/industryBrowseSs',[ProblemController::class, 'industryBrowseSs']);
         Route::post('/browseSs',[ProblemController::class, 'browseSs']);
+        Route::get('/getInfo', [OnboardingController::class, 'getInfo']);
+        Route::get('/OnboardingPaymentNotifySS', [OnboardingController::class, 'OnboardingPaymentNotifySS']);
+       
         
         
         });
@@ -190,6 +194,7 @@ use Illuminate\Support\Facades\Route;
 
         Route::post('/OnboardingPreference', [OnboardingController::class, 'OnboardingPreference']);
         Route::post('/updateOnboardingExperience', [OnboardingController::class, 'updateOnboardingExperience']);
+        Route::get('/OnboardingPaymentNotifySP', [OnboardingController::class, 'OnboardingPaymentNotifySP']);
 
 
         });
