@@ -66,6 +66,8 @@ use Illuminate\Support\Facades\Route;
         //Routes available to only Admin 
         Route::middleware(['role:A'])->prefix('admin')->group(function () {
                 Route::get('/dashboard_section1', [AdminController::class, 'dashboard_section1']);
+                Route::get('/sales_dashboard', [AdminController::class, 'sales_dashboard']);
+                
                 
         });
 
