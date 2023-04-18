@@ -16,7 +16,8 @@ use App\Services\AuthService;
 use App\Services\OnboardingService;
 use App\Services\ProfileService;
 use App\Mail\BugReport;
-
+use App\Mail\OtpSent;
+use App\Mail\PrequalificationMail;
 
 class OnboardingController extends Controller
 {
@@ -57,9 +58,10 @@ public function sentOtp(){
 
 						curl_close($ch);
 
-                        //sending email otp
-                        //$email_data['otp'] = $otp;
-                        //Mail::to($email)->send(new otpSent($email_data));
+                         //sending email otp
+                         $email_data['otp'] = $otp;
+                         $email_data['fullname'] = ProfileService::getFullName($customer_id);
+                         Mail::to($email)->send(new OtpSent($email_data));
 
                          //wati sms for otp
 
@@ -311,6 +313,15 @@ curl_close($ch);
     catch(Exception $e){
         return response()->json(['message' => $e->getMessage()], 404);
     }
+}
+
+public function sentPrequalificationMail(){
+     //prequalification mail to user
+        $email = auth()->user()->email;
+        $cid = CommonService::getCidByEmail($email);
+
+        $email_data['fullname'] = ProfileService::getFullName($cid);
+        Mail::to($email)->send(new PrequalificationMail($email_data));
 }
 
 public function createContact($email,$cid){

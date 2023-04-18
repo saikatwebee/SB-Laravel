@@ -16,7 +16,8 @@ use App\Models\User;
 use App\Services\AuthService;
 use App\Services\CommonService;
 use App\Services\ProfileService;
-use App\Mail\otpSent;
+use App\Mail\OtpSent;
+use App\Mail\RegistrationMail;
 
 
 
@@ -65,9 +66,14 @@ class AuthController extends Controller
                                 $reg_url = trim($request->input('reg_url'));
                                 $res = AuthService::customer_insert($firstname,$email,$phone,$role,$howsb,$reg_url);
                                 if($res){
-                                    //return response()->json(["Customer Registration Successful"]);
-
                                     $cid = AuthService::get_cid_reg($email);
+
+                                    //registration mail to user
+                                    
+                                    $email_data['fullname'] = ProfileService::getFullName($cid);
+                                    Mail::to($email)->send(new RegistrationMail($email_data));
+
+                                  
                                         $trackingdata = array (
                                         'customer_id' => $cid,
                                         'sb_first_typ' => $request->input('sb_first_typ'),
@@ -95,6 +101,8 @@ class AuthController extends Controller
                                     );
 
                                     AuthService::addTracking($trackingdata);
+
+                                    
 
                                     //generating token after successfully register to solutionbuggy portal.
 
@@ -129,7 +137,7 @@ class AuthController extends Controller
                }
             }
         } catch (Exception $e) {
-            return $e->getMessage();
+            return response()->json(['message' => $e->getMessage()], 404);
         }
     }
 
@@ -217,29 +225,35 @@ class AuthController extends Controller
 
         }
         catch (Exception $e) {
-            return $e->getMessage();
+            return response()->json(['message' => $e->getMessage()], 404);
         }
     }
 
     public function login(Request $request){
 
-        $rules = [
-           "email" => "required|email",
-           "password"=>"required|min:5|max:15",
-            ];
-
-           
-        $validator = Validator::make($request->all(), $rules);
-        if ($validator->fails()) {
-            return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);
+        try{
+            $rules = [
+                "email" => "required|email",
+                "password"=>"required|min:5|max:15",
+                 ];
+     
+                
+             $validator = Validator::make($request->all(), $rules);
+             if ($validator->fails()) {
+                 return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.'],220);
+             }
+             
+            if(!$token = JWTAuth::attempt($validator->validated())){
+                return response()->json(['message'=>"Unauthorized User!"],401);
+                
+             }
+     
+             return  $this->createNewToken($token);
         }
-        
-       if(!$token = JWTAuth::attempt($validator->validated())){
-           return response()->json(['message'=>"Unauthorized User!"],401);
-           
+        catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 404);
         }
-
-        return  $this->createNewToken($token);
+       
     }
 
     public function loginWithOtp(Request $request){
@@ -296,8 +310,9 @@ class AuthController extends Controller
 						curl_close($ch);
 
                         //sending email otp
-                        // $email_data['otp'] = $otp;
-                        // Mail::to($email)->send(new otpSent($email_data));
+                        $email_data['otp'] = $otp;
+                        $email_data['fullname'] = ProfileService::getFullName($customer_id);
+                        Mail::to($email)->send(new OtpSent($email_data));
 
                         //wati sms for otp
 

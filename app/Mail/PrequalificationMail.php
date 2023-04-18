@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class OtpSent extends Mailable
+class PrequalificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -18,6 +18,6 @@ class OtpSent extends Mailable
     }
     public function build()
     {
-        return $this->subject('One Time Password')->view('mails.otp_mail')->with(['email_data' => $this->email_data]);
+        return $this->subject('Registraion Successsfull')->view('mails.prequalify_mail')->with(['email_data' => $this->email_data]);
     }
 }

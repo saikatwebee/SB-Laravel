@@ -127,7 +127,7 @@ use Illuminate\Support\Facades\Route;
         Route::post('/browseSs',[ProblemController::class, 'browseSs']);
         Route::get('/getInfo', [OnboardingController::class, 'getInfo']);
         Route::get('/OnboardingPaymentNotifySS', [OnboardingController::class, 'OnboardingPaymentNotifySS']);
-       
+        Route::get('/sentPrequalificationMail', [OnboardingController::class, 'sentPrequalificationMail']);
         
         
         });
