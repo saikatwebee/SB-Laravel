@@ -3,22 +3,19 @@
 namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\api\CustomerController;
+use Illuminate\Support\Facades\Mail;
 use App\Mail\PostProject;
 use App\Mail\PostProjectInfo;
-use App\Mail\awardIndustryProject;
+use App\Mail\AwardIndustryProject;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Problem;
-//use APP\Models\Customer;
-// use APP\Models\Industry;
-// use APP\Models\Category;
 use App\Services\CommonService;
 use App\Services\ProblemService;
 use App\Services\ProfileService;
-use Illuminate\Support\Facades\Mail;
-// use Illuminate\Database\Eloquent\Builder;
+
 use Illuminate\Support\Facades\DB;
 use App\Models\Proposal;
 
@@ -635,7 +632,7 @@ public function notawardedExecution(){
                     //$email_data['proTitle'] = ProblemService::getprotitle($problem_id);
 
                     //sending email 
-                  //  Mail::to($email_data['iemail'])->send(new awardIndustryProject($email_data));
+                  //  Mail::to($email_data['iemail'])->send(new AwardIndustryProject($email_data));
                     
                     return response()->json(
                         [

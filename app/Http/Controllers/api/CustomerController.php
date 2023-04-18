@@ -549,7 +549,7 @@ class CustomerController extends Controller
             if ($validator->fails()) {
                 return response()->json($validator->errors()->toJson(), 400);
             } else {
-                // Mail::to('saikatsb10@gmail.com')->send(
+                // Mail::to('admin@solutionbuggy.com')->send(
                 //     new BugReport('saikatsb10@gmail.com')
                 // );
                 return response()->json(
@@ -600,46 +600,57 @@ class CustomerController extends Controller
     }
 
     public function getIndustryDashboard(){
-        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
-        $plan_check = InvoiceService::verifyCId($customer_id);
+        try{
+            $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+            $plan_check = InvoiceService::verifyCId($customer_id);
 
-        if($plan_check){
+            if($plan_check){
            
-            $res = InvoiceService::getCustomerPlan($customer_id);
-            $data['current_plan'] = $res->title;
-            $data['expiry'] = $res->exp_plane;
-            $data['post_credit'] = $res->problem;
+                $res = InvoiceService::getCustomerPlan($customer_id);
+                $data['current_plan'] = $res->title;
+                $data['expiry'] = $res->exp_plane;
+                $data['post_credit'] = $res->problem;
+            }
+            else{
+                $data['current_plan'] = 'NA';
+                $data['expiry'] = 'NA';
+                $data['post_credit'] = 'NA';
+            }
+
+                return response()->json($data);
         }
-        else{
-            $data['current_plan'] = 'NA';
-            $data['expiry'] = 'NA';
-            $data['post_credit'] = 'NA';
-            
+        catch(Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
         }
 
-        return response()->json($data);
+        
         
     }
 
     public function getConsultantDashboard(){
-        $customer_id = CommonService::getCidByEmail(auth()->user()->email);
-        $plan_check = InvoiceService::verifyCId($customer_id);
-        if($plan_check){
-            $res = InvoiceService::getCustomerPlan($customer_id);
-            
-            $data['current_plan'] = $res->title;
-            $data['expiry'] = $res->exp_plane;
-            $data['apply_credit'] = $res->apply;
+        try{
+            $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+            $plan_check = InvoiceService::verifyCId($customer_id);
+            if($plan_check){
+                $res = InvoiceService::getCustomerPlan($customer_id);
+                
+                $data['current_plan'] = $res->title;
+                $data['expiry'] = $res->exp_plane;
+                $data['apply_credit'] = $res->apply;
+            }
+            else{
+    
+                $data['current_plan'] = 'NA';
+                $data['expiry'] = 'NA';
+                $data['apply_credit'] = 'NA';
+            }
+    
+            return response()->json($data);
         }
-        else{
-
-            $data['current_plan'] = 'NA';
-            $data['expiry'] = 'NA';
-            $data['apply_credit'] = 'NA';
+        catch(Exception $e){
+            return response()->json(['message' => $e->getMessage()], 404);
         }
 
-        return response()->json($data);
-        
         
     }
 

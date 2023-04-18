@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class AwardIndustryProject extends Mailable
+class PrequalificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -18,7 +18,6 @@ class AwardIndustryProject extends Mailable
     }
     public function build()
     {
-        return $this->subject('Congrats! Project Awarded for your Offer.')->view('mails.award_industry_project')->with(['email_data' => $this->email_data]);
+        return $this->subject('Registraion Successsfull')->view('mails.prequalify_mail')->with(['email_data' => $this->email_data]);
     }
 }
-?>
