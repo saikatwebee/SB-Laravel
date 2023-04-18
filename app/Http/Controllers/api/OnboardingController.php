@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Models\CustomerReq;
 use App\Models\DatabaseComplete;
+use App\Models\CustomerIndustries;
+use App\Models\CustomerSkill;
 use App\Services\CommonService;
 use App\Services\AuthService;
 use App\Services\OnboardingService;
@@ -110,6 +112,9 @@ public function sentOtp(){
         return response()->json(['message' => $e->getMessage()], 404);
     }
 }
+
+
+
 
     public function otpVerification(Request $request){
         try{

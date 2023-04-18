@@ -396,6 +396,12 @@ class AuthController extends Controller
         }
     }
 
+    
+
+
+
+
+
     public function checkOtp(Request $request){
         try{
             $data['password'] = trim($request->input('password'));
