@@ -67,10 +67,11 @@ class AuthController extends Controller
                                 $res = AuthService::customer_insert($firstname,$email,$phone,$role,$howsb,$reg_url);
                                 if($res){
                                     $cid = AuthService::get_cid_reg($email);
+                                    $fullname = ProfileService::getFullName($cid);
 
                                     //registration mail to user
                                     
-                                    $email_data['fullname'] = ProfileService::getFullName($cid);
+                                    $email_data['fullname'] = $fullname;
                                     Mail::to($email)->send(new RegistrationMail($email_data));
 
                                   
@@ -102,7 +103,36 @@ class AuthController extends Controller
 
                                     AuthService::addTracking($trackingdata);
 
-                                    
+
+                                    //thank you sms after registration complete
+
+
+                        $body = [
+                            "parameters" => [
+                                  [
+                                     "name" => "fullname", 
+                                     "value" => $fullname
+                                  ],
+                                  
+                               ], 
+                            "template_name" => 'thankyou_msg_registered', 
+                            "broadcast_name" => "sb-ThankYou" 
+                         ]; 
+                          
+                        
+                        $msg = json_encode($body);
+                        
+                        $ch2 = curl_init("https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber=".$phone);
+                            
+                        $authorization = "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDczODQzNy0zMDVjLTQ5NDctOGI1MC0zMzllMWRhNjIxNGIiLCJ1bmlxdWVfbmFtZSI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwibmFtZWlkIjoiYWRtaW5Ac29sdXRpb25idWdneS5jb20iLCJlbWFpbCI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwiYXV0aF90aW1lIjoiMDEvMTcvMjAyMiAxMDoyMTo1OCIsImRiX25hbWUiOiI2ODA0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQURNSU5JU1RSQVRPUiIsImV4cCI6MjUzNDAyMzAwODAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.Y_KsRhEnu_NKsxOf0U5HfHRILpnENXShJsgjjTbL5Ss"; // Prepare the authorisation token
+                            
+                            curl_setopt($ch2, CURLOPT_HTTPHEADER, array('Content-Type: application/json' , $authorization )); // Inject the token into the header
+                            curl_setopt($ch2, CURLOPT_CUSTOMREQUEST, 'POST');
+                            curl_setopt($ch2, CURLOPT_POSTFIELDS, $msg);
+                            curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+                            curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false);
+                            $result2 = curl_exec($ch2);
+                            curl_close($ch2);
 
                                     //generating token after successfully register to solutionbuggy portal.
 
