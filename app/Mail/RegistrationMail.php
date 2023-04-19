@@ -18,6 +18,6 @@ class RegistrationMail extends Mailable
     }
     public function build()
     {
-        return $this->subject('Registraion Successsfull')->view('mails.register_mail')->with(['email_data' => $this->email_data]);
+        return $this->subject('Registraion Successsfull')->view('Mails.register_mail')->with(['email_data' => $this->email_data]);
     }
 }

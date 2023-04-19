@@ -420,6 +420,9 @@ class PlaneController extends Controller
 				  $result = curl_exec($ch);
 				  curl_close($ch);
 
+				  //wati sms for payment sucess
+
+
 					return View('payment_success',['jsondata' => json_encode($data)]);
 
 				}
@@ -623,7 +626,7 @@ class PlaneController extends Controller
 			  $result = curl_exec($ch);
 			  curl_close($ch);
 						 
-
+						  //wati sms for payment failed
 
 
 					}

@@ -17,7 +17,7 @@ class PaymentFailure extends Mailable
     }
     public function build()
     {
-        return $this->subject('Sorry! Your payment has failed.')->view('mails.payFail')->with(['email_data' => $this->email_data]);
+        return $this->subject('Sorry! Your payment has failed.')->view('Mails.payFail')->with(['email_data' => $this->email_data]);
     }
 }
 ?>
