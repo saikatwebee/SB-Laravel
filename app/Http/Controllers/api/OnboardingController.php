@@ -328,9 +328,12 @@ public function sentPrequalificationNotification(){
         $phone = ProfileService::getPhone($cid);
 
         $req=OnboardingService::getReq($cid);
+
+
+
         $requirement = $req->requirement;
         $ind_id = $req->industries;
-        $industry=OnboardingService::getIndustriesName($cid);
+        $industry=OnboardingService::getIndustriesName($ind_id);
 
 
         $email_data['fullname'] = $fullname;
