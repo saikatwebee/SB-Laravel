@@ -17,7 +17,7 @@ class PaymentSuccess extends Mailable
     }
     public function build()
     {
-        return $this->subject('Thank You! Your payment is succesful.')->view('mails.paySuccess')->with(['email_data' => $this->email_data]);
+        return $this->subject('Thank You! Your payment is succesful.')->view('Mails.paySuccess')->with(['email_data' => $this->email_data]);
     }
 }
 ?>

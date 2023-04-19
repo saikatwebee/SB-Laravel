@@ -18,7 +18,7 @@ class PostProject extends Mailable
 
     public function build()
     {
-       return $this->subject('Thanks for posting the project')->view('mails.post_project');
+       return $this->subject('Thanks for posting the project')->view('Mails.post_project');
            
     }
 }
