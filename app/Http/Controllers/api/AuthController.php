@@ -133,7 +133,7 @@ class AuthController extends Controller {
                                     ];
 
                                     if ( !$token = JWTAuth::attempt( $jwtarr ) ) {
-                                        return response()->json( [ 'message'=>'Unauthorized User!' ], 401 );
+                                        return response()->json( [ 'message'=>'Unauthorized User!' ], 210 );
 
                                     }
 
@@ -260,7 +260,7 @@ class AuthController extends Controller {
             }
 
             if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
-                return response()->json( [ 'message'=>'Unauthorized User!' ], 401 );
+                return response()->json( [ 'message'=>'Unauthorized User!' ], 210 );
 
             }
 
@@ -393,7 +393,7 @@ class AuthController extends Controller {
                 return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops! Invalid data request.' ], 220 );
             } else {
                 if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
-                    return response()->json( [ 'message'=>'Unauthorized User!' ], 401 );
+                    return response()->json( [ 'message'=>'Unauthorized User!' ], 210 );
 
                 }
 
@@ -511,7 +511,7 @@ class AuthController extends Controller {
             if ( $check_mac ) {
                 //token creation
                 if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
-                    return response()->json( [ 'message'=>'Email or Password is incorrect!' ], 401 );
+                    return response()->json( [ 'message'=>'Email or Password is incorrect!' ], 210 );
                 }
                 return  $this->createNewToken( $token );
             } else {
