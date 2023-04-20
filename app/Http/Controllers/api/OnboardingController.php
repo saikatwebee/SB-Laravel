@@ -103,13 +103,13 @@ public function sentOtp(){
         }
         else{
              //Account not activated 
-             return response()->json(['message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111'],404);
+             return response()->json(['message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111'],502);
 
         }
        
     }
     catch(Exception $e){
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
 
@@ -137,13 +137,13 @@ public function sentOtp(){
                     return response()->json(['message'=>'OTP verified'],200);
                 }
                 else
-                    return response()->json(['message'=>'Invalid OTP!'],404);
+                    return response()->json(['message'=>'Invalid OTP!'],502);
                 
             }
 
         }
         catch(Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -316,7 +316,7 @@ curl_close($ch);
     }
     }
     catch(Exception $e){
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
 
@@ -567,7 +567,7 @@ public function OnboardingPreference(Request $request){
         }
     }
     catch (Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
 
@@ -637,7 +637,7 @@ public function updateOnboardingExperience(Request $request){
         }
     }
     catch (Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
 
@@ -672,7 +672,7 @@ public function getInfo(){
         return response()->json($data);
     }
     catch (Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 
 }
@@ -793,7 +793,7 @@ public function OnboardingPaymentNotifySS(){
   
     }
     catch (Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
 
@@ -914,7 +914,7 @@ public function OnboardingPaymentNotifySP(){
   
     }
     catch (Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
 

@@ -101,7 +101,7 @@ class ProblemController extends Controller
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
     //SS-list of notlive project  
@@ -468,7 +468,7 @@ public function notawardedExecution(){
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -499,7 +499,7 @@ public function notawardedExecution(){
                 }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -531,7 +531,7 @@ public function notawardedExecution(){
                 }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -566,7 +566,7 @@ public function notawardedExecution(){
            }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -588,7 +588,7 @@ public function notawardedExecution(){
             }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -600,7 +600,7 @@ public function notawardedExecution(){
              return ProblemService::getProject($p_id);
              
          } catch (Exception $e) {
-             return response()->json(['message' => $e->getMessage()], 404);
+             return response()->json(['message' => $e->getMessage()], 502);
          }
      }
 
@@ -632,7 +632,7 @@ public function notawardedExecution(){
             return ProblemService::getProfile($c_id);
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -647,7 +647,7 @@ public function notawardedExecution(){
             }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -657,7 +657,7 @@ public function notawardedExecution(){
           $dropdown =  ProblemService::getCategoryDependent($ind_id);
             return response()->json($dropdown);
         } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
     public function skillDepDropdown(Request $request){
@@ -666,7 +666,7 @@ public function notawardedExecution(){
             $dropdown =  ProblemService::getSkillDependent($ind_id);
             return response()->json($dropdown);
         } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -676,7 +676,7 @@ public function notawardedExecution(){
             $industries =  CommonService::getIndById($ind_id);
             return response()->json($industries);
         } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -686,7 +686,7 @@ public function notawardedExecution(){
             $sub_cat =  CommonService::getCatById($subCat);
             return response()->json($sub_cat);
         } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -696,7 +696,7 @@ public function notawardedExecution(){
             $skill =  CommonService::getSkillById($skill_id);
             return response()->json($skill);
         } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -729,7 +729,7 @@ public function notawardedExecution(){
 
         }
         catch(Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
     public function proposalUpload($file, $customer_id)
