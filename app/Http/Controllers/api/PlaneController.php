@@ -194,7 +194,7 @@ class PlaneController extends Controller
 				return response()->json($data);
              
          } catch (Exception $e) {
-             return response()->json(['message' => $e->getMessage()], 404);
+             return response()->json(['message' => $e->getMessage()], 502);
          }
     }
 
@@ -429,7 +429,7 @@ class PlaneController extends Controller
 			}
 		}
 		catch (Exception $e) {
-			return response()->json(['message' => $e->getMessage()], 404);
+			return response()->json(['message' => $e->getMessage()], 502);
 		}
 
 	}
@@ -633,7 +633,7 @@ class PlaneController extends Controller
 					return View('payment_failed',['data' => json_encode($data)]);
 				}
 		catch (Exception $e) {
-			return response()->json(['message' => $e->getMessage()], 404);
+			return response()->json(['message' => $e->getMessage()], 502);
 		}
 
 	}

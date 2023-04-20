@@ -132,11 +132,23 @@ class AuthController extends Controller {
                                     ];
 
                                     if ( !$token = JWTAuth::attempt( $jwtarr ) ) {
-                                        return response()->json( [ 'message'=>'Unauthorized User!' ], 404 );
+                                        return response()->json( [ 'message'=>'Unauthorized User!' ], 502 );
 
                                     }
 
-                                    return  $this->createNewToken( $token );
+                                    $user = $this->auth_user_profile();
+                                    $role = $this->get_role();
+                            
+                                    return response()->json( [
+                                        'access_token'=>$token,
+                                        'token_type'=>'bearer',
+                                        'role'=>$role,
+                                        'user'=>$user,
+                                        'tracking' =>$trackingdata,
+                                        'expires_in'=> auth()->factory()->getTTL()*60,
+                                    ] );
+
+                                    //return  $this->createNewToken( $token );
 
                                 }
                             } else {
@@ -150,11 +162,11 @@ class AuthController extends Controller {
 
                     }
                 } else {
-                    return response()->json( [ 'success' => true, 'message' => 'Email is already exist!'], 404);
+                    return response()->json( [ 'success' => true, 'message' => 'Email is already exist!'], 502);
                 }
             }
         } catch ( Exception $e ) {
-            return response()->json( [ 'message' => $e->getMessage() ], 404 );
+            return response()->json( [ 'message' => $e->getMessage() ], 502 );
         }
     }
 
@@ -240,7 +252,7 @@ class AuthController extends Controller {
             }
 
         } catch ( Exception $e ) {
-            return response()->json( [ 'message' => $e->getMessage() ], 404 );
+            return response()->json( [ 'message' => $e->getMessage() ], 502 );
         }
     }
 
@@ -258,13 +270,13 @@ class AuthController extends Controller {
             }
 
             if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
-                return response()->json( [ 'message'=>'Unauthorized User!' ], 404 );
+                return response()->json( [ 'message'=>'Unauthorized User!' ], 502 );
 
             }
 
             return  $this->createNewToken( $token );
         } catch ( Exception $e ) {
-            return response()->json( [ 'message' => $e->getMessage() ], 404 );
+            return response()->json( [ 'message' => $e->getMessage() ], 502 );
         }
 
     }
@@ -361,15 +373,15 @@ class AuthController extends Controller {
 
                         } else {
                             //Account not activated
-                            return response()->json([ 'message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111' ], 404 );
+                            return response()->json([ 'message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111' ], 502 );
                         }
                     } else {
-                        return response()->json( [ 'message' => 'Your Email is not Registered' ], 404);
+                        return response()->json( [ 'message' => 'Your Email is not Registered' ], 502);
                     }
                 }
             }
         } catch ( Exception $e ) {
-            return response()->json( [ 'message' => $e->getMessage() ], 404 );
+            return response()->json( [ 'message' => $e->getMessage() ], 502 );
         }
     }
 
@@ -389,7 +401,7 @@ class AuthController extends Controller {
                 return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400);
             } else {
                 if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
-                    return response()->json( [ 'message'=>'Unauthorized User!' ], 404 );
+                    return response()->json( [ 'message'=>'Unauthorized User!' ], 502 );
 
                 }
 
@@ -407,7 +419,7 @@ class AuthController extends Controller {
                 return  $this->createNewToken( $token );
             }
         } catch ( Exception $e ) {
-            return response()->json( [ 'message' => $e->getMessage() ], 404 );
+            return response()->json( [ 'message' => $e->getMessage() ], 502 );
         }
     }
 
@@ -483,7 +495,7 @@ class AuthController extends Controller {
             }
 
         } catch ( Exception $e ) {
-            return response()->json( [ 'message' => $e->getMessage() ], 404 );
+            return response()->json( [ 'message' => $e->getMessage() ], 502 );
         }
     }
 
@@ -507,11 +519,11 @@ class AuthController extends Controller {
             if ( $check_mac ) {
                 //token creation
                 if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
-                    return response()->json( [ 'message'=>'Email or Password is incorrect!' ], 404 );
+                    return response()->json( [ 'message'=>'Email or Password is incorrect!' ], 502 );
                 }
                 return  $this->createNewToken( $token );
             } else {
-                return response()->json( [ 'message'=>'Mac Address is not present,Kindly Contact IT Team!' ], 404 );
+                return response()->json( [ 'message'=>'Mac Address is not present,Kindly Contact IT Team!' ], 502 );
             }
         }
 

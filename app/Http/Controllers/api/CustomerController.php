@@ -77,7 +77,7 @@ class CustomerController extends Controller
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -122,7 +122,7 @@ class CustomerController extends Controller
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -175,7 +175,7 @@ class CustomerController extends Controller
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -227,7 +227,7 @@ class CustomerController extends Controller
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -261,7 +261,7 @@ class CustomerController extends Controller
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -332,7 +332,7 @@ class CustomerController extends Controller
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -375,7 +375,7 @@ class CustomerController extends Controller
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -387,7 +387,7 @@ class CustomerController extends Controller
             return response()->json($res);
         }
         catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -399,7 +399,7 @@ class CustomerController extends Controller
             return response()->json($res);
         }
         catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -411,7 +411,7 @@ class CustomerController extends Controller
             return response()->json($res);
         }
         catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -423,7 +423,7 @@ class CustomerController extends Controller
             return response()->json($res);
         }
         catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -435,7 +435,7 @@ class CustomerController extends Controller
             return response()->json($res);
         }
         catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -447,7 +447,7 @@ class CustomerController extends Controller
             return response()->json($res);
         }
         catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -492,7 +492,7 @@ class CustomerController extends Controller
 
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -524,7 +524,7 @@ class CustomerController extends Controller
 
         }
         catch(Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -551,7 +551,7 @@ class CustomerController extends Controller
                     }
             }
         catch(Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -576,7 +576,7 @@ class CustomerController extends Controller
                 return response()->json($data);
         }
         catch(Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
 
         
@@ -604,7 +604,7 @@ class CustomerController extends Controller
             return response()->json($data);
         }
         catch(Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
 
         

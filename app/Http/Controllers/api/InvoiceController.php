@@ -42,7 +42,7 @@ class InvoiceController extends Controller
             return InvoiceService::getInvoice($inv_id);
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -64,7 +64,7 @@ class InvoiceController extends Controller
                 return response()->json(['success' => true,'message' =>'Invoice Added Successfully'],200);
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -77,7 +77,7 @@ class InvoiceController extends Controller
              return response()->json($plan);
              
          } catch (Exception $e) {
-             return response()->json(['message' => $e->getMessage()], 404);
+             return response()->json(['message' => $e->getMessage()], 502);
          }
      }
 
@@ -109,7 +109,7 @@ class InvoiceController extends Controller
             }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -127,7 +127,7 @@ class InvoiceController extends Controller
                 return response()->json(['success' => true,'message' => 'Updated Successfully'],200);
             }             
          } catch (Exception $e) {
-             return response()->json(['message' => $e->getMessage()], 404);
+             return response()->json(['message' => $e->getMessage()], 502);
          }
      }
 
@@ -139,7 +139,7 @@ class InvoiceController extends Controller
               return InvoiceService::getPlandetails($plan_id);
               
           } catch (Exception $e) {
-              return response()->json(['message' => $e->getMessage()], 404);
+              return response()->json(['message' => $e->getMessage()], 502);
           }
       }
     
