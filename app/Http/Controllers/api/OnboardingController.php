@@ -103,7 +103,7 @@ public function sentOtp(){
         }
         else{
              //Account not activated 
-             return response()->json(['message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111'],210);
+             return response()->json(['message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111'],404);
 
         }
        
@@ -126,7 +126,7 @@ public function sentOtp(){
 
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
-                return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+                return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.'], 400);
             }
             else{
                $res =  OnboardingService::otp_verification($email,$otp);
@@ -134,10 +134,10 @@ public function sentOtp(){
                     //step update as 2
                     $stepData['step'] = 2;
                     OnboardingService::updateStep($stepData,$customer_id);
-                    return response()->json(['message'=>'OTP verified'],Response::HTTP_OK);
+                    return response()->json(['message'=>'OTP verified'],200);
                 }
                 else
-                    return response()->json(['message'=>'Invalid OTP!'],210);
+                    return response()->json(['message'=>'Invalid OTP!'],404);
                 
             }
 
@@ -312,7 +312,7 @@ curl_close($ch);
         //create contact 
         $msg =  $this->createContact($email,$cid);
           
-        return response()->json($msg,Response::HTTP_OK);
+        return response()->json($msg);
     }
     }
     catch(Exception $e){
@@ -552,7 +552,7 @@ public function OnboardingPreference(Request $request){
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
         } else {
             //validation successfull
            $res = ProfileService::insertOnboardingPreference($data);
@@ -599,7 +599,7 @@ public function updateOnboardingExperience(Request $request){
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
         } else {
             //validation successfull
 
@@ -789,7 +789,7 @@ public function OnboardingPaymentNotifySS(){
 // 	  // var_dump($result);
 // 	  curl_close($ch);
 
-        return response()->json(['message'=>'Paymennt Notification sent successfully'],Response::HTTP_OK);
+        return response()->json(['message'=>'Paymennt Notification sent successfully'],200);
   
     }
     catch (Exception $e) {
@@ -910,7 +910,7 @@ public function OnboardingPaymentNotifySP(){
 // 	  // var_dump($result);
 // 	  curl_close($ch);
 
-        return response()->json(['message'=>'Paymennt Notification sent successfully'],Response::HTTP_OK);
+        return response()->json(['message'=>'Paymennt Notification sent successfully'],200);
   
     }
     catch (Exception $e) {

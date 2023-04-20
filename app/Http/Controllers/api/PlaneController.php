@@ -638,15 +638,6 @@ class PlaneController extends Controller
 
 	}
 
-	public function api_check(){
-		$data['subscriberplane_id']='26';
-		$data['exp_plane'] = '2025-09-12';
-		$data['date_updated'] =  date('Y-m-d H:i:s');
-		$data['problem']=0;
-		$data['apply']=6;
-		$d=PaymentService::updateCustomerPlane($data,'29');
-		var_dump($d);
-	}
 
 
 	
