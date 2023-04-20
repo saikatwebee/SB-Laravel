@@ -51,7 +51,7 @@ class CustomerController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'],400);
             } else {
                 //validation successfull
                 $customer_id = CommonService::getCidByEmail(
@@ -73,14 +73,7 @@ class CustomerController extends Controller
                         $request->input('industries'),
                         $customer_id
                     );
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Update Successfull',
-                            'status' => '200',
-                        ],
-                        Response::HTTP_OK
-                    );
+                    return response()->json(['success' => true,'message' => 'Update Successfull'],200);
                 }
             }
         } catch (Exception $e) {
@@ -108,7 +101,7 @@ class CustomerController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
             } else {
                 //validation successfull
                 $customer_id = CommonService::getCidByEmail(
@@ -125,14 +118,7 @@ class CustomerController extends Controller
 
                 $res = ProfileService::editCustomerProfile($data, $customer_id);
                 if ($res) {
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Update Successfull',
-                            'status' => '200',
-                        ],
-                        Response::HTTP_OK
-                    );
+                    return response()->json(['success' => true,'message' => 'Update Successfull'],200);
                 }
             }
         } catch (Exception $e) {
@@ -172,7 +158,7 @@ class CustomerController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
             } else {
                 //validation successfull
                 $customer_id = CommonService::getCidByEmail(
@@ -185,14 +171,7 @@ class CustomerController extends Controller
                         $request->input('industries'),
                         $customer_id
                     );
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Update Successfull',
-                            'status' => '200',
-                        ],
-                        Response::HTTP_OK
-                    );
+                    return response()->json(['success' => true,'message' => 'Update Successfull'],200);
                 }
             }
         } catch (Exception $e) {
@@ -222,7 +201,7 @@ class CustomerController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
             } else {
                 //validation successfull
                 $customer_id = CommonService::getCidByEmail(
@@ -244,14 +223,7 @@ class CustomerController extends Controller
 
                 $res = ProfileService::editCustomerProfile($data, $customer_id);
                 if ($res) {
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Update Successfull',
-                            'status' => '200',
-                        ],
-                        Response::HTTP_OK
-                    );
+                    return response()->json(['success' => true,'message' => 'Update Successfull'],200);
                 }
             }
         } catch (Exception $e) {
@@ -276,7 +248,7 @@ class CustomerController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
             } else {
                 //validation successfull
                 $customer_id = CommonService::getCidByEmail(
@@ -285,14 +257,7 @@ class CustomerController extends Controller
 
                 $res = ProfileService::editCustomerProfile($data, $customer_id);
                 if ($res) {
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Update Successfull',
-                            'status' => '200',
-                        ],
-                        Response::HTTP_OK
-                    );
+                    return response()->json(['success' => true,'message' => 'Update Successfull'],200);
                 }
             }
         } catch (Exception $e) {
@@ -321,7 +286,7 @@ class CustomerController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
             } else {
                 //validation successfull
                 $customer_id = CommonService::getCidByEmail(
@@ -363,14 +328,7 @@ class CustomerController extends Controller
                         );
                     }
 
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Update Successfull',
-                            'status' => '200',
-                        ],
-                        Response::HTTP_OK
-                    );
+                    return response()->json(['success' => true,'message' => 'Update Successfull',],200);
                 }
             }
         } catch (Exception $e) {
@@ -397,7 +355,7 @@ class CustomerController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
             } else {
                 //validation successfull
                 $customer_id = CommonService::getCidByEmail(
@@ -412,7 +370,7 @@ class CustomerController extends Controller
                             'message' => 'Update Successfull',
                             'status' => '200',
                         ],
-                        Response::HTTP_OK
+                        200
                     );
                 }
             }
@@ -529,7 +487,7 @@ class CustomerController extends Controller
                             'Referral Added Successfully',
                         'status' => '200',
                     ],
-                    Response::HTTP_OK
+                    200
                 );
 
             }
@@ -547,7 +505,7 @@ class CustomerController extends Controller
 
             $validator = Validator::make($request->all(),$rules);
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
             } else {
                 // Mail::to('admin@solutionbuggy.com')->send(
                 //     new BugReport('saikatsb10@gmail.com')
@@ -559,7 +517,7 @@ class CustomerController extends Controller
                             'Bug reported Successfully',
                         'status' => '200',
                     ],
-                    Response::HTTP_OK
+                    200
                 );
 
             }
@@ -583,14 +541,12 @@ class CustomerController extends Controller
            ];
            $validator = Validator::make($request->all(), $rules);
                  if ($validator->fails()) {
-                      // return response()->json($validator->errors()->toJson(),400);
-                       return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+                        return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
                     }
                     else{
                         $res = ReferalService::referal_insert($data);
                     if ($res) {
-                        //return response()->json(["Referral Added Successfully"]);
-                        return response()->json([ 'success' => true,'message' =>'Referral Added Successfully','status' => '200', ], Response::HTTP_OK );
+                                return response()->json([ 'success' => true,'message' =>'Referral Added Successfully'], 200 );
                              }
                     }
             }

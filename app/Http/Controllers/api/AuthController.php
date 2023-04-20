@@ -46,8 +46,7 @@ class AuthController extends Controller {
                     $validator = Validator::make( $request->all(), $rules );
 
                     if ( $validator->fails() ) {
-                        // return response()->json( $validator->errors()->toJson(), 400 );
-                        return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops! Invalid data request.', 'status'=>'220' ], Response::HTTP_OK );
+                        return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400 );
                     } else {
                         $data = AuthService::auth_insert( $firstname, $email, $password, $role, $status );
                         if ( $data ) {
@@ -59,12 +58,12 @@ class AuthController extends Controller {
                                 $reg_url = trim( $request->input( 'reg_url' ) );
                                 $res = AuthService::customer_insert( $firstname, $email, $phone, $role, $howsb, $reg_url );
                                 if ( $res ) {
-                                    $cid = AuthService::get_cid_reg($email);
+                                    $cid = AuthService::get_cid_reg( $email );
                                     $fullname = ProfileService::getFullName( $cid );
 
-                                     //thank you sms after registration complete
+                                    //thank you sms after registration complete
 
-                                     $body = [
+                                    $body = [
                                         'parameters' => [
                                             [
                                                 'name' => 'fullname',
@@ -89,8 +88,8 @@ class AuthController extends Controller {
                                     curl_setopt( $ch, CURLOPT_POSTFIELDS, $msg );
                                     curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
                                     curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
-                                    $result = curl_exec($ch);
-                                    curl_close($ch);
+                                    $result = curl_exec( $ch );
+                                    curl_close( $ch );
 
                                     //registration mail to user
 
@@ -125,8 +124,6 @@ class AuthController extends Controller {
 
                                     AuthService::addTracking( $trackingdata );
 
-                                   
-
                                     //generating token after successfully register to solutionbuggy portal.
 
                                     $jwtarr = [
@@ -135,26 +132,25 @@ class AuthController extends Controller {
                                     ];
 
                                     if ( !$token = JWTAuth::attempt( $jwtarr ) ) {
-                                        return response()->json( [ 'message'=>'Unauthorized User!' ], 210 );
+                                        return response()->json( [ 'message'=>'Unauthorized User!' ], 404 );
 
                                     }
 
                                     return  $this->createNewToken( $token );
 
-                                    //return response()->json( [ 'success' => true, 'message' => 'Customer Registration Successful', 'status'=>'200' ], Response::HTTP_OK );
                                 }
                             } else {
                                 //insert into user
                                 $res = AuthService::user_insert( $firstname, $email, $phone, $role, $status );
                                 if ( $res )
-                                return response()->json( [ 'success' => true, 'message' => 'Admin Registration Successful', 'status'=>'200' ], Response::HTTP_OK );
+                                return response()->json( [ 'success' => true, 'message' => 'Admin Registration Successful' ], 200 );
                             }
 
                         }
 
                     }
                 } else {
-                    return response()->json( [ 'success' => true, 'message' => 'Email is already exist!', 'status'=>'210' ], Response::HTTP_OK );
+                    return response()->json( [ 'success' => true, 'message' => 'Email is already exist!'], 404);
                 }
             }
         } catch ( Exception $e ) {
@@ -187,7 +183,7 @@ class AuthController extends Controller {
                     $validator = Validator::make( $request->all(), $rules );
 
                     if ( $validator->fails() ) {
-                        return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops! Invalid data request.', 'status'=>'220' ], Response::HTTP_OK );
+                        return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!'], 400);
                     } else {
                         $data = AuthService::auth_insert( $firstname, $email, $password, $role, $status );
                         if ( $data ) {
@@ -239,7 +235,7 @@ class AuthController extends Controller {
                     }
                 } else {
                     //existing warning
-                    return response()->json( [ 'success' => true, 'message' => 'Email is already exist!', 'status'=>'210' ], Response::HTTP_OK );
+                    return response()->json( [ 'success' => true, 'message' => 'Email is already exist!'], 400 );
                 }
             }
 
@@ -258,11 +254,11 @@ class AuthController extends Controller {
 
             $validator = Validator::make( $request->all(), $rules );
             if ( $validator->fails() ) {
-                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops! Invalid data request.' ], 220 );
+                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400);
             }
 
             if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
-                return response()->json( [ 'message'=>'Unauthorized User!' ], 210 );
+                return response()->json( [ 'message'=>'Unauthorized User!' ], 404 );
 
             }
 
@@ -282,7 +278,7 @@ class AuthController extends Controller {
 
             $validator = Validator::make( $request->all(), $rules );
             if ( $validator->fails() ) {
-                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops! Invalid data request.' ], 220 );
+                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ],400);
             } else {
                 if ( $email != '' ) {
                     $check_email = AuthService::check_email( $email );
@@ -318,12 +314,10 @@ class AuthController extends Controller {
                             $headers[] = 'Api-Key: Aaa25fd00f22308bba995277ea7baea2b';
                             curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 
-                            $result = curl_exec($ch);
-                            $error = curl_error($ch);
+                            $result = curl_exec( $ch );
+                            $error = curl_error( $ch );
 
                             curl_close( $ch );
-
-
 
                             //sending email otp
                             $email_data[ 'otp' ] = $otp;
@@ -353,24 +347,24 @@ class AuthController extends Controller {
 
                             curl_setopt( $ch2, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', $authorization ) );
                             // Inject the token into the header
-                            curl_setopt($ch2, CURLOPT_CUSTOMREQUEST, 'POST');
-                            curl_setopt($ch2, CURLOPT_POSTFIELDS, $msg);
-                            curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true );
-                            curl_setopt($ch2, CURLOPT_SSL_VERIFYPEER, false );
-                            $result2 = curl_exec($ch2);
-                            curl_close($ch2);
+                            curl_setopt( $ch2, CURLOPT_CUSTOMREQUEST, 'POST' );
+                            curl_setopt( $ch2, CURLOPT_POSTFIELDS, $msg );
+                            curl_setopt( $ch2, CURLOPT_RETURNTRANSFER, true );
+                            curl_setopt( $ch2, CURLOPT_SSL_VERIFYPEER, false );
+                            $result2 = curl_exec( $ch2 );
+                            curl_close( $ch2 );
 
                             $otpData = [ 'password'=>bcrypt( $otp ) ];
                             $row = AuthService::auth_update( $otpData, $auth_id );
 
-                            return response()->json( [ 'message' => 'Otp has been sent successfully', 'res'=>$result, 'err'=>$error, 'row'=>$row ] );
+                            return response()->json( [ 'message' => 'Otp has been sent successfully'],200 );
 
                         } else {
                             //Account not activated
-                            return response()->json( [ 'message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111' ], 210 );
+                            return response()->json([ 'message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111' ], 404 );
                         }
                     } else {
-                        return response()->json( [ 'message' => 'Your Email is not Registered' ], 210 );
+                        return response()->json( [ 'message' => 'Your Email is not Registered' ], 404);
                     }
                 }
             }
@@ -392,10 +386,10 @@ class AuthController extends Controller {
 
             $validator = Validator::make( $data, $rules );
             if ( $validator->fails() ) {
-                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops! Invalid data request.' ], 220 );
+                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400);
             } else {
                 if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
-                    return response()->json( [ 'message'=>'Unauthorized User!' ], 210 );
+                    return response()->json( [ 'message'=>'Unauthorized User!' ], 404 );
 
                 }
 
@@ -419,7 +413,7 @@ class AuthController extends Controller {
 
     public function logout() {
         auth()->logout();
-        return response()->json( [ 'message' => 'User successfully signed out' ] );
+        return response()->json( [ 'message' => 'User successfully signed out' ],200 );
     }
 
     public function refresh() {
@@ -480,11 +474,11 @@ class AuthController extends Controller {
 
             $validator = Validator::make( $request->all(), $rules );
             if ( $validator->fails() ) {
-                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops! Invalid data request.', 'status'=>'220' ], Response::HTTP_OK );
+                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400);
             } else {
                 $res = AuthService::changePassword( bcrypt( $password ), auth()->user()->id );
                 if ( $res )
-                return response()->json( [ 'success' => true, 'message' => 'Password changed Successfully', 'status' => '200', ], Response::HTTP_OK );
+                return response()->json( [ 'success' => true, 'message' => 'Password changed Successfully'],200);
 
             }
 
@@ -505,7 +499,7 @@ class AuthController extends Controller {
 
         $validator = Validator::make( $request->all(), $rules );
         if ( $validator->fails() ) {
-            return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops! Invalid data request.', 'status'=>'220' ], Response::HTTP_OK );
+            return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400);
         } else {
 
             $check_mac = AuthService::check_mac( $mac, $email );
@@ -513,11 +507,11 @@ class AuthController extends Controller {
             if ( $check_mac ) {
                 //token creation
                 if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
-                    return response()->json( [ 'message'=>'Email or Password is incorrect!' ], 210 );
+                    return response()->json( [ 'message'=>'Email or Password is incorrect!' ], 404 );
                 }
                 return  $this->createNewToken( $token );
             } else {
-                return response()->json( [ 'message'=>'Mac Address is not present,Kindly Contact IT Team!' ], 403 );
+                return response()->json( [ 'message'=>'Mac Address is not present,Kindly Contact IT Team!' ], 404 );
             }
         }
 
@@ -532,11 +526,11 @@ class AuthController extends Controller {
 
         } catch ( \Tymon\JWTAuth\Exceptions\TokenExpiredException $e ) {
 
-            return response()->json( [ 'message'=>'Token is expired' ], 500 );
+            return response()->json( [ 'message'=>'Token is expired' ], 403 );
 
         } catch ( \Tymon\JWTAuth\Exceptions\TokenInvalidException $e ) {
 
-            return response()->json( [ 'message'=>'Token is invalid' ], 500 );
+            return response()->json( [ 'message'=>'Token is invalid' ], 401 );
 
         } catch ( \Tymon\JWTAuth\Exceptions\JWTException $e ) {
 

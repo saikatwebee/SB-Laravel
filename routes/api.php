@@ -23,14 +23,10 @@ use Illuminate\Support\Facades\Route;
 
         //success page
         Route::post('/paymentSuccess', [PlaneController::class, 'paymentSuccess'])->withoutMiddleware(['jwt.verify']);
-        Route::get('/api_check', [PlaneController::class, 'api_check'])->withoutMiddleware(['jwt.verify']);
        
-        
-
         //falied page
         Route::post('/paymentFailed', [PlaneController::class, 'paymentFailed'])->withoutMiddleware(['jwt.verify']);
      
-       
         Route::post('/register', [AuthController::class, 'register'])->withoutMiddleware(['jwt.verify']);
         //registration for ads page
         Route::post('/adsRegister', [AuthController::class, 'adsRegister'])->withoutMiddleware(['jwt.verify']);
