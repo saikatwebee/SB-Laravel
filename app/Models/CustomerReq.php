@@ -31,6 +31,7 @@ class CustomerReq extends Model
      * @var string
      */
     protected $table = 'customer_req';
+    public $timestamps = false;
 
     /**
      * @var array

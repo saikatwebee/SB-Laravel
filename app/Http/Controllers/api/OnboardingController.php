@@ -175,8 +175,12 @@ public function sentOtp(){
                 if($request->input('land')!=""){
                     $data['land']=trim($request->input('land'));
                 }
+                if($request->input('assist')!=""){
+                    $data['land']=trim($request->input('assist'));
+                }
                 
-                $res=OnboardingService::update_req($data, $cid);
+                
+                $res=OnboardingService::update_req($data,$cid);
             }
         else{
             //when cid not found then insert data
@@ -199,9 +203,14 @@ public function sentOtp(){
             if($request->input('land')!=""){
                 $data['land']=trim($request->input('land'));
             }
+            if($request->input('assist')!=""){
+                $data['land']=trim($request->input('assist'));
+            }
 
             $res=OnboardingService::add_req($data);
         }
+
+       
 
         if($res){
             //update as prequlified  and step update as 3
@@ -326,23 +335,20 @@ public function sentPrequalificationNotification(){
         $cid = CommonService::getCidByEmail($email);
         $fullname = ProfileService::getFullName($cid);
         $phone = ProfileService::getPhone($cid);
+        $ph = '+91'.$phone;
 
         $req=OnboardingService::getReq($cid);
 
-
-
         $requirement = $req->requirement;
         $ind_id = $req->industries;
-        $industry=OnboardingService::getIndustriesName($ind_id);
+        $industry = OnboardingService::getIndustriesName($ind_id);
 
-
-        $email_data['fullname'] = $fullname;
+        $email_data['fullname']=$fullname;
         Mail::to($email)->send(new PrequalificationMail($email_data));
 
-        //wati sms 
+         
 
-        //thank you sms after registration complete
-
+        //wati sms after becoming prequalified customer
         $body = [
             'parameters' => [
                 [
@@ -366,7 +372,7 @@ public function sentPrequalificationNotification(){
 
         $msg = json_encode( $body );
 
-        $ch = curl_init( 'https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber='.$phone );
+        $ch = curl_init( 'https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber='.$ph);
 
         $authorization = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDczODQzNy0zMDVjLTQ5NDctOGI1MC0zMzllMWRhNjIxNGIiLCJ1bmlxdWVfbmFtZSI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwibmFtZWlkIjoiYWRtaW5Ac29sdXRpb25idWdneS5jb20iLCJlbWFpbCI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwiYXV0aF90aW1lIjoiMDEvMTcvMjAyMiAxMDoyMTo1OCIsImRiX25hbWUiOiI2ODA0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQURNSU5JU1RSQVRPUiIsImV4cCI6MjUzNDAyMzAwODAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.Y_KsRhEnu_NKsxOf0U5HfHRILpnENXShJsgjjTbL5Ss';
         // Prepare the authorisation token
@@ -379,6 +385,8 @@ public function sentPrequalificationNotification(){
         curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
         $result = curl_exec($ch);
         curl_close($ch);
+
+        return response()->json($result);
 
 }
 
