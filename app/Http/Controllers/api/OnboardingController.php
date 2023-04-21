@@ -545,6 +545,10 @@ public function OnboardingPreference(Request $request){
         $data['cid']=$customer_id;
         //$data['relocate_location'] = trim($request->input('relocate_location'));
         $data['relocate'] = trim($request->input('relocate'));
+        if($request->input('relocateLocation')!=""){
+            $data['relocate_location'] = trim($request->input('relocateLocation'));
+        }
+
         $data['startProject'] = trim($request->input('startProject'));
 
         $rules = [
@@ -582,19 +586,28 @@ public function OnboardingPreference(Request $request){
 public function updateOnboardingExperience(Request $request){
     try{
         $data['mycurrentposition'] = trim($request->input('employmentStatus'));
+        if($request->input('empStatus')!=""){
+            $data['consultant_type'] = $request->input('empStatus');
+        }
         $data['country']= trim($request->input('countries'));
         $data['linkedin'] = trim($request->input('linkedIn'));
         $data['phone'] = trim($request->input('phone'));
         $data['city'] = trim($request->input('city'));
-        $data['languages'] = $request->input('languages');
+        $data['languages'] = implode(",",$request->input('languages'));
         $data['date_updated'] = date('Y-m-d H:i:s');
         $data['step']=4;
 
-        $ind_str = $request->input('industries');
-        $ind_arr = explode (",", $ind_str); 
+        // $ind_str = $request->input('industries');
+        // $ind_arr = explode (",", $ind_str); 
 
-        $skill_str = $request->input('skills');
-        $skill_arr = explode (",", $skill_str); 
+        $ind_arr = $request->input('industries');
+
+
+        // $skill_str = $request->input('skills');
+        // $skill_arr = explode (",", $skill_str); 
+
+        $skill_arr = $request->input('skills');
+
 
         $rules = [
             'employmentStatus' => 'required',

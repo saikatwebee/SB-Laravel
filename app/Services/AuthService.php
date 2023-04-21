@@ -53,6 +53,7 @@ class AuthService implements AuthInterface{
     }
 
     public static function customer_insert($firstname,$email,$phone,$customer_type,$howsb,$reg_url){
+        date_default_timezone_set('Asia/Kolkata');
         $step ='1';
         $ip = getenv("REMOTE_ADDR");
         $customer = new Customer;

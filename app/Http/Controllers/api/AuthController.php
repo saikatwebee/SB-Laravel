@@ -442,7 +442,7 @@ class AuthController extends Controller {
 
     public function userProfile() {
         $user = $this->auth_user_profile();
-        return response()->json( $user );
+        return response()->json($user);
     }
 
     public function auth_user_profile() {
