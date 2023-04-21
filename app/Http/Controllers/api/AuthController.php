@@ -27,6 +27,8 @@ class AuthController extends Controller {
             $firstname = trim( $request->input( 'firstname' ) );
             $email = trim( $request->input( 'email' ) );
             $phone = trim( $request->input( 'phone' ) );
+            $ph = '+91'.$phone;
+
             $password = trim( $request->input( 'password' ) );
             $role = trim( $request->input( 'role' ) );
             $status = trim( $request->input( 'status' ) );
@@ -77,7 +79,7 @@ class AuthController extends Controller {
 
                                     $msg = json_encode( $body );
 
-                                    $ch = curl_init( 'https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber='.$phone );
+                                    $ch = curl_init( 'https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber='.$ph);
 
                                     $authorization = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDczODQzNy0zMDVjLTQ5NDctOGI1MC0zMzllMWRhNjIxNGIiLCJ1bmlxdWVfbmFtZSI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwibmFtZWlkIjoiYWRtaW5Ac29sdXRpb25idWdneS5jb20iLCJlbWFpbCI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwiYXV0aF90aW1lIjoiMDEvMTcvMjAyMiAxMDoyMTo1OCIsImRiX25hbWUiOiI2ODA0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQURNSU5JU1RSQVRPUiIsImV4cCI6MjUzNDAyMzAwODAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.Y_KsRhEnu_NKsxOf0U5HfHRILpnENXShJsgjjTbL5Ss';
                                     // Prepare the authorisation token

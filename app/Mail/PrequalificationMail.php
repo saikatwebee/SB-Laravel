@@ -18,6 +18,6 @@ class PrequalificationMail extends Mailable
     }
     public function build()
     {
-        return $this->subject('Registraion Successsfull')->view('Mails.prequalify_mail')->with(['email_data' => $this->email_data]);
+        return $this->subject('SolutionBuggy Onboarding')->view('Mails.prequalify_mail')->with(['email_data' => $this->email_data]);
     }
 }

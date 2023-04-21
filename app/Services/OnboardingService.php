@@ -32,7 +32,9 @@ class OnboardingService implements OnboardingInterface
 {
 
     public static function update_req($data,$cid){
-        $affectedRows = CustomerReq::where(['id'=>$cid])->update($data);
+        //  DB::enableQueryLog();
+        $affectedRows = CustomerReq::where(['cid'=>$cid])->update($data);
+        // return $query = DB::getQueryLog();
         if($affectedRows > 0)
         return true;
     }
