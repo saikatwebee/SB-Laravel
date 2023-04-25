@@ -7,9 +7,10 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class PaymentSuccess extends Mailable
+class PrequalificationMail extends Mailable
 {
     use Queueable, SerializesModels;
+
     public $email_data;
     public function __construct($email_data)
     {
@@ -17,7 +18,6 @@ class PaymentSuccess extends Mailable
     }
     public function build()
     {
-        return $this->subject('Thank You! Your payment is succesful.')->view('Mails.paySuccess')->with(['email_data' => $this->email_data]);
+        return $this->subject('SolutionBuggy Onboarding')->view('Mails.prequalify_mail')->with(['email_data' => $this->email_data]);
     }
 }
-?>

@@ -11,12 +11,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
 use App\Models\CustomerReq;
 use App\Models\DatabaseComplete;
+use App\Models\CustomerIndustries;
+use App\Models\CustomerSkill;
 use App\Services\CommonService;
 use App\Services\AuthService;
 use App\Services\OnboardingService;
 use App\Services\ProfileService;
 use App\Mail\BugReport;
-
+use App\Mail\OtpSent;
+use App\Mail\PrequalificationMail;
 
 class OnboardingController extends Controller
 {
@@ -57,9 +60,10 @@ public function sentOtp(){
 
 						curl_close($ch);
 
-                        //sending email otp
-                        //$email_data['otp'] = $otp;
-                        //Mail::to($email)->send(new otpSent($email_data));
+                         //sending email otp
+                         $email_data['otp'] = $otp;
+                         $email_data['fullname'] = ProfileService::getFullName($customer_id);
+                         Mail::to($email)->send(new OtpSent($email_data));
 
                          //wati sms for otp
 
@@ -71,7 +75,7 @@ public function sentOtp(){
                                   ],
                                   
                                ], 
-                            "template_name" => 'registration_otp', 
+                            "template_name" => 'otp_verification', 
                             "broadcast_name" => "sb-otp" 
                          ]; 
                           
@@ -99,15 +103,18 @@ public function sentOtp(){
         }
         else{
              //Account not activated 
-             return response()->json(['message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111'],210);
+             return response()->json(['message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111'],502);
 
         }
        
     }
     catch(Exception $e){
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
+
+
+
 
     public function otpVerification(Request $request){
         try{
@@ -119,7 +126,7 @@ public function sentOtp(){
 
             $validator = Validator::make($request->all(), $rules);
             if ($validator->fails()) {
-                return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+                return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.'], 400);
             }
             else{
                $res =  OnboardingService::otp_verification($email,$otp);
@@ -127,16 +134,16 @@ public function sentOtp(){
                     //step update as 2
                     $stepData['step'] = 2;
                     OnboardingService::updateStep($stepData,$customer_id);
-                    return response()->json(['message'=>'OTP verified'],Response::HTTP_OK);
+                    return response()->json(['message'=>'OTP verified'],200);
                 }
                 else
-                    return response()->json(['message'=>'Invalid OTP!'],210);
+                    return response()->json(['message'=>'Invalid OTP!'],502);
                 
             }
 
         }
         catch(Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -168,8 +175,12 @@ public function sentOtp(){
                 if($request->input('land')!=""){
                     $data['land']=trim($request->input('land'));
                 }
+                if($request->input('assist')!=""){
+                    $data['land']=trim($request->input('assist'));
+                }
                 
-                $res=OnboardingService::update_req($data, $cid);
+                
+                $res=OnboardingService::update_req($data,$cid);
             }
         else{
             //when cid not found then insert data
@@ -192,9 +203,14 @@ public function sentOtp(){
             if($request->input('land')!=""){
                 $data['land']=trim($request->input('land'));
             }
+            if($request->input('assist')!=""){
+                $data['land']=trim($request->input('assist'));
+            }
 
             $res=OnboardingService::add_req($data);
         }
+
+       
 
         if($res){
             //update as prequlified  and step update as 3
@@ -305,12 +321,73 @@ curl_close($ch);
         //create contact 
         $msg =  $this->createContact($email,$cid);
           
-        return response()->json($msg,Response::HTTP_OK);
+        return response()->json($msg);
     }
     }
     catch(Exception $e){
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
+}
+
+public function sentPrequalificationNotification(){
+     //prequalification mail to user
+        $email = auth()->user()->email;
+        $cid = CommonService::getCidByEmail($email);
+        $fullname = ProfileService::getFullName($cid);
+        $phone = ProfileService::getPhone($cid);
+        $ph = '+91'.$phone;
+
+        $req=OnboardingService::getReq($cid);
+
+        $requirement = $req->requirement;
+        $ind_id = $req->industries;
+        $industry = OnboardingService::getIndustriesName($ind_id);
+
+        $email_data['fullname']=$fullname;
+        Mail::to($email)->send(new PrequalificationMail($email_data));
+
+         
+
+        //wati sms after becoming prequalified customer
+        $body = [
+            'parameters' => [
+                [
+                    'name' => 'fullname',
+                    'value' => $fullname
+                ],
+                [
+                    'name' => 'industry',
+                    'value' => $industry
+                ],
+                [
+                    'name' => 'requirement',
+                    'value' =>  $requirement 
+                ],
+
+
+            ],
+            'template_name' => 'prequalification_done',
+            'broadcast_name' => 'sb-prequalification'
+        ];
+
+        $msg = json_encode( $body );
+
+        $ch = curl_init( 'https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber='.$ph);
+
+        $authorization = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDczODQzNy0zMDVjLTQ5NDctOGI1MC0zMzllMWRhNjIxNGIiLCJ1bmlxdWVfbmFtZSI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwibmFtZWlkIjoiYWRtaW5Ac29sdXRpb25idWdneS5jb20iLCJlbWFpbCI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwiYXV0aF90aW1lIjoiMDEvMTcvMjAyMiAxMDoyMTo1OCIsImRiX25hbWUiOiI2ODA0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQURNSU5JU1RSQVRPUiIsImV4cCI6MjUzNDAyMzAwODAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.Y_KsRhEnu_NKsxOf0U5HfHRILpnENXShJsgjjTbL5Ss';
+        // Prepare the authorisation token
+
+        curl_setopt( $ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', $authorization ) );
+        // Inject the token into the header
+        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $msg );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+        $result = curl_exec($ch);
+        curl_close($ch);
+
+        return response()->json($result);
+
 }
 
 public function createContact($email,$cid){
@@ -468,6 +545,10 @@ public function OnboardingPreference(Request $request){
         $data['cid']=$customer_id;
         //$data['relocate_location'] = trim($request->input('relocate_location'));
         $data['relocate'] = trim($request->input('relocate'));
+        if($request->input('relocateLocation')!=""){
+            $data['relocate_location'] = trim($request->input('relocateLocation'));
+        }
+
         $data['startProject'] = trim($request->input('startProject'));
 
         $rules = [
@@ -483,7 +564,7 @@ public function OnboardingPreference(Request $request){
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
         } else {
             //validation successfull
            $res = ProfileService::insertOnboardingPreference($data);
@@ -498,26 +579,35 @@ public function OnboardingPreference(Request $request){
         }
     }
     catch (Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
 
 public function updateOnboardingExperience(Request $request){
     try{
         $data['mycurrentposition'] = trim($request->input('employmentStatus'));
+        if($request->input('empStatus')!=""){
+            $data['consultant_type'] = $request->input('empStatus');
+        }
         $data['country']= trim($request->input('countries'));
         $data['linkedin'] = trim($request->input('linkedIn'));
         $data['phone'] = trim($request->input('phone'));
         $data['city'] = trim($request->input('city'));
-        $data['languages'] = $request->input('languages');
+        $data['languages'] = implode(",",$request->input('languages'));
         $data['date_updated'] = date('Y-m-d H:i:s');
         $data['step']=4;
 
-        $ind_str = $request->input('industries');
-        $ind_arr = explode (",", $ind_str); 
+        // $ind_str = $request->input('industries');
+        // $ind_arr = explode (",", $ind_str); 
 
-        $skill_str = $request->input('skills');
-        $skill_arr = explode (",", $skill_str); 
+        $ind_arr = $request->input('industries');
+
+
+        // $skill_str = $request->input('skills');
+        // $skill_arr = explode (",", $skill_str); 
+
+        $skill_arr = $request->input('skills');
+
 
         $rules = [
             'employmentStatus' => 'required',
@@ -530,7 +620,7 @@ public function updateOnboardingExperience(Request $request){
         $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
-            return response()->json($validator->errors()->toJson(), 400);
+            return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops! Invalid request!'], 400);
         } else {
             //validation successfull
 
@@ -568,7 +658,7 @@ public function updateOnboardingExperience(Request $request){
         }
     }
     catch (Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
 
@@ -603,7 +693,7 @@ public function getInfo(){
         return response()->json($data);
     }
     catch (Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 
 }
@@ -720,11 +810,11 @@ public function OnboardingPaymentNotifySS(){
 // 	  // var_dump($result);
 // 	  curl_close($ch);
 
-        return response()->json(['message'=>'Paymennt Notification sent successfully'],Response::HTTP_OK);
+        return response()->json(['message'=>'Paymennt Notification sent successfully'],200);
   
     }
     catch (Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
 
@@ -841,11 +931,11 @@ public function OnboardingPaymentNotifySP(){
 // 	  // var_dump($result);
 // 	  curl_close($ch);
 
-        return response()->json(['message'=>'Paymennt Notification sent successfully'],Response::HTTP_OK);
+        return response()->json(['message'=>'Paymennt Notification sent successfully'],200);
   
     }
     catch (Exception $e) {
-        return response()->json(['message' => $e->getMessage()], 404);
+        return response()->json(['message' => $e->getMessage()], 502);
     }
 }
 

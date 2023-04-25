@@ -539,6 +539,12 @@
                                                                                                                 style="color: #080808; font-family: Arial, helvetica, sans-serif; font-size: 16px;">Dear
                                                                                                                 <?= $email_data['fullname'] ?></span>
                                                                                                         </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                            <span
+                                                                                                                style="color: #080808; font-family: Arial, helvetica, sans-serif; font-size: 16px;">Warm
+                                                                                                                greetings,</span>
+                                                                                                        </p>
                                                                                                     </div>
                                                                                                 </td>
                                                                                             </tr>
@@ -560,13 +566,53 @@
                                                                                                     <div>
                                                                                                         <p
                                                                                                             style="margin: 0;">
-                                                                                                            <strong><?= $email_data['otp'] ?></strong>
-                                                                                                            is your OTP
-                                                                                                            to activate
-                                                                                                            SolutionBuggy
-                                                                                                            account
-                                                                                                            &amp; get
+                                                                                                            <span
+                                                                                                                style="font-family: Arial, helvetica, sans-serif;">Thank
+                                                                                                                you for
+                                                                                                                registering.</span>
+                                                                                                        </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                             </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                            <span
+                                                                                                                style="font-family: Arial, helvetica, sans-serif;">SolutionBuggy
+                                                                                                                is glad
+                                                                                                                to have
+                                                                                                                you on
+                                                                                                                board,
+                                                                                                                we can’t
+                                                                                                                wait to
+                                                                                                                start
+                                                                                                                your
+                                                                                                                successful
+                                                                                                                business
+                                                                                                                journey.</span>
+                                                                                                        </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                             </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                            To
+                                                                                                            understand
                                                                                                             your
+                                                                                                            requirement
+                                                                                                            better, we
+                                                                                                            request you
+                                                                                                            to submit
+                                                                                                            the
+                                                                                                            appropriate
+                                                                                                            details
+                                                                                                            &amp;
+                                                                                                            complete the
+                                                                                                            onboarding
+                                                                                                            process in
+                                                                                                            order to get
+                                                                                                            your
+                                                                                                            manufacturing
+                                                                                                            related
                                                                                                             requirement
                                                                                                             addressed.
                                                                                                         </p>

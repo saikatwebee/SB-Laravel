@@ -477,7 +477,7 @@
                                                                                             <tr>
                                                                                                 <td class="r9-i"
                                                                                                     style="font-size: 0px; line-height: 0px;">
-                                                                                                    <img src="https://img.mailinblue.com/4029713/images/content_library/original/6423ebc731a55d3d3a3e2617.jpg"
+                                                                                                    <img src="https://img.mailinblue.com/4029713/images/content_library/original/6310a3cfd92b944248099100.jpg"
                                                                                                         width="570"
                                                                                                         border="0"
                                                                                                         class=""
@@ -539,6 +539,35 @@
                                                                                                                 style="color: #080808; font-family: Arial, helvetica, sans-serif; font-size: 16px;">Dear
                                                                                                                 <?= $email_data['fullname'] ?></span>
                                                                                                         </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                            <span
+                                                                                                                style="color: #080808; font-family: Arial, helvetica, sans-serif; font-size: 16px;">Warm
+                                                                                                                greetings</span>
+                                                                                                        </p>
+                                                                                                    </div>
+                                                                                                </td>
+                                                                                            </tr>
+                                                                                        </table>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td class="r2-c" align="center">
+                                                                                        <table cellspacing="0"
+                                                                                            cellpadding="0" border="0"
+                                                                                            role="presentation"
+                                                                                            width="100%" class="r3-o"
+                                                                                            style="border-collapse: separate; border-radius: 10px; table-layout: fixed; width: 100%;">
+                                                                                            <tr>
+                                                                                                <td align="left"
+                                                                                                    valign="top"
+                                                                                                    class="r11-i nl2go-default-textstyle"
+                                                                                                    style="color: #080808; font-family: arial,helvetica,sans-serif; font-size: 15px; line-height: 1.5; word-break: break-word; border-radius: 10px; padding-bottom: 5px; padding-top: 5px; text-align: left;">
+                                                                                                    <div>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                            <strong>CONGRATULATIONS!!!</strong>
+                                                                                                        </p>
                                                                                                     </div>
                                                                                                 </td>
                                                                                             </tr>
@@ -560,15 +589,55 @@
                                                                                                     <div>
                                                                                                         <p
                                                                                                             style="margin: 0;">
-                                                                                                            <strong><?= $email_data['otp'] ?></strong>
-                                                                                                            is your OTP
-                                                                                                            to activate
+                                                                                                            Your
                                                                                                             SolutionBuggy
-                                                                                                            account
-                                                                                                            &amp; get
-                                                                                                            your
-                                                                                                            requirement
-                                                                                                            addressed.
+                                                                                                            account is
+                                                                                                            now
+                                                                                                            activated
+                                                                                                            successfully.
+                                                                                                        </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                             </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                            We have
+                                                                                                            found you
+                                                                                                            the right
+                                                                                                            &amp;
+                                                                                                            relevant
+                                                                                                            consultants
+                                                                                                            for your
+                                                                                                            requirement.
+                                                                                                            SolutionBuggy
+                                                                                                            expert team
+                                                                                                            is eagerly
+                                                                                                            waiting for
+                                                                                                            you to
+                                                                                                            onboard in
+                                                                                                            order to
+                                                                                                            have the
+                                                                                                            project
+                                                                                                            discussions.
+                                                                                                        </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                             </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                            To get
+                                                                                                            started, our
+                                                                                                            project
+                                                                                                            executive
+                                                                                                            will be
+                                                                                                            contacting
+                                                                                                            you at the
+                                                                                                            earliest to
+                                                                                                            guide you
+                                                                                                            the further
+                                                                                                            process
+                                                                                                            &amp; the
+                                                                                                            benefits.
                                                                                                         </p>
                                                                                                     </div>
                                                                                                 </td>

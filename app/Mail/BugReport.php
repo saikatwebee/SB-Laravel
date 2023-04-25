@@ -19,7 +19,7 @@ class BugReport extends Mailable
     }
 
     public function build(){
-        return $this->subject('Bug Report')->view('mails.bug_report');
+        return $this->subject('Bug Report')->view('Mails.bug_report');
     }
 }
 ?>

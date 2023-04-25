@@ -194,7 +194,7 @@ class PlaneController extends Controller
 				return response()->json($data);
              
          } catch (Exception $e) {
-             return response()->json(['message' => $e->getMessage()], 404);
+             return response()->json(['message' => $e->getMessage()], 502);
          }
     }
 
@@ -420,13 +420,16 @@ class PlaneController extends Controller
 				  $result = curl_exec($ch);
 				  curl_close($ch);
 
+				  //wati sms for payment sucess
+
+
 					return View('payment_success',['jsondata' => json_encode($data)]);
 
 				}
 			}
 		}
 		catch (Exception $e) {
-			return response()->json(['message' => $e->getMessage()], 404);
+			return response()->json(['message' => $e->getMessage()], 502);
 		}
 
 	}
@@ -623,27 +626,18 @@ class PlaneController extends Controller
 			  $result = curl_exec($ch);
 			  curl_close($ch);
 						 
-
+						  //wati sms for payment failed
 
 
 					}
 					return View('payment_failed',['data' => json_encode($data)]);
 				}
 		catch (Exception $e) {
-			return response()->json(['message' => $e->getMessage()], 404);
+			return response()->json(['message' => $e->getMessage()], 502);
 		}
 
 	}
 
-	public function api_check(){
-		$data['subscriberplane_id']='26';
-		$data['exp_plane'] = '2025-09-12';
-		$data['date_updated'] =  date('Y-m-d H:i:s');
-		$data['problem']=0;
-		$data['apply']=6;
-		$d=PaymentService::updateCustomerPlane($data,'29');
-		var_dump($d);
-	}
 
 
 	

@@ -42,7 +42,7 @@ class InvoiceController extends Controller
             return InvoiceService::getInvoice($inv_id);
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -61,19 +61,10 @@ class InvoiceController extends Controller
             ];
             $res = InvoiceService::AddInvoice($data);
             if ($res) {
-                return response()->json(
-                    [
-                        'success' => true,
-                        'message' =>
-                            'Invoice Added Successfully',
-                        'status' => '200',
-                    ],
-                    Response::HTTP_OK
-                );
-
+                return response()->json(['success' => true,'message' =>'Invoice Added Successfully'],200);
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -86,7 +77,7 @@ class InvoiceController extends Controller
              return response()->json($plan);
              
          } catch (Exception $e) {
-             return response()->json(['message' => $e->getMessage()], 404);
+             return response()->json(['message' => $e->getMessage()], 502);
          }
      }
 
@@ -107,32 +98,18 @@ class InvoiceController extends Controller
             if ($cid_exist) {
                 $res = InvoiceService::updatePlandetails($data, $customer_id);
                 if ($res){
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Updated Successfully',
-                            'status' => '200',
-                        ],
-                        Response::HTTP_OK
-                    );
+                    return response()->json(['success' => true,'message' => 'Updated Successfully'],200);
                 }
             } else {
                 $data['customer_id'] = $customer_id;
                 $res = InvoiceService::AddPlandetails($data);
                 if ($res){
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Added Successfully',
-                            'status' => '200',
-                        ],
-                        Response::HTTP_OK
-                    );
+                    return response()->json(['success' => true,'message' => 'Added Successfully'],200);
                 }
             }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -147,17 +124,10 @@ class InvoiceController extends Controller
              $data['state'] = trim($request->input('state'));
              $res = InvoiceService::updateInvoiceTable($data,$inv_id);
              if ($res) {
-                return response()->json(
-                    [
-                        'success' => true,
-                        'message' => 'Updated Successfully',
-                        'status' => '200',
-                    ],
-                    Response::HTTP_OK
-                );
+                return response()->json(['success' => true,'message' => 'Updated Successfully'],200);
             }             
          } catch (Exception $e) {
-             return response()->json(['message' => $e->getMessage()], 404);
+             return response()->json(['message' => $e->getMessage()], 502);
          }
      }
 
@@ -169,7 +139,7 @@ class InvoiceController extends Controller
               return InvoiceService::getPlandetails($plan_id);
               
           } catch (Exception $e) {
-              return response()->json(['message' => $e->getMessage()], 404);
+              return response()->json(['message' => $e->getMessage()], 502);
           }
       }
     

@@ -3,22 +3,19 @@
 namespace App\Http\Controllers\api;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\api\CustomerController;
+use Illuminate\Support\Facades\Mail;
 use App\Mail\PostProject;
 use App\Mail\PostProjectInfo;
-use App\Mail\awardIndustryProject;
+use App\Mail\AwardIndustryProject;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Problem;
-//use APP\Models\Customer;
-// use APP\Models\Industry;
-// use APP\Models\Category;
 use App\Services\CommonService;
 use App\Services\ProblemService;
 use App\Services\ProfileService;
-use Illuminate\Support\Facades\Mail;
-// use Illuminate\Database\Eloquent\Builder;
+
 use Illuminate\Support\Facades\DB;
 use App\Models\Proposal;
 
@@ -56,7 +53,7 @@ class ProblemController extends Controller
             $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
-                return response()->json($validator->errors()->toJson(), 400);
+                return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops Invalid data request!'], 400);
             } else {
                 //validation on success
                 $res = ProblemService::postProject($data);
@@ -91,52 +88,20 @@ class ProblemController extends Controller
                             if ($problem_count > 0) {
                                 //substract problem count
                                 ProblemService::subProblemCount($customer_id);
-                                return response()->json(
-                                    [
-                                        'success' => true,
-                                        'message' =>
-                                            'Project has been Posted Successfully',
-                                        'status' => '200',
-                                    ],
-                                    Response::HTTP_OK
-                                );
+                                return response()->json(['success' => true,'message' =>'Project has been Posted Successfully','status' => '200',],200);
                             } else {
-                                return response()->json(
-                                    [
-                                        'success' => true,
-                                        'message' =>
-                                            "Don't have enough credit! Buy Membership to make this Project live",
-                                        'status' => '210',
-                                    ],
-                                    Response::HTTP_OK
-                                );
+                                return response()->json(['success' => true,'message' =>"Don't have enough credit! Buy Membership to make this Project live",'status' => '210',],200);
                             }
                         } else {
-                            return response()->json(
-                                [
-                                    'success' => true,
-                                    'message' =>
-                                        'plan expired! Buy Membership to make this Project live',
-                                    'status' => '220',
-                                ],
-                                Response::HTTP_OK
-                            );
+                            return response()->json(['success' => true,'message' =>'plan expired! Buy Membership to make this Project live','status' => '220',],200);
                         }
                     } else {
-                        return response()->json(
-                            [
-                                'success' => true,
-                                'message' =>
-                                    'Buy Membership to make this Project live',
-                                'status' => '230',
-                            ],
-                            Response::HTTP_OK
-                        );
+                        return response()->json(['success' => true,'message' =>'Buy Membership to make this Project live','status' => '230',],200);
                     }
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
     //SS-list of notlive project  
@@ -489,14 +454,7 @@ public function notawardedExecution(){
                     $problem_id
                 );
                 if ($res) {
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Updated Successfully',
-                            'status' => '200',
-                        ],
-                        Response::HTTP_OK
-                    );
+                    return response()->json(['success' => true,'message' => 'Updated Successfully'],200);
                 }
             } else {
                 $data['action'] = 5;
@@ -505,18 +463,12 @@ public function notawardedExecution(){
                 $data['date_added'] = date('Y-m-d H:i:s');
                 $res = ProblemService::addProblemToProvider($data);
                 if ($res) {
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Added Successfully',
-                            'status' => '200',
-                        ],
-                        Response::HTTP_OK
+                    return response()->json(['success' => true,'message' => 'Added Successfully'],200
                     );
                 }
             }
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -535,33 +487,19 @@ public function notawardedExecution(){
                 if($chk) {
                     $res = ProblemService::updateProblemToProvider($data, $customer_id, $problem_id);
                     if ($res) {
-                        return response()->json(
-                            [
-                                'success' => true,
-                                'message' => 'Updated Successfull',
-                                'status' => '200',
-                            ],
-                            Response::HTTP_OK
-                        );
+                        return response()->json(['success' => true,'message' => 'Updated Successfull'],200);
                     }
                 } else {
                     $data['customer_id'] = $customer_id;
                     $data['problem_id'] = $problem_id;
                     $res = ProblemService::addProblemToProvider($data);
                     if ($res) {
-                        return response()->json(
-                            [
-                                'success' => true,
-                                'message' => 'Updated Successfull',
-                                'status' => '200',
-                            ],
-                            Response::HTTP_OK
-                        );
+                        return response()->json(['success' => true,'message' => 'Updated Successfull'],200);
                     }
                 }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -581,33 +519,19 @@ public function notawardedExecution(){
                 if($chk) {
                     $res = ProblemService::updateProblemToProvider($data, $customer_id, $problem_id);
                     if ($res) {
-                        return response()->json(
-                            [
-                                'success' => true,
-                                'message' => 'Updated Successfully',
-                                'status' => '200',
-                            ],
-                            Response::HTTP_OK
-                        );
+                        return response()->json(['success' => true,'message' => 'Updated Successfully'],200);
                     }
                 } else {
                     $data['customer_id'] = $customer_id;
                     $data['problem_id'] = $problem_id;
                     $res = ProblemService::addProblemToProvider($data);
                     if ($res) {
-                        return response()->json(
-                            [
-                                'success' => true,
-                                'message' => 'Updated Successfully',
-                                'status' => '200',
-                            ],
-                            Response::HTTP_OK
-                        );
+                        return response()->json(['success' => true,'message' => 'Updated Successfully'],200);
                     }
                 }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -635,23 +559,14 @@ public function notawardedExecution(){
                     //$email_data['proTitle'] = ProblemService::getprotitle($problem_id);
 
                     //sending email 
-                  //  Mail::to($email_data['iemail'])->send(new awardIndustryProject($email_data));
+                  //  Mail::to($email_data['iemail'])->send(new AwardIndustryProject($email_data));
                     
-                    return response()->json(
-                        [
-                            'success' => true,
-                            'message' => 'Awarded Successfully',
-                            'status' => '200',
-                            'cid'  => $cid,
-                            'email_data' => $email_data
-                        ],
-                        Response::HTTP_OK
-                    );
+                    return response()->json(['success' => true,'message' => 'Awarded Successfully','cid'  => $cid,'email_data' => $email_data],200);
                 }
            }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -669,18 +584,11 @@ public function notawardedExecution(){
             );
             $res = ProblemService::addReferProject($data);
             if ($res) {
-                return response()->json(
-                    [
-                        'success' => true,
-                        'message' => 'Updated Successfully',
-                        'status' => '200',
-                    ],
-                    Response::HTTP_OK
-                );
+                return response()->json(['success' => true,'message' => 'Updated Successfully'],200);
             }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -692,7 +600,7 @@ public function notawardedExecution(){
              return ProblemService::getProject($p_id);
              
          } catch (Exception $e) {
-             return response()->json(['message' => $e->getMessage()], 404);
+             return response()->json(['message' => $e->getMessage()], 502);
          }
      }
 
@@ -724,7 +632,7 @@ public function notawardedExecution(){
             return ProblemService::getProfile($c_id);
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -735,18 +643,11 @@ public function notawardedExecution(){
             $c_id = trim($request->input('c_id'));
             $res =  ProblemService::subApplyCount($c_id);
             if ($res) {
-                return response()->json(
-                    [
-                        'success' => true,
-                        'message' => 'Updated Successfully',
-                        'status' => '200',
-                    ],
-                    Response::HTTP_OK
-                );
+                return response()->json(['success' => true,'message' => 'Updated Successfully',],200);
             }
             
         } catch (Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -756,7 +657,7 @@ public function notawardedExecution(){
           $dropdown =  ProblemService::getCategoryDependent($ind_id);
             return response()->json($dropdown);
         } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
     public function skillDepDropdown(Request $request){
@@ -765,7 +666,7 @@ public function notawardedExecution(){
             $dropdown =  ProblemService::getSkillDependent($ind_id);
             return response()->json($dropdown);
         } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -775,7 +676,7 @@ public function notawardedExecution(){
             $industries =  CommonService::getIndById($ind_id);
             return response()->json($industries);
         } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -785,7 +686,7 @@ public function notawardedExecution(){
             $sub_cat =  CommonService::getCatById($subCat);
             return response()->json($sub_cat);
         } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -795,7 +696,7 @@ public function notawardedExecution(){
             $skill =  CommonService::getSkillById($skill_id);
             return response()->json($skill);
         } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
 
@@ -813,8 +714,7 @@ public function notawardedExecution(){
            ];
            $validator = Validator::make($request->all(), $rules);
                  if ($validator->fails()) {
-                      // return response()->json($validator->errors()->toJson(),400);
-                       return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops! Invalid data request.','status'=>'220'], Response::HTTP_OK);
+                     return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops Invalid data request!'], 200);
                     }
                     else{
                         $uploaded_file = $this->proposalUpload($request->file('proposal_doc'), $data['cid']);
@@ -829,7 +729,7 @@ public function notawardedExecution(){
 
         }
         catch(Exception $e){
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 502);
         }
     }
     public function proposalUpload($file, $customer_id)
