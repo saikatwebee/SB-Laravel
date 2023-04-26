@@ -56,8 +56,9 @@ class ProblemController extends Controller
                 return response()->json(['info'=>$validator->errors()->toJson(),'message'=>'Oops Invalid data request!'], 400);
             } else {
                 //validation on success
-                $res = ProblemService::postProject($data);
-                if ($res) {
+                $pid = ProblemService::postProject($data);
+               
+                if ($pid > 0) {
                     //Email sending code ...
                     //mail to industry
                     // Mail::to(auth()->user()->email)->send(
@@ -88,15 +89,15 @@ class ProblemController extends Controller
                             if ($problem_count > 0) {
                                 //substract problem count
                                 ProblemService::subProblemCount($customer_id);
-                                return response()->json(['success' => true,'message' =>'Project has been Posted Successfully','status' => '200',],200);
+                                return response()->json(['success' => true,'message' =>'Project has been Posted Successfully','status' => '200','pid'=>$pid],200);
                             } else {
-                                return response()->json(['success' => true,'message' =>"Don't have enough credit! Buy Membership to make this Project live",'status' => '210',],200);
+                                return response()->json(['success' => true,'message' =>"Don't have enough credit! Buy Membership to make this Project live",'status' => '210','pid'=>$pid],200);
                             }
                         } else {
-                            return response()->json(['success' => true,'message' =>'plan expired! Buy Membership to make this Project live','status' => '220',],200);
+                            return response()->json(['success' => true,'message' =>'plan expired! Buy Membership to make this Project live','status' => '220','pid'=>$pid],200);
                         }
                     } else {
-                        return response()->json(['success' => true,'message' =>'Buy Membership to make this Project live','status' => '230',],200);
+                        return response()->json(['success' => true,'message' =>'Buy Membership to make this Project live','status' => '230','pid'=>$pid],200);
                     }
                 }
             }
@@ -209,19 +210,19 @@ class ProblemController extends Controller
         $customer_id = CommonService::getCidByEmail(auth()->user()->email);
        
         //DB::enableQueryLog();
-        $res = DB::table('problem_to_provider')
-			->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
-            ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
-            ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
-            ->select(
+        $res = DB::table('problem')
+                 //->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+			    ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+                ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+                ->select(
                 'problem.id as projectId',
                 'problem.describe',
                 'industries.name as industry',
                 'category.name as category',
                 'problem.location',
                 'problem.date_added'
-            )
-            ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 0])
+                )
+           //->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 0])
             ->where('problem.execution', '<', '2')
             ->where('problem.action','1')
 			->get();
@@ -309,10 +310,10 @@ class ProblemController extends Controller
  //SP-latest project (Execution)
 
  public function latestExecution(){
-    $customer_id = CommonService::getCidByEmail(auth()->user()->email);
+    //$customer_id = CommonService::getCidByEmail(auth()->user()->email);
 
-    $res = DB::table('problem_to_provider')
-        ->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+    $res = DB::table('problem')
+        //->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
         ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
         ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
         ->select(
@@ -323,8 +324,8 @@ class ProblemController extends Controller
             'problem.location',
             'problem.date_added'
         )
-        ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 0])
-        ->where('problem_to_provider.shortlist','0')
+       // ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 0])
+      //  ->where('problem_to_provider.shortlist','0')
         ->where('problem.execution', '2')
         ->where('problem.action','1')
         ->get();
@@ -813,6 +814,18 @@ public function notawardedExecution(){
             $res=ProblemService::browse_ss($sub_cat,$industries,$customer_id);
             return response()->json($res);
         }
+    } 
+
+    public function getProviderDetails(Request $request){
+       try {
+            $cid = CommonService::getCidByEmail(auth()->user()->email);
+            $pid = trim($request->input('problem_id'));
+            $res=ProblemService::get_provider($pid,$cid);
+            return response()->json($res);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 502);
+        }
+
     }
 
 

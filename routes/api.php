@@ -192,6 +192,10 @@ use Illuminate\Support\Facades\Route;
         Route::post('/updateOnboardingExperience', [OnboardingController::class, 'updateOnboardingExperience']);
         Route::get('/OnboardingPaymentNotifySP', [OnboardingController::class, 'OnboardingPaymentNotifySP']);
 
+        //Get problem to provider details
+        Route::post('/getProviderDetails', [ProblemController::class, 'getProviderDetails']);
+       
+
 
         });
 
@@ -272,7 +276,7 @@ use Illuminate\Support\Facades\Route;
                 //otp verification for onboarding step 1
                 Route::post('/otpVerification',[OnboardingController::class, 'otpVerification']);
                 
-
+                
 
                
 
