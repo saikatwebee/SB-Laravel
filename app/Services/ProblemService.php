@@ -37,6 +37,7 @@ interface ProblemInterface
     public static function browse_ss($sub_cat,$industries,$customer_id);
     public static function get_provider($pid,$cid);
     public static function get_awarded_count($cid);
+    public static function get_complted_count($cid);
 }
 
 class ProblemService implements ProblemInterface{
@@ -315,6 +316,21 @@ class ProblemService implements ProblemInterface{
         else
         return 0;
        
+    }
+
+    public static function get_complted_count($cid){
+        $res = DB::table('problem')
+            ->select('*')
+            ->where('customer_id',$cid,)
+            ->whereIn('action', [2,4,5])
+            ->get();
+
+        if($res){
+            return $res->count();
+        }
+        else{
+            return 0;
+        }
     }
    
 }

@@ -195,8 +195,7 @@ use Illuminate\Support\Facades\Route;
         //Get problem to provider details
         Route::post('/getProviderDetails', [ProblemController::class, 'getProviderDetails']);
        
-        //get awarded project count
-        Route::get('/awardedProjectCount', [OnboardingController::class, 'awardedProjectCount']);
+        
         
 
 
