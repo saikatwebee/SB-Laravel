@@ -15,6 +15,7 @@ use App\Models\Problem;
 use App\Services\CommonService;
 use App\Services\ProblemService;
 use App\Services\ProfileService;
+use App\Services\InvoiceService;
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Proposal;
@@ -520,6 +521,18 @@ public function notawardedExecution(){
                 if($chk) {
                     $res = ProblemService::updateProblemToProvider($data, $customer_id, $problem_id);
                     if ($res) {
+                        
+                        $check=InvoiceService::verifyCId($customer_id);
+                        //plan check
+                        if($check){
+                            
+                            //check execution
+                            $project =  ProblemService::getProject($problem_id);
+                            if($project->execution < 2)
+                            //substract apply credit by 1
+                                $sub =  ProblemService::subApplyCount($customer_id);
+                        }
+
                         return response()->json(['success' => true,'message' => 'Updated Successfully'],200);
                     }
                 } else {
@@ -527,7 +540,17 @@ public function notawardedExecution(){
                     $data['problem_id'] = $problem_id;
                     $res = ProblemService::addProblemToProvider($data);
                     if ($res) {
-                        return response()->json(['success' => true,'message' => 'Updated Successfully'],200);
+                        $check=InvoiceService::verifyCId($customer_id);
+                        //plan check
+                        if($check){
+                            
+                            //check execution
+                            $project =  ProblemService::getProject($problem_id);
+                            if($project->execution < 2)
+                            //substract apply credit by 1
+                                $sub =  ProblemService::subApplyCount($customer_id);
+                        }
+                        return response()->json(['success' => true,'message' => 'Added Successfully'],200);
                     }
                 }
             
@@ -826,6 +849,16 @@ public function notawardedExecution(){
             return response()->json(['message' => $e->getMessage()], 502);
         }
 
+    }
+
+    public function awardedProjectCount(){
+        try {
+            $cid = CommonService::getCidByEmail(auth()->user()->email);
+            $num=ProblemService::get_awarded_count($cid);
+            return response()->json($num);
+        } catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 502);
+        }
     }
 
 

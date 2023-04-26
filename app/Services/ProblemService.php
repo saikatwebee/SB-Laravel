@@ -36,7 +36,7 @@ interface ProblemInterface
     public static function browse_sp($sub_cat,$industries);
     public static function browse_ss($sub_cat,$industries,$customer_id);
     public static function get_provider($pid,$cid);
-   
+    public static function get_awarded_count($cid);
 }
 
 class ProblemService implements ProblemInterface{
@@ -72,9 +72,10 @@ class ProblemService implements ProblemInterface{
     }
 
     public static function subApplyCount($customer_id){
-        $apply_count = CustomerPlane::select("apply")->where('customer_id',$customer_id)->first();
-        if($apply_count->apply > 0){
-            $apply = $apply_count->apply - 1;
+        $data = CustomerPlane::select("apply")->where('customer_id',$customer_id)->first();
+        $apply_count = $data->apply;
+        if($apply_count > 0){
+            $apply = $apply_count - 1;
             $affectedRows = CustomerPlane::where("customer_id",$customer_id)->update(['apply'=>$apply]);
             if($affectedRows > 0)
             return true;
@@ -301,6 +302,19 @@ class ProblemService implements ProblemInterface{
         ->first();
 
         return $data;
+    }
+
+    public static function get_awarded_count($cid){
+        $data = DB::table('problem_to_provider')
+        ->select('*')
+        ->where(['action'=>2,'customer_id'=>$cid])
+        ->get();
+
+       if($data)
+        return $data->count();
+        else
+        return 0;
+       
     }
    
 }
