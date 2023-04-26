@@ -216,7 +216,7 @@ class ProblemController extends Controller
                 ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
                 ->select(
                 'problem.id as projectId',
-                'problem.describe',
+                'problem.title',
                 'industries.name as industry',
                 'category.name as category',
                 'problem.location',
@@ -225,6 +225,7 @@ class ProblemController extends Controller
            //->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 0])
             ->where('problem.execution', '<', '2')
             ->where('problem.action','1')
+            ->orderBy('problem.id','desc')
 			->get();
 
         return response()->json($res);
@@ -242,7 +243,7 @@ class ProblemController extends Controller
             ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
             ->select(
                 'problem.id as projectId',
-                'problem.describe',
+                'problem.title',
                 'industries.name as industry',
                 'category.name as category',
                 'problem.location',
@@ -251,6 +252,7 @@ class ProblemController extends Controller
             ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 1])
             ->where('problem.execution', '<', '2')
             ->where('problem.action','1')
+            ->orderBy('problem.id','desc')
 			->get();
 
         return response()->json($res);
@@ -267,7 +269,7 @@ class ProblemController extends Controller
             ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
             ->select(
                 'problem.id as projectId',
-                'problem.describe',
+                'problem.title',
                 'industries.name as industry',
                 'category.name as category',
                 'problem.location',
@@ -276,6 +278,7 @@ class ProblemController extends Controller
             ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 2])
             ->where('problem.execution', '<', '2')
             ->where('problem.action','2')
+            ->orderBy('problem.id','desc')
 			->get();
 
         return response()->json($res);
@@ -292,7 +295,7 @@ class ProblemController extends Controller
             ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
             ->select(
                 'problem.id as projectId',
-                'problem.describe',
+                'problem.title',
                 'industries.name as industry',
                 'category.name as category',
                 'problem.location',
@@ -302,6 +305,7 @@ class ProblemController extends Controller
             ->where('problem_to_provider.action','!=', '2')
             ->where('problem.execution', '<', '2')
             ->where('problem.action','2')
+            ->orderBy('problem.id','desc')
 			->get();
 
         return response()->json($res);
@@ -318,7 +322,7 @@ class ProblemController extends Controller
         ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
         ->select(
             'problem.id as projectId',
-            'problem.describe',
+            'problem.title',
             'industries.name as industry',
             'category.name as category',
             'problem.location',
@@ -328,6 +332,7 @@ class ProblemController extends Controller
       //  ->where('problem_to_provider.shortlist','0')
         ->where('problem.execution', '2')
         ->where('problem.action','1')
+        ->orderBy('problem.id','desc')
         ->get();
 
     return response()->json($res);
@@ -344,7 +349,7 @@ public function appliedExecution(){
         ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
         ->select(
             'problem.id as projectId',
-            'problem.describe',
+            'problem.title',
             'industries.name as industry',
             'category.name as category',
             'problem.location',
@@ -354,6 +359,7 @@ public function appliedExecution(){
         ->where('problem_to_provider.shortlist','0')
         ->where('problem.execution', '2')
         ->where('problem.action','1')
+        ->orderBy('problem.id','desc')
         ->get();
 
     return response()->json($res);
@@ -370,7 +376,7 @@ public function shortlistedExecution(){
         ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
         ->select(
             'problem.id as projectId',
-            'problem.describe',
+            'problem.title',
             'industries.name as industry',
             'category.name as category',
             'problem.location',
@@ -380,6 +386,7 @@ public function shortlistedExecution(){
         ->where('problem_to_provider.shortlist','1')
         ->where('problem.execution','2')
         ->where('problem.action','1')
+        ->orderBy('problem.id','desc')
         ->get();
 
     return response()->json($res);
@@ -396,7 +403,7 @@ public function awardedExecution(){
         ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
         ->select(
             'problem.id as projectId',
-            'problem.describe',
+            'problem.title',
             'industries.name as industry',
             'category.name as category',
             'problem.location',
@@ -405,6 +412,7 @@ public function awardedExecution(){
         ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 2])
         ->where('problem.execution','2')
         ->where('problem.action','2')
+        ->orderBy('problem.id','desc')
         ->get();
 
     return response()->json($res);
@@ -421,7 +429,7 @@ public function notawardedExecution(){
         ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
         ->select(
             'problem.id as projectId',
-            'problem.describe',
+            'problem.title',
             'industries.name as industry',
             'category.name as category',
             'problem.location',
@@ -431,6 +439,7 @@ public function notawardedExecution(){
         ->where('problem_to_provider.action','!=', '2')
         ->where('problem.execution','2')
         ->where('problem.action','2')
+        ->orderBy('problem.id','desc')
         ->get();
 
     return response()->json($res);
