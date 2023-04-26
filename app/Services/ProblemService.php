@@ -35,14 +35,14 @@ interface ProblemInterface
     public static function industry_browse_ss($industries,$customer_id);
     public static function browse_sp($sub_cat,$industries);
     public static function browse_ss($sub_cat,$industries,$customer_id);
+    public static function get_provider($pid,$cid);
    
 }
 
 class ProblemService implements ProblemInterface{
     public static function postProject($data){
-        $affectedRows = Problem::insert($data);
-        if($affectedRows > 0)
-        return true;
+        $id = DB::table('problem')->insertGetId($data);
+        return $id;
     }
 
     public static function verifyPlanId($customer_id){
@@ -291,6 +291,16 @@ class ProblemService implements ProblemInterface{
                     ->get();
 
                     return $data;
+    }
+
+    public static function get_provider($pid,$cid){
+        $data = DB::table('problem_to_provider')
+        ->select('*')
+        ->where(['problem_id'=>$pid,'customer_id'=>$cid])
+        ->get()
+        ->first();
+
+        return $data;
     }
    
 }
