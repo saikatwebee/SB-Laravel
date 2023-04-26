@@ -86,7 +86,7 @@ class InvoiceService implements InvoiceInterface
     public static function getCustomerPlan($customer_id){
         $res = DB::table('customer_plane')
         ->leftJoin('subscriberplane', 'subscriberplane.id', '=','customer_plane.subscriberplane_id' )
-        ->select('*')
+        ->select('customer_plane.problem','customer_plane.apply','customer_plane.exp_plane','subscriberplane.title')
         ->where('customer_id',$customer_id)
         ->get()
         ->first();
