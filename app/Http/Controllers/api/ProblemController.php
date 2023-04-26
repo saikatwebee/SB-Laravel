@@ -860,15 +860,7 @@ public function notawardedExecution(){
 
     }
 
-    public function awardedProjectCount(){
-        try {
-            $cid = CommonService::getCidByEmail(auth()->user()->email);
-            $num=ProblemService::get_awarded_count($cid);
-            return response()->json($num);
-        } catch (Exception $e){
-            return response()->json(['message' => $e->getMessage()], 502);
-        }
-    }
+    
 
 
 }

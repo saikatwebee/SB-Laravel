@@ -10,6 +10,7 @@ use App\Services\ProfileService;
 use App\Services\CommonService;
 use App\Services\ReferalService;
 use App\Services\InvoiceService;
+use App\Services\ProblemService;
 use App\Models\CustomerIndustries;
 use App\Models\CustomerSkill;
 use Illuminate\Support\Facades\Mail;
@@ -566,11 +567,13 @@ class CustomerController extends Controller
                 $data['current_plan'] = $res->title;
                 $data['expiry'] = $res->exp_plane;
                 $data['post_credit'] = $res->problem;
+                $data['completed_count'] = ProblemService::get_complted_count($customer_id);
             }
             else{
                 $data['current_plan'] = 'NA';
                 $data['expiry'] = 'NA';
                 $data['post_credit'] = 'NA';
+                $data['completed_count'] = 'NA';
             }
 
                 return response()->json($data);
@@ -593,12 +596,15 @@ class CustomerController extends Controller
                 $data['current_plan'] = $res->title;
                 $data['expiry'] = $res->exp_plane;
                 $data['apply_credit'] = $res->apply;
+                $data['awarded_count'] = ProblemService::get_awarded_count($customer_id);
+                
             }
             else{
     
                 $data['current_plan'] = 'NA';
                 $data['expiry'] = 'NA';
                 $data['apply_credit'] = 'NA';
+                $data['awarded_count'] = 'NA';
             }
     
             return response()->json($data);
