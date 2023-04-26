@@ -24,10 +24,11 @@ class AuthController extends Controller {
     public function register( Request $request ) {
 
         try {
-            $firstname = trim( $request->input( 'firstname' ) );
-            $email = trim( $request->input( 'email' ) );
-            $phone = trim( $request->input( 'phone' ) );
-            $ph = '+91'.$phone;
+            $firstname = trim($request->input('firstname'));
+            $email = trim($request->input('email'));
+            $phone = trim($request->input('phone'));
+            $last_ten=substr($phone,-10,10);
+            $ph='+91'.$last_ten;
 
             $password = trim( $request->input( 'password' ) );
             $role = trim( $request->input( 'role' ) );
@@ -300,9 +301,9 @@ class AuthController extends Controller {
                         //for existing user
                         $customer_id = CommonService::getCidByEmail( $email );
                         $auth_id = CommonService::getAuthIdByEmail( $email );
-                        $phone  = CommonService::getCphByEmail( $email );
-
-                        $ph = '+91'.$phone;
+                        $phone  = CommonService::getCphByEmail($email);
+                        $last_ten=substr($phone,-10,10);
+                        $ph='+91'.$last_ten;
                         $otp = mt_rand( 1111, 9999 );
 
                         //Account Activation

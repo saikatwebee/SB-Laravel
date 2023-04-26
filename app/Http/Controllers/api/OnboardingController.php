@@ -335,7 +335,9 @@ public function sentPrequalificationNotification(){
         $cid = CommonService::getCidByEmail($email);
         $fullname = ProfileService::getFullName($cid);
         $phone = ProfileService::getPhone($cid);
-        $ph = '+91'.$phone;
+        $last_ten=substr($phone,-10,10);
+        $ph='+91'.$last_ten;
+       
 
         $req=OnboardingService::getReq($cid);
 
