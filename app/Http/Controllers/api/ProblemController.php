@@ -7,15 +7,20 @@ use Illuminate\Support\Facades\Mail;
 use App\Mail\PostProject;
 use App\Mail\PostProjectInfo;
 use App\Mail\AwardIndustryProject;
+use App\Mail\ProposalMail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Problem;
+use App\Models\ProblemFiles;
 use App\Services\CommonService;
 use App\Services\ProblemService;
 use App\Services\ProfileService;
 use App\Services\InvoiceService;
+
+
+
 
 use Illuminate\Support\Facades\DB;
 use App\Models\Proposal;
@@ -80,9 +85,7 @@ class ProblemController extends Controller
 
                         $today = date('Y-m-d H:i:s');
                         //step:3 get the problem credit
-                        $problem_count = ProblemService::getProblemCount(
-                            $customer_id
-                        );
+                        $problem_count = ProblemService::getProblemCount($customer_id);
                       
                        
                         //step:4 check expiry date and problem credit count
@@ -412,7 +415,7 @@ public function awardedExecution(){
         )
         ->where(['problem_to_provider.customer_id' => $customer_id, 'problem_to_provider.action' => 2])
         ->where('problem.execution','2')
-        ->where('problem.action','2')
+        ->where('problem.action','4')
         ->orderBy('problem.id','desc')
         ->get();
 
@@ -522,47 +525,68 @@ public function notawardedExecution(){
             $data['action'] = 1;
             $data['date_added'] = date('Y-m-d H:i:s');
             $data['offer'] = trim($request->input('offer'));
-                $customer_id = CommonService::getCidByEmail(
-                    auth()->user()->email
-                );
-                //Check forwarded
-                $chk = ProblemService::checkProblemForwarded($customer_id, $problem_id);
-                if($chk) {
-                    $res = ProblemService::updateProblemToProvider($data, $customer_id, $problem_id);
-                    if ($res) {
-                        
-                        $check=InvoiceService::verifyCId($customer_id);
-                        //plan check
-                        if($check){
-                            
-                            //check execution
-                            $project =  ProblemService::getProject($problem_id);
-                            if($project->execution < 2)
-                            //substract apply credit by 1
-                                $sub =  ProblemService::subApplyCount($customer_id);
-                        }
+            $customer_id = CommonService::getCidByEmail(auth()->user()->email);
 
-                        return response()->json(['success' => true,'message' => 'Updated Successfully'],200);
-                    }
-                } else {
-                    $data['customer_id'] = $customer_id;
-                    $data['problem_id'] = $problem_id;
-                    $res = ProblemService::addProblemToProvider($data);
-                    if ($res) {
-                        $check=InvoiceService::verifyCId($customer_id);
-                        //plan check
-                        if($check){
-                            
+            //step:1 plan check 
+            $verify = ProblemService::verifyPlanId($customer_id);
+
+            if($verify){
+                //step:2  plan expiry date
+                $exp_date = ProblemService::getExpDate($customer_id);
+                $today = date('Y-m-d H:i:s');
+
+                //step:3 get the problem credit
+                $problem_count = ProblemService::getApplyCount($customer_id);
+
+                 //step:4 check expiry date and problem credit count
+                 if ($exp_date > $today) {
+                    if ($problem_count > 0) {
+                        //check forwared or not
+                        $chk = ProblemService::checkProblemForwarded($customer_id, $problem_id);
+                        if($chk) {
+                            //update to problem_to_provider table
+                            $res = ProblemService::updateProblemToProvider($data,$customer_id,$problem_id);
+                        }
+                        else{
+                            //insert to problem_to_provider table
+                            $data['customer_id'] = $customer_id;
+                            $data['problem_id'] = $problem_id;
+                            $res = ProblemService::addProblemToProvider($data);
+                        }
+                        //if insert or updation is successfull
+                        if($res){
                             //check execution
                             $project =  ProblemService::getProject($problem_id);
-                            if($project->execution < 2)
-                            //substract apply credit by 1
-                                $sub =  ProblemService::subApplyCount($customer_id);
+                            if($project->execution < 2){
+                                //substract apply credit by 1 for normal project
+                                $response =  ProblemService::subApplyCount($customer_id);
+                                if($response)
+                                return response()->json(['success' => true,'message' => 'You have Successfully applied to this Project'],200);
+                            }
+                            else if($project->execution == 2){
+                                return response()->json(['success' => true,'message' => 'You have Successfully applied to this Project'],200);
+                            }
+                            
+                            
                         }
-                        return response()->json(['success' => true,'message' => 'Added Successfully'],200);
+                        
                     }
-                }
-            
+                    else{
+                        //error msg for apply credit
+                        return response()->json( [ 'message'=>'Oops Your apply credit is not sufficient! Renew Membership to apply this Project!'], 502);
+
+                    }
+                 }
+                 else{
+                    //error msg for plan expiry
+                    return response()->json( [ 'message'=>'Oops Your plan has been expired! Renew Membership to apply this Project!' ], 502);
+                 }
+
+            }
+            else{
+                //error msg for non plan taken customer
+                return response()->json( [ 'message'=>'Buy Membership to apply this Project!' ], 502);
+            }
         } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 502);
         }
@@ -735,27 +759,61 @@ public function notawardedExecution(){
 
     public function proposalInsert(Request $request){
         try{
-           $data['ammount']=trim($request->input('ammount'));
-           $data['is_gst']=trim($request->input('is_gst'));
-           $data['cid']=trim($request->input('cid'));
-           $data['pid']=trim($request->input('pid'));
+
+            $data['cid']=CommonService::getCidByEmail(auth()->user()->email);
+            $data['pid']=trim($request->input('ProjectId'));
+            
+
+            $data['ammount']=trim($request->input('amount'));
+            $data['is_gst']=trim($request->input('isgst'));
+            $data['gst']=trim($request->input('gst'));
+            $data['pan']=trim($request->input('pan'));
+           
            $rules = [
-            "ammount" => "required|numeric|max:10",
-            "is_gst" => "required",
-            "cid" => "required|numeric",
-            "pid" => "required|numeric",
+            "amount" => "required|numeric",
+            "ProjectId" => "required",
            ];
+
            $validator = Validator::make($request->all(), $rules);
                  if ($validator->fails()) {
-                     return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops Invalid data request!'], 200);
+                     return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops Invalid data request!'], 400);
                     }
                     else{
-                        $uploaded_file = $this->proposalUpload($request->file('proposal_doc'), $data['cid']);
-                        if($uploaded_file){  
+                        $uploaded_file = $this->proposalUpload($request->file('proposalDoc'), $data['cid'],$data['pid']);
+                        if($uploaded_file){ 
                             $data['proposal_doc']=$uploaded_file;
                             $res=ProblemService::proposal_insert($data);
-                            if($res)
-                           return response()->json($res);
+                            if($res){
+                                $ftype=1;
+                                //$root_url = "https://api.solutionbuggy.com/";
+                                $root_url = "http://127.0.0.1:8000/";
+                                $file_path = $root_url.'proposal/'.$data['cid'].'/'.$uploaded_file;
+
+					            $fileData['fpath']=$file_path;
+					            $fileData['fname']=$uploaded_file;	
+                                
+                                
+                                if(ProblemFiles::where(['cid'=>$data['cid'],'pid'=>$data['pid'],'ftype'=>$ftype])->exists()){
+                                    //update problem_files
+                                    ProblemService::updateProblemFiles($fileData,$data['cid'],$data['pid'],$ftype);
+                                }
+                                else{
+                                    //add problem_files
+                                    $fileData['cid']= $data['cid'];
+                                    $fileData['pid']=$data['pid'];
+                                    $fileData['ftype']=$ftype;
+                                    ProblemService::addProblemFiles($fileData);
+                                }
+                                
+
+                                //UPDATE PROBLEM_TO_PROVIDER TABLE exe_doc 
+                                    $provider['exe_doc']=1;
+                                    ProblemService::updateProblemToProvider($provider,$data['cid'],$data['pid']);
+
+                                return response()->json(['message'=>'Proposal has been Submitted Successfully'],200);
+
+                            }
+                            
                         }
                         
                     }
@@ -765,15 +823,129 @@ public function notawardedExecution(){
             return response()->json(['message' => $e->getMessage()], 502);
         }
     }
-    public function proposalUpload($file, $customer_id)
+
+    public function sentProposalMail(Request $request){
+        try{
+            $email = auth()->user()->email;
+            $cid = CommonService::getCidByEmail($email);
+            $pid = trim($request->input('pid'));
+
+            $email_data['cid'] = $cid;
+            $email_data['pid'] = $pid;
+            $email_data['fullname'] = ProfileService::getFullName($cid);
+
+            $proposal=ProblemService::getProposal($cid,$pid);
+
+            $email_data['amount'] = $proposal->ammount;
+            $email_data['gst'] = $proposal->gst;
+            $email_data['pan'] = $proposal->pan;
+
+            Mail::to($email)->send(new ProposalMail($email_data));
+
+        }catch(Exception $e){
+            return response()->json(['message' => $e->getMessage()],502);
+        }
+    }
+
+
+
+
+    public function getProposalCon(Request $request){
+        try{
+            $email = auth()->user()->email;
+            $cid = CommonService::getCidByEmail($email);
+            $pid = trim($request->input('pid'));
+
+            $res =  ProblemService::getProposal($cid,$pid);
+            $doc_name = $res->proposal_doc;
+
+            //$root_url = "https://api.solutionbuggy.com/";
+            $root_url = "http://127.0.0.1:8000/";
+            $file_path = $root_url.'proposal/'.$cid.'/'.$doc_name;
+
+            $res->doc_src = $file_path;
+            
+            return response()->json($res);
+        }
+        catch(Exception $e){
+            return response()->json(['message' => $e->getMessage()],502);
+        }
+
+    }
+
+    public function updateProposalDoc(Request $request){
+        try{
+            $email = auth()->user()->email;
+            $cid = CommonService::getCidByEmail($email);
+            $pid = trim($request->input('ProjectId'));
+
+            $data['ammount']=trim($request->input('amount'));
+            $data['is_gst']=trim($request->input('isgst'));
+            $data['gst']=trim($request->input('gst'));
+            $data['pan']=trim($request->input('pan'));
+           
+           $rules = [
+            "amount" => "required|numeric",
+            "ProjectId" => "required",
+           ];
+
+           $validator = Validator::make($request->all(), $rules);
+                 if ($validator->fails()) {
+                     return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops Invalid data request!'], 400);
+                    }
+                    else{
+                        $uploaded_file = $this->proposalUpload($request->file('proposalDoc'), $cid,$pid);
+                        if($uploaded_file){ 
+                            $data['proposal_doc']=$uploaded_file;
+
+                            $res=ProblemService::proposal_update($data,$cid,$pid);
+                            if($res){
+                               
+                                $ftype=1;
+                                //$root_url = "https://api.solutionbuggy.com/";
+                                $root_url = "http://127.0.0.1:8000/";
+                                $file_path = $root_url.'proposal/'.$cid.'/'.$uploaded_file;
+
+					            $fileData['fpath']=$file_path;
+					            $fileData['fname']=$uploaded_file;	
+                                
+                                
+                                if(ProblemFiles::where(['cid'=>$cid,'pid'=>$pid,'ftype'=>$ftype])->exists()){
+                                    //update problem_files
+                                    ProblemService::updateProblemFiles($fileData,$cid,$pid,$ftype);
+                                }
+
+                                return response()->json(['message'=>'Proposal has been Updated Successfully'],200);
+
+                            }
+
+                        }
+                    }
+
+
+        }
+        catch(Exception $e){
+            return response()->json(['message' => $e->getMessage()],502);
+        }
+
+    }
+
+
+    public function proposalUpload($file,$customer_id,$pid)
     {
         $fileName = $file->getClientOriginalName();
-        //check profile pic is already exist or not
-       
-            // if (file_exists(public_path('customerProfile/' . $logo))) {
-            //     unlink(public_path('customerProfile/' . $logo));
-            // }
+        
+            //check proposal_doc is already exist or not
 
+            $res =  ProblemService::getProposal($customer_id,$pid);
+            if ($res != null || $res != '') {
+                $proposal_doc = $res->proposal_doc;
+
+                if (file_exists(public_path('proposal/'.$customer_id.'/'.$proposal_doc))) {
+                    unlink(public_path('proposal/'.$customer_id.'/'.$proposal_doc));
+                }
+            }
+            
             if (!is_dir(public_path('proposal/'.$customer_id))) {
     			mkdir(public_path('proposal/'.$customer_id), 0777, true);
         	}
@@ -782,6 +954,7 @@ public function notawardedExecution(){
             return $fileName;
         }
     }
+
 
     public function categoryBrowseSp(Request $request){
         //$customer_id = CommonService::getCidByEmail(auth()->user()->email);
@@ -858,6 +1031,56 @@ public function notawardedExecution(){
             return response()->json(['message' => $e->getMessage()], 502);
         }
 
+    }
+
+    public function consultantProjectStatus(Request $request){
+        try{
+            $msg ="";
+            $cid = CommonService::getCidByEmail(auth()->user()->email);
+            $pid = trim($request->input('problem_id'));
+            $project_details = ProblemService::getProject($pid);
+            $provider_details = ProblemService::get_provider($pid,$cid);
+
+            if($provider_details){
+                //forwarded 
+            if($project_details->action==1 && $provider_details->action==0){
+                $msg ="This Project has been forwarded to you.";
+            }
+
+            //Applied
+            if($project_details->action==1 && $provider_details->action==1){
+                $msg ="You have applied to this project.";
+            }
+
+            //Interested
+            if($project_details->action==1 && $provider_details->action==5){
+                $msg ="You have shown interested to this project.";
+            }
+
+            //normal Awarded 
+            if($project_details->action==2 && $provider_details->action==2){
+                $msg ="You have been  awarded to this project.";
+            }
+
+            //execution Awarded
+            if($project_details->action==4 && $provider_details->action==2){
+                $msg ="You have been  awarded to this project.";
+            }
+
+            //Not Awarded
+            if($project_details->action==2 && $provider_details->action==1){
+                $msg ="This project has been awarded to some other consultant!";
+            }
+
+            }
+            
+
+            return response()->json($msg);
+
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 502);
+        }
     }
 
     

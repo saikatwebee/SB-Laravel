@@ -178,6 +178,15 @@ use Illuminate\Support\Facades\Route;
         
         //proposal insert
         Route::post('/proposalInsert', [ProblemController::class, 'proposalInsert']);
+        //sent proposal mail
+        Route::post('/sentProposalMail', [ProblemController::class, 'sentProposalMail']);
+
+        //get consultant Proposal
+        Route::post('/getProposalCon', [ProblemController::class, 'getProposalCon']);
+
+        //update consultant Proposal
+        Route::post('/updateProposalDoc', [ProblemController::class, 'updateProposalDoc']);
+        
 
         //consultant dashboard api data
         Route::get('/getConsultantDashboard',[CustomerController::class, 'getConsultantDashboard']);
@@ -194,6 +203,8 @@ use Illuminate\Support\Facades\Route;
 
         //Get problem to provider details
         Route::post('/getProviderDetails', [ProblemController::class, 'getProviderDetails']);
+       //get project status
+       Route::post('/consultantProjectStatus', [ProblemController::class, 'consultantProjectStatus']);
        
         
         
@@ -286,5 +297,3 @@ use Illuminate\Support\Facades\Route;
         });
          
 });
-
-
