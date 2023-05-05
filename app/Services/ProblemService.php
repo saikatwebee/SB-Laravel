@@ -8,6 +8,8 @@ use App\Models\Proposal;
 use App\Models\Problem;
 use App\Models\ProblemReferral;
 use App\Models\ProblemToProvider;
+use App\Models\ProblemFiles;
+
 use Illuminate\Support\Facades\DB;
 
 interface ProblemInterface
@@ -16,6 +18,7 @@ interface ProblemInterface
     public static function verifyPlanId($customer_id);
     public static function getExpDate($customer_id);
     public static function getProblemCount($customer_id);
+    public static function getApplyCount($customer_id);
     public static function subProblemCount($customer_id);
     public static function subApplyCount($customer_id);
     public static function updateProblem($data,$problem_id);
@@ -28,6 +31,8 @@ interface ProblemInterface
     public static function getCategoryDependent($ind);
     public static function getSkillDependent($ind);
     public static function proposal_insert($data1);
+    public static function proposal_update($data,$cid,$pid);
+
     public static function getprotitle($problem_id);
     public static function category_browse_sp($sub_cat);
     public static function category_browse_ss($sub_cat,$customer_id);
@@ -38,6 +43,10 @@ interface ProblemInterface
     public static function get_provider($pid,$cid);
     public static function get_awarded_count($cid);
     public static function get_complted_count($cid);
+    public static function getProposal($cid,$pid);
+    public static function addProblemFiles($data);
+    public static function updateProblemFiles($data,$cid,$pid,$ftype);
+    
 }
 
 class ProblemService implements ProblemInterface{
@@ -61,6 +70,13 @@ class ProblemService implements ProblemInterface{
         $row = CustomerPlane::select("problem")->where('customer_id',$customer_id)->first();
         return $row->problem;
     }
+
+    public static function getApplyCount($customer_id){
+        $row = CustomerPlane::select("apply")->where('customer_id',$customer_id)->first();
+        return $row->apply;
+    }
+
+    
 
     public static function subProblemCount($customer_id){
         $problem_count = CustomerPlane::select("problem")->where('customer_id',$customer_id)->first();
@@ -188,6 +204,12 @@ class ProblemService implements ProblemInterface{
         $affected_rows=Proposal::insert($data1);
         if($affected_rows > 0)
             return true;
+    }
+
+    public static function proposal_update($data,$cid,$pid){
+        $affectedRows = Proposal::where(['cid'=>$cid,'pid'=>$pid])->update($data);
+        if($affectedRows > 0)
+        return true;
     }
 
     public static function getprotitle($problem_id){
@@ -331,6 +353,28 @@ class ProblemService implements ProblemInterface{
         else{
             return 0;
         }
+    }
+
+    public static function getProposal($cid,$pid){
+        $data = DB::table('proposal')
+                ->select('*')
+                ->where(['cid'=>$cid,'pid'=>$pid])
+                ->get()
+                ->first();
+
+        return $data;
+    }
+
+    public static function addProblemFiles($data){
+        $affectedRows = ProblemFiles::insert($data);
+        if($affectedRows > 0)
+        return true;
+    }
+
+    public static function updateProblemFiles($data,$cid,$pid,$ftype){
+        $affectedRows = ProblemFiles::where(['cid'=>$cid,'pid'=>$pid,'ftype'=>$ftype])->update($data);
+            if($affectedRows > 0)
+            return true;
     }
    
 }

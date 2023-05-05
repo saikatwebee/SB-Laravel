@@ -20,6 +20,7 @@ class ProblemFiles extends Model
     /**
      * @var array
      */
+    public $timestamps = false;
     protected $fillable = ['pid', 'cid', 'ftype', 'fpath', 'fname', 'date_created'];
 
     /**
