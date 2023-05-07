@@ -1,6 +1,5 @@
 
 /public
-/public/storage
 /storage/*.key
 /vendor  
 .env
