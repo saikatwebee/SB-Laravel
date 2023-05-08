@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Models\Invoice;
 use App\Services\CommonService;
 use App\Services\InvoiceService;
+use App\Services\ProblemService;
 use Illuminate\Support\Facades\Mail;
 // use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -142,5 +143,79 @@ class InvoiceController extends Controller
               return response()->json(['message' => $e->getMessage()], 502);
           }
       }
+
+      public function paymentRequest(Request $request){
+        try{
+            $data['cid']= CommonService::getCidByEmail(auth()->user()->email);
+            $data['pid']=trim($request->input('ProjectId'));
+            $data['amount'] = trim($request->input('amount'));
+            $data['is_gst'] = trim($request->input('isgst'));
+            $data['gst'] = trim($request->input('gst'));
+            $data['doc_type'] = trim($request->input('doc_type'));
+            $data['reference']= trim($request->input('reference_no'));
+            $data['account_nm']= trim($request->input('account_nm'));
+            $data['account_no'] = trim($request->input('account_no'));
+            $data['ifsc'] = trim($request->input('ifsc'));
+
+            $uploaded_file = $this->paymentUpload($request->file('paymentDoc'),$data['cid']);
+            if($uploaded_file){ 
+                $data['payment_doc']=$uploaded_file;
+                $res=InvoiceService::addPaymentReq($data);
+                if($res){
+                    //add project files for payment_doc
+                    
+                    $ftype=3;
+                    $root_url = "https://api.solutionbuggy.com/";
+                    // $root_url = "http://127.0.0.1:8000/";
+                    $file_path = $root_url.'payment/'.$data['cid'].'/'.$uploaded_file;
+
+                    $fileData['fpath']=$file_path;
+                    $fileData['fname']=$uploaded_file;	
+
+                    $fileData['cid']= $data['cid'];
+                    $fileData['pid']=$data['pid'];
+                    $fileData['ftype']=$ftype;
+                    $check=ProblemService::addProblemFiles($fileData);
+                    if($check)
+                    return response()->json(['success' => true,'message' => 'Payment Request Submitted Successfully'],200);
+
+                }
+            }
+
+
+        } catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 502);
+        }
+
+      }
+
+      public function getPaymentRequest(Request $request){
+        try{
+            $cid = CommonService::getCidByEmail(auth()->user()->email);
+            $pid = trim($request->input('pid'));
+            $res = InvoiceService::getPaymentReq($cid,$pid);
+            if($res)
+            return response()->json($res);
+
+        }
+        catch (Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 502);
+        }
+      }
+
+      public function paymentUpload($file,$customer_id)
+    {
+        $fileName = $file->getClientOriginalName();
+        
+            if (!is_dir(public_path('payment/'.$customer_id))) {
+    			mkdir(public_path('payment/'.$customer_id), 0777, true);
+        	}
+        
+        if ($file->move(public_path('payment/'.$customer_id), $fileName)) {
+            return $fileName;
+        }
+    }
+
+   
     
 }

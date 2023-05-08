@@ -42,6 +42,7 @@ class PaymentRequest extends Model
      * @var bool
      */
     public $incrementing = false;
+    public $timestamps = false;
 
     /**
      * @var array

@@ -8,6 +8,8 @@ use App\Models\Invoice;
 use App\Models\Subscriberplane;
 use App\Models\Customer;
 use App\Models\CustomerPlane;
+use App\Models\PaymentRequest;
+use App\Models\Coupon;
 use Illuminate\Support\Facades\DB;
 
 interface InvoiceInterface
@@ -21,6 +23,10 @@ interface InvoiceInterface
     public static function updatePlandetails($data,$customer_id);
     public static function AddPlandetails($data);
     public static function getCustomerPlan($customer_id);
+    public static function addPaymentReq($data);
+    public static function getPaymentReq($cid,$pid);
+    public static function checkCoupon($code,$cid);
+    public static function  getCouponDiscount($code,$cid,$type);
 
 }
 
@@ -94,6 +100,36 @@ class InvoiceService implements InvoiceInterface
         return $res;
 
     }
+
+    public static function addPaymentReq($data){
+        $affectedRows = PaymentRequest::insert($data);
+        if($affectedRows > 0)
+        return true;
+    }
+
+    public static function getPaymentReq($cid,$pid){
+        $req = PaymentRequest::where(['cid'=>$cid,'pid'=>$pid])->get();
+        return $req;
+    }
+
+    public static function checkCoupon($code,$cid){
+        if(Coupon::where(['customer_id'=>$cid,'coupon'=>$code])->exists()){
+            return true;
+        }
+    }
+
+    public static function  getCouponDiscount($code,$cid,$type){
+       
+        $res = DB::table('coupon')
+                ->select($type)
+                ->where(['coupon'=>$code,'customer_id'=>$cid])
+                ->get()
+                ->first();
+            if($res)
+            return $res->$type;
+    }
+
+
      
 }
 

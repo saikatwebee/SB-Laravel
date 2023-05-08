@@ -11,6 +11,8 @@ use App\Models\CustomerSkill;
 use App\Models\ReferalDatabase;
 use App\Models\DatabaseComplete;
 use App\Models\ConsultantReq;
+
+
 use Illuminate\Support\Facades\DB;
 
 interface ProfileInterface
@@ -32,6 +34,9 @@ interface ProfileInterface
     public static function CheckActivation($email);
     public static function insertOnboardingPreference($data);
     public static function updateStep($data,$cid);
+    public static function delCustomerIndustry_Sp($customer_id);
+    public static function delCustomerCategory_Sp($customer_id);
+
 
     
 }
@@ -264,6 +269,18 @@ class ProfileService implements ProfileInterface
         $rows =  Customer::where(['customer_id'=>$cid])->update($data);
         if ($rows > 0)
           return true;
+    }
+
+    public static function delCustomerIndustry_Sp($customer_id){
+        $affectedRows=CustomerIndustries::where(['customer_id'=>$customer_id])->delete();
+        if($affectedRows > 0)
+        return true;
+    }
+
+    public static function delCustomerCategory_Sp($customer_id){
+        $affectedRows=CustomerCategory::where(['customer_id'=>$customer_id])->delete();
+        if($affectedRows > 0)
+        return true;
     }
 
 
