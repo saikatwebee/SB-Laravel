@@ -785,8 +785,8 @@ public function notawardedExecution(){
                             $res=ProblemService::proposal_insert($data);
                             if($res){
                                 $ftype=1;
-                                //$root_url = "https://api.solutionbuggy.com/";
-                                $root_url = "http://127.0.0.1:8000/";
+                                $root_url = "https://api.solutionbuggy.com/";
+                                // $root_url = "http://127.0.0.1:8000/";
                                 $file_path = $root_url.'proposal/'.$data['cid'].'/'.$uploaded_file;
 
 					            $fileData['fpath']=$file_path;
@@ -859,8 +859,8 @@ public function notawardedExecution(){
             $res =  ProblemService::getProposal($cid,$pid);
             $doc_name = $res->proposal_doc;
 
-            //$root_url = "https://api.solutionbuggy.com/";
-            $root_url = "http://127.0.0.1:8000/";
+            $root_url = "https://api.solutionbuggy.com/";
+            // $root_url = "http://127.0.0.1:8000/";
             $file_path = $root_url.'proposal/'.$cid.'/'.$doc_name;
 
             $res->doc_src = $file_path;
@@ -902,8 +902,8 @@ public function notawardedExecution(){
                             if($res){
                                
                                 $ftype=1;
-                                //$root_url = "https://api.solutionbuggy.com/";
-                                $root_url = "http://127.0.0.1:8000/";
+                                $root_url = "https://api.solutionbuggy.com/";
+                                // $root_url = "http://127.0.0.1:8000/";
                                 $file_path = $root_url.'proposal/'.$cid.'/'.$uploaded_file;
 
 					            $fileData['fpath']=$file_path;
@@ -1048,8 +1048,12 @@ public function notawardedExecution(){
             }
 
             //Applied
-            if($project_details->action==1 && $provider_details->action==1){
+            if($project_details->action==1 && $provider_details->action==1 && $provider_details->shortlist==0){
                 $msg ="You have applied to this project.";
+            }
+            //Applied
+            if($project_details->action==1 && $provider_details->action==1 && $provider_details->shortlist==1){
+                $msg ="You have been shortlisted to this project.";
             }
 
             //Interested
@@ -1081,6 +1085,19 @@ public function notawardedExecution(){
         catch (Exception $e){
             return response()->json(['message' => $e->getMessage()], 502);
         }
+    }
+
+    public function getIndustryDetails(Request $request){
+        try{
+            
+            $cid = trim($request->input('cid'));
+           $res =  CommonService::getRowByCid($cid);
+           return response()->json($res);
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 502);
+        }
+
     }
 
     

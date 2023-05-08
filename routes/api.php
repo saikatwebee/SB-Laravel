@@ -186,6 +186,15 @@ use Illuminate\Support\Facades\Route;
 
         //update consultant Proposal
         Route::post('/updateProposalDoc', [ProblemController::class, 'updateProposalDoc']);
+
+        //add Payment Request 
+        Route::post('/paymentRequest', [InvoiceController::class, 'paymentRequest']);
+
+        //get payment request
+        Route::post('/getPaymentRequest', [InvoiceController::class, 'getPaymentRequest']);
+       //get industry details
+       Route::post('/getIndustryDetails', [ProblemController::class, 'getIndustryDetails']);
+      
         
 
         //consultant dashboard api data
@@ -288,6 +297,10 @@ use Illuminate\Support\Facades\Route;
                 
                 //otp verification for onboarding step 1
                 Route::post('/otpVerification',[OnboardingController::class, 'otpVerification']);
+
+                //apply coupon
+                Route::post('/ApplyCoupon',[PlaneController::class, 'ApplyCoupon']);
+
                 
                 
 
