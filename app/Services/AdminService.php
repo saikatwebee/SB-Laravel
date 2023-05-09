@@ -22,7 +22,7 @@ interface AdminInterface
    public static function sales($date);
    public static function project_sales($date);
    public static function sales_count();
-   public static function sales_by_person($date);
+   public static function sales_by_person($date,$name);
   
   }
 
@@ -145,11 +145,11 @@ class AdminService implements AdminInterface{
         return $query;
     }
 
-    public static function sales_by_person($date){
+    public static function sales_by_person($date,$name){
         $query = DB::table('user')
         ->leftJoin('database_complete', 'database_complete.assigned_to', '=','user.user_id' )
         ->leftJoin('invoice', 'invoice.customer_id', '=','database_complete.customer_id' )
-        ->select('user.user_id','user.firstname', DB::raw('sum(invoice.totalcost)/1.18 as sales'))
+        ->select('user.user_id','user.firstname', DB::raw('sum(invoice.totalcost)/1.18 as '.$name))
         ->where('invoice.date','LIKE','%'.$date.'%')
         ->where('invoice.plan_id','!=',30)
         ->where('user.status','=',1)

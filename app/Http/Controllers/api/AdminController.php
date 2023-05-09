@@ -76,15 +76,15 @@ class AdminController extends Controller
 
         //This month sales
         $thismonth = Carbon::today()->format('Y-m');
-        $AdminObject->put('thismonth_sales',AdminService::sales_by_person($thismonth));
+        $AdminObject->put('thismonth_sales',AdminService::sales_by_person($thismonth, 'thismonth_sales'));
 
         //Last month sales
         $lastmonth = Carbon::today()->subMonth()->format('Y-m');
-        $AdminObject->put('lastmonth_sales',AdminService::sales_by_person($lastmonth));
+        $AdminObject->put('lastmonth_sales',AdminService::sales_by_person($lastmonth, 'lastmonth_sales'));
 
         //2 months back sales
         $last_2_month = Carbon::today()->subMonths(2)->format('Y-m');
-        $AdminObject->put('last_2_month_sales',AdminService::sales_by_person($last_2_month));
+        $AdminObject->put('last_2_month_sales',AdminService::sales_by_person($last_2_month, 'last_2_month_sales'));
 
         return $AdminObject;
 
