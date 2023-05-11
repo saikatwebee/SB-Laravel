@@ -301,7 +301,9 @@ use Illuminate\Support\Facades\Route;
                 //apply coupon
                 Route::post('/ApplyCoupon',[PlaneController::class, 'ApplyCoupon']);
 
-                
+                //get Project Manager Name
+                Route::post('/getProjectManager',[ProblemController::class, 'getProjectManager']);
+
                 
 
                
