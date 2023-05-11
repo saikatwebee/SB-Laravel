@@ -294,56 +294,62 @@ class CustomerController extends Controller {
                     auth()->user()->email
                 );
 
-                $uploaded_file = $this->resumeUpload( $request->file( 'resume' ), $customer_id );
-                if ( $uploaded_file ) {
-                    $data[ 'resume' ] = $uploaded_file;
-                    $res = ProfileService::editCustomerProfile( $data, $customer_id );
-
-                    if ( $res ) {
-                        $industries = $request->input( 'industries' );
-                        // $industries = explode( ',', $industry_str );
-
-                        $categories = $request->input( 'category' );
-                        // $categories = explode( ',', $category_str );
-
-                        // $skill_str = $request->input( 'skills' );
-                        // $skills = explode( ',', $skill_str );
-
-                        //adding Customer Industries
-                        if ( count( $industries ) > 0 ) {
-                            ProfileService::delCustomerIndustry_Sp( $customer_id );
-                            foreach ( $industries as $ind ) {
-
-                                ProfileService::addCustomerIndustry_Sp(
-                                    $ind,
-                                    $customer_id
-                                );
-                            }
+                if ( isset( $_FILES[ 'resume' ][ 'name' ] ) ) {
+                    if ( $request->file( 'resume' )->isValid() ) {
+                        $uploaded_file = $this->resumeUpload( $request->file( 'resume' ), $customer_id );
+                        if ( $uploaded_file ) {
+                            $data[ 'resume' ] = $uploaded_file;
                         }
-
-                        //adding Customer Categories
-                        if ( count( $categories ) > 0 ) {
-                            ProfileService::delCustomerCategory_Sp( $customer_id );
-                            foreach ( $categories as $cat ) {
-                                ProfileService::addCustomerCategory_Sp(
-                                    $cat,
-                                    $customer_id
-                                );
-                            }
-
-                        }
-
-                        //adding Customer Skills
-                        // foreach ( $skills as $skill ) {
-                        //     ProfileService::addCustomerSkill_Sp(
-                        //         $skill,
-                        //         $customer_id
-                        // );
-                        // }
-
-                        return response()->json( [ 'success' => true, 'message' => 'Update Successfull', ], 200 );
                     }
                 }
+
+                $res = ProfileService::editCustomerProfile( $data, $customer_id );
+
+                if ( $res ) {
+                    $industries = $request->input( 'industries' );
+                    // $industries = explode( ',', $industry_str );
+
+                    $categories = $request->input( 'category' );
+                    // $categories = explode( ',', $category_str );
+
+                    // $skill_str = $request->input( 'skills' );
+                    // $skills = explode( ',', $skill_str );
+
+                    //adding Customer Industries
+                    if ( count( $industries ) > 0 ) {
+                        ProfileService::delCustomerIndustry_Sp( $customer_id );
+                        foreach ( $industries as $ind ) {
+
+                            ProfileService::addCustomerIndustry_Sp(
+                                $ind,
+                                $customer_id
+                            );
+                        }
+                    }
+
+                    //adding Customer Categories
+                    if ( count( $categories ) > 0 ) {
+                        ProfileService::delCustomerCategory_Sp( $customer_id );
+                        foreach ( $categories as $cat ) {
+                            ProfileService::addCustomerCategory_Sp(
+                                $cat,
+                                $customer_id
+                            );
+                        }
+
+                    }
+
+                    //adding Customer Skills
+                    // foreach ( $skills as $skill ) {
+                    //     ProfileService::addCustomerSkill_Sp(
+                    //         $skill,
+                    //         $customer_id
+                    // );
+                    // }
+
+                    return response()->json( [ 'success' => true, 'message' => 'Update Successfull', ], 200 );
+                }
+
             }
         } catch ( Exception $e ) {
             return response()->json( [ 'message' => $e->getMessage() ], 502 );

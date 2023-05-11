@@ -24,11 +24,11 @@ class AuthController extends Controller {
     public function register( Request $request ) {
 
         try {
-            $firstname = trim($request->input('firstname'));
-            $email = trim($request->input('email'));
-            $phone = trim($request->input('phone'));
-            $last_ten=substr($phone,-10,10);
-            $ph='+91'.$last_ten;
+            $firstname = trim( $request->input( 'firstname' ) );
+            $email = trim( $request->input( 'email' ) );
+            $phone = trim( $request->input( 'phone' ) );
+            $last_ten = substr( $phone, -10, 10 );
+            $ph = '+91'.$last_ten;
 
             $password = trim( $request->input( 'password' ) );
             $role = trim( $request->input( 'role' ) );
@@ -80,7 +80,7 @@ class AuthController extends Controller {
 
                                     $msg = json_encode( $body );
 
-                                    $ch = curl_init( 'https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber='.$ph);
+                                    $ch = curl_init( 'https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber='.$ph );
 
                                     $authorization = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDczODQzNy0zMDVjLTQ5NDctOGI1MC0zMzllMWRhNjIxNGIiLCJ1bmlxdWVfbmFtZSI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwibmFtZWlkIjoiYWRtaW5Ac29sdXRpb25idWdneS5jb20iLCJlbWFpbCI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwiYXV0aF90aW1lIjoiMDEvMTcvMjAyMiAxMDoyMTo1OCIsImRiX25hbWUiOiI2ODA0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQURNSU5JU1RSQVRPUiIsImV4cCI6MjUzNDAyMzAwODAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.Y_KsRhEnu_NKsxOf0U5HfHRILpnENXShJsgjjTbL5Ss';
                                     // Prepare the authorisation token
@@ -141,7 +141,7 @@ class AuthController extends Controller {
 
                                     $user = $this->auth_user_profile();
                                     $role = $this->get_role();
-                            
+
                                     return response()->json( [
                                         'access_token'=>$token,
                                         'token_type'=>'bearer',
@@ -165,7 +165,7 @@ class AuthController extends Controller {
 
                     }
                 } else {
-                    return response()->json( [ 'success' => true, 'message' => 'Email is already exist!'], 502);
+                    return response()->json( [ 'success' => true, 'message' => 'Email is already exist!' ], 502 );
                 }
             }
         } catch ( Exception $e ) {
@@ -198,7 +198,7 @@ class AuthController extends Controller {
                     $validator = Validator::make( $request->all(), $rules );
 
                     if ( $validator->fails() ) {
-                        return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!'], 400);
+                        return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400 );
                     } else {
                         $data = AuthService::auth_insert( $firstname, $email, $password, $role, $status );
                         if ( $data ) {
@@ -250,7 +250,7 @@ class AuthController extends Controller {
                     }
                 } else {
                     //existing warning
-                    return response()->json( [ 'success' => true, 'message' => 'Email is already exist!'], 400 );
+                    return response()->json( [ 'success' => true, 'message' => 'Email is already exist!' ], 400 );
                 }
             }
 
@@ -269,7 +269,7 @@ class AuthController extends Controller {
 
             $validator = Validator::make( $request->all(), $rules );
             if ( $validator->fails() ) {
-                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400);
+                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400 );
             }
 
             if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
@@ -293,7 +293,7 @@ class AuthController extends Controller {
 
             $validator = Validator::make( $request->all(), $rules );
             if ( $validator->fails() ) {
-                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ],400);
+                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400 );
             } else {
                 if ( $email != '' ) {
                     $check_email = AuthService::check_email( $email );
@@ -301,9 +301,9 @@ class AuthController extends Controller {
                         //for existing user
                         $customer_id = CommonService::getCidByEmail( $email );
                         $auth_id = CommonService::getAuthIdByEmail( $email );
-                        $phone  = CommonService::getCphByEmail($email);
-                        $last_ten=substr($phone,-10,10);
-                        $ph='+91'.$last_ten;
+                        $phone  = CommonService::getCphByEmail( $email );
+                        $last_ten = substr( $phone, -10, 10 );
+                        $ph = '+91'.$last_ten;
                         $otp = mt_rand( 1111, 9999 );
 
                         //Account Activation
@@ -372,14 +372,14 @@ class AuthController extends Controller {
                             $otpData = [ 'password'=>bcrypt( $otp ) ];
                             $row = AuthService::auth_update( $otpData, $auth_id );
 
-                            return response()->json( [ 'message' => 'Otp has been sent successfully'],200 );
+                            return response()->json( [ 'message' => 'Otp has been sent successfully' ], 200 );
 
                         } else {
                             //Account not activated
-                            return response()->json([ 'message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111' ], 502 );
+                            return response()->json( [ 'message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111' ], 502 );
                         }
                     } else {
-                        return response()->json( [ 'message' => 'Your Email is not Registered' ], 502);
+                        return response()->json( [ 'message' => 'Your Email is not Registered' ], 502 );
                     }
                 }
             }
@@ -401,7 +401,7 @@ class AuthController extends Controller {
 
             $validator = Validator::make( $data, $rules );
             if ( $validator->fails() ) {
-                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400);
+                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400 );
             } else {
                 if ( !$token = JWTAuth::attempt( $validator->validated() ) ) {
                     return response()->json( [ 'message'=>'Unauthorized User!' ], 502 );
@@ -428,7 +428,7 @@ class AuthController extends Controller {
 
     public function logout() {
         auth()->logout();
-        return response()->json( [ 'message' => 'User successfully signed out' ],200 );
+        return response()->json( [ 'message' => 'User successfully signed out' ], 200 );
     }
 
     public function refresh() {
@@ -443,7 +443,7 @@ class AuthController extends Controller {
 
     public function userProfile() {
         $user = $this->auth_user_profile();
-        return response()->json($user);
+        return response()->json( $user );
     }
 
     public function auth_user_profile() {
@@ -489,11 +489,11 @@ class AuthController extends Controller {
 
             $validator = Validator::make( $request->all(), $rules );
             if ( $validator->fails() ) {
-                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400);
+                return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400 );
             } else {
                 $res = AuthService::changePassword( bcrypt( $password ), auth()->user()->id );
                 if ( $res )
-                return response()->json( [ 'success' => true, 'message' => 'Password changed Successfully'],200);
+                return response()->json( [ 'success' => true, 'message' => 'Password changed Successfully' ], 200 );
 
             }
 
@@ -514,7 +514,7 @@ class AuthController extends Controller {
 
         $validator = Validator::make( $request->all(), $rules );
         if ( $validator->fails() ) {
-            return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400);
+            return response()->json( [ 'info' => $validator->errors()->toJson(), 'message' => 'Oops Invalid data request!' ], 400 );
         } else {
 
             $check_mac = AuthService::check_mac( $mac, $email );
@@ -554,17 +554,26 @@ class AuthController extends Controller {
         }
     }
 
-    public function createNewToken( $token ) {
+    public function createNewToken($token) {
         $user = $this->auth_user_profile();
         $role = $this->get_role();
 
-        return response()->json( [
-            'access_token'=>$token,
-            'token_type'=>'bearer',
-            'role'=>$role,
-            'user'=>$user,
-            'expires_in'=> auth()->factory()->getTTL()*60,
-        ] );
+        $email = auth()->user()->email;
+        //date_default_timezone_set('Asia/Kolkata');
+        $loginData[ 'last_login' ] = date( 'Y-m-d H:i:s' );
+        //update last_login
+        $check = AuthService::updateLastLogin($email,$loginData);
+
+        if ($check) {
+            return response()->json( [
+                'access_token'=>$token,
+                'token_type'=>'bearer',
+                'role'=>$role,
+                'user'=>$user,
+                'expires_in'=> auth()->factory()->getTTL()*60,
+            ] );
+        }
+
     }
 
 }

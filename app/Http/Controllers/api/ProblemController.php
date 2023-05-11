@@ -779,6 +779,8 @@ public function notawardedExecution(){
                      return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops Invalid data request!'], 400);
                     }
                     else{
+                        if ( isset( $_FILES[ 'proposalDoc' ][ 'name' ] ) ) {
+                            if ( $request->file( 'proposalDoc' )->isValid() ) {
                         $uploaded_file = $this->proposalUpload($request->file('proposalDoc'), $data['cid'],$data['pid']);
                         if($uploaded_file){ 
                             $data['proposal_doc']=$uploaded_file;
@@ -786,7 +788,7 @@ public function notawardedExecution(){
                             if($res){
                                 $ftype=1;
                                 $root_url = "https://api.solutionbuggy.com/";
-                                // $root_url = "http://127.0.0.1:8000/";
+                                 //$root_url = "http://127.0.0.1:8000/";
                                 $file_path = $root_url.'proposal/'.$data['cid'].'/'.$uploaded_file;
 
 					            $fileData['fpath']=$file_path;
@@ -815,6 +817,8 @@ public function notawardedExecution(){
                             }
                             
                         }
+                    }
+                }
                         
                     }
 
@@ -859,8 +863,8 @@ public function notawardedExecution(){
             $res =  ProblemService::getProposal($cid,$pid);
             $doc_name = $res->proposal_doc;
 
-            $root_url = "https://api.solutionbuggy.com/";
-            // $root_url = "http://127.0.0.1:8000/";
+           $root_url = "https://api.solutionbuggy.com/";
+             //$root_url = "http://127.0.0.1:8000/";
             $file_path = $root_url.'proposal/'.$cid.'/'.$doc_name;
 
             $res->doc_src = $file_path;
@@ -894,7 +898,12 @@ public function notawardedExecution(){
                      return response()->json(['info' => $validator->errors()->toJson(),'message' => 'Oops Invalid data request!'], 400);
                     }
                     else{
+                        if ( isset( $_FILES[ 'proposalDoc' ][ 'name' ] ) ) {
+                            if ( $request->file( 'proposalDoc' )->isValid() ) {
+                        
                         $uploaded_file = $this->proposalUpload($request->file('proposalDoc'), $cid,$pid);
+                        
+                        
                         if($uploaded_file){ 
                             $data['proposal_doc']=$uploaded_file;
 
@@ -903,7 +912,7 @@ public function notawardedExecution(){
                                
                                 $ftype=1;
                                 $root_url = "https://api.solutionbuggy.com/";
-                                // $root_url = "http://127.0.0.1:8000/";
+                                 //$root_url = "http://127.0.0.1:8000/";
                                 $file_path = $root_url.'proposal/'.$cid.'/'.$uploaded_file;
 
 					            $fileData['fpath']=$file_path;
@@ -920,6 +929,8 @@ public function notawardedExecution(){
                             }
 
                         }
+                    }
+                }
                     }
 
 
@@ -1098,6 +1109,28 @@ public function notawardedExecution(){
             return response()->json(['message' => $e->getMessage()], 502);
         }
 
+    }
+
+    public function getProjectManager(Request $request){
+        try{
+           
+            $pid = trim($request->input('pid'));
+
+           $project =  ProblemService::getProject($pid);
+           $assigned_to = $project->assigned_to_1;
+           if(isset($assigned_to) && !empty($assigned_to)){
+            $projectManager = ProfileService::getAssignedName($assigned_to);
+           }
+           else{
+            $projectManager ="";
+           }
+          
+           return response()->json($projectManager);
+
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 502);
+        }
     }
 
     

@@ -25,6 +25,7 @@ interface AuthInterface
     public static function get_cid_reg($email);
     public static function addTracking($data);
     public static function updateStep($data,$cid);
+    public static function updateLastLogin($email,$data);
     
   }
 
@@ -181,6 +182,12 @@ class AuthService implements AuthInterface{
 
     public static function updateStep($data,$cid){
         $rows =  Customer::where(['customer_id'=>$cid])->update($data);
+        if ($rows > 0)
+          return true;
+    }
+
+    public static function updateLastLogin($email,$data){
+        $rows =  Customer::where(['email'=>$email])->update($data);
         if ($rows > 0)
           return true;
     }
