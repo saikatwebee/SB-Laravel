@@ -80,6 +80,19 @@ class InvoiceController extends Controller {
         }
     }
 
+    public function ViewPlanNonAuthenticate(Request $request) {
+        try {
+            $customer_id = trim($request->input('customer_id'));
+            $plan = InvoiceService::getPlan( $customer_id );
+            return response()->json( $plan );
+
+        } catch ( Exception $e ) {
+            return response()->json( [ 'message' => $e->getMessage() ], 502 );
+        }
+    }
+
+    
+
     //Add or Update Plan Details
 
     public function UpdatePlan( Request $request ) {

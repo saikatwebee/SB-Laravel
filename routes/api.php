@@ -35,6 +35,7 @@ use Illuminate\Support\Facades\Route;
         Route::get('/profile', [AuthController::class, 'userProfile']);
         Route::post('/changePassword', [AuthController::class, 'changePassword']);
 
+
         //get all state list
         Route::get('/stateList', [AuthController::class, 'stateList']);
 
@@ -55,6 +56,13 @@ use Illuminate\Support\Facades\Route;
 
         //get skill name by id
         Route::post('/getSkillById', [ProblemController::class, 'getSkillById']);
+
+         //Get Plan Details for non authenticate user
+         Route::post('/ViewPlanNonAuthenticate', [InvoiceController::class, 'ViewPlanNonAuthenticate']);
+
+          //Get authintaceted user's role and details
+          Route::get('/getAuthUser', [AuthController::class, 'getAuthUser']);
+         
         
 
         //Admin Panel :
