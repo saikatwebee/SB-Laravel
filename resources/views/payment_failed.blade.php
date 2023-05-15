@@ -112,7 +112,7 @@
 
     <script>
     $(document).on("click", ".back", () => {
-        window.location.href = 'http://localhost:3000/customer/buy-memberships';
+        window.location.href = 'https://my.solutionbuggy.com/customer/buy-memberships';
     })
     </script>
 </body>

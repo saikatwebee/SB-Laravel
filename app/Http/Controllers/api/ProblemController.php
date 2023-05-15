@@ -912,7 +912,7 @@ public function notawardedExecution(){
                                
                                 $ftype=1;
                                 $root_url = "https://api.solutionbuggy.com/";
-                                 //$root_url = "http://127.0.0.1:8000/";
+                                //$root_url = "http://127.0.0.1:8000/";
                                 $file_path = $root_url.'proposal/'.$cid.'/'.$uploaded_file;
 
 					            $fileData['fpath']=$file_path;

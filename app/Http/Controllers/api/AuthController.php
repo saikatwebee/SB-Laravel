@@ -300,84 +300,89 @@ class AuthController extends Controller {
                     if ( $check_email ) {
                         //for existing user
                         $customer_id = CommonService::getCidByEmail( $email );
-                        $auth_id = CommonService::getAuthIdByEmail( $email );
-                        $phone  = CommonService::getCphByEmail( $email );
-                        $last_ten = substr( $phone, -10, 10 );
-                        $ph = '+91'.$last_ten;
-                        $otp = mt_rand( 1111, 9999 );
+                        if ( $customer_id ) {
+                            $auth_id = CommonService::getAuthIdByEmail( $email );
+                            $phone  = CommonService::getCphByEmail( $email );
+                            $last_ten = substr( $phone, -10, 10 );
+                            $ph = '+91'.$last_ten;
+                            $otp = mt_rand( 1111, 9999 );
 
-                        //Account Activation
-                        $data = [ 'status'=>1 ];
-                        $res = ProfileService::editCustomerProfile( $data, $customer_id );
+                            //Account Activation
+                            $data = [ 'status'=>1 ];
+                            $res = ProfileService::editCustomerProfile( $data, $customer_id );
 
-                        //check Account Activation
-                        $check = ProfileService::CheckActivation( $email );
-                        if ( $check ) {
+                            //check Account Activation
+                            $check = ProfileService::CheckActivation( $email );
+                            if ( $check ) {
 
-                            //sending otp sms
-                            //otp sms
+                                //sending otp sms
+                                //otp sms
 
-                            $ch = curl_init();
+                                $ch = curl_init();
 
-                            curl_setopt( $ch, CURLOPT_URL, 'https://api.kaleyra.io/v1/HXIN1700258037IN/messages' );
-                            curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
-                            curl_setopt( $ch, CURLOPT_POST, 1 );
-                            curl_setopt( $ch, CURLOPT_POSTFIELDS, 'to='.$ph.'&type=OTP&sender=SOLBUG&body= '.$otp.' is your OTP for login to SolutionBuggy Portal. Please do not share it with anyone.&template_id=1007163645755201460' );
+                                curl_setopt( $ch, CURLOPT_URL, 'https://api.kaleyra.io/v1/HXIN1700258037IN/messages' );
+                                curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1 );
+                                curl_setopt( $ch, CURLOPT_POST, 1 );
+                                curl_setopt( $ch, CURLOPT_POSTFIELDS, 'to='.$ph.'&type=OTP&sender=SOLBUG&body= '.$otp.' is your OTP for login to SolutionBuggy Portal. Please do not share it with anyone.&template_id=1007163645755201460' );
 
-                            $headers = array();
-                            $headers[] = 'Content-Type: application/x-www-form-urlencoded';
-                            $headers[] = 'Api-Key: Aaa25fd00f22308bba995277ea7baea2b';
-                            curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
+                                $headers = array();
+                                $headers[] = 'Content-Type: application/x-www-form-urlencoded';
+                                $headers[] = 'Api-Key: Aaa25fd00f22308bba995277ea7baea2b';
+                                curl_setopt( $ch, CURLOPT_HTTPHEADER, $headers );
 
-                            $result = curl_exec( $ch );
-                            $error = curl_error( $ch );
+                                $result = curl_exec( $ch );
+                                $error = curl_error( $ch );
 
-                            curl_close( $ch );
+                                curl_close( $ch );
 
-                            //sending email otp
-                            $email_data[ 'otp' ] = $otp;
-                            $email_data[ 'fullname' ] = ProfileService::getFullName( $customer_id );
-                            Mail::to( $email )->send( new OtpSent( $email_data ) );
+                                //sending email otp
+                                $email_data[ 'otp' ] = $otp;
+                                $email_data[ 'fullname' ] = ProfileService::getFullName( $customer_id );
+                                Mail::to( $email )->send( new OtpSent( $email_data ) );
 
-                            //wati sms for otp
+                                //wati sms for otp
 
-                            $body = [
-                                'parameters' => [
-                                    [
-                                        'name' => 'otp',
-                                        'value' => $otp
+                                $body = [
+                                    'parameters' => [
+                                        [
+                                            'name' => 'otp',
+                                            'value' => $otp
+                                        ],
+
                                     ],
+                                    'template_name' => 'otp_verification',
+                                    'broadcast_name' => 'sb-otp'
+                                ];
 
-                                ],
-                                'template_name' => 'otp_verification',
-                                'broadcast_name' => 'sb-otp'
-                            ];
+                                $msg = json_encode( $body );
 
-                            $msg = json_encode( $body );
+                                $ch2 = curl_init( 'https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber='.$ph );
 
-                            $ch2 = curl_init( 'https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber='.$ph );
+                                $authorization = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDczODQzNy0zMDVjLTQ5NDctOGI1MC0zMzllMWRhNjIxNGIiLCJ1bmlxdWVfbmFtZSI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwibmFtZWlkIjoiYWRtaW5Ac29sdXRpb25idWdneS5jb20iLCJlbWFpbCI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwiYXV0aF90aW1lIjoiMDEvMTcvMjAyMiAxMDoyMTo1OCIsImRiX25hbWUiOiI2ODA0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQURNSU5JU1RSQVRPUiIsImV4cCI6MjUzNDAyMzAwODAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.Y_KsRhEnu_NKsxOf0U5HfHRILpnENXShJsgjjTbL5Ss';
+                                // Prepare the authorisation token
 
-                            $authorization = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDczODQzNy0zMDVjLTQ5NDctOGI1MC0zMzllMWRhNjIxNGIiLCJ1bmlxdWVfbmFtZSI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwibmFtZWlkIjoiYWRtaW5Ac29sdXRpb25idWdneS5jb20iLCJlbWFpbCI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwiYXV0aF90aW1lIjoiMDEvMTcvMjAyMiAxMDoyMTo1OCIsImRiX25hbWUiOiI2ODA0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQURNSU5JU1RSQVRPUiIsImV4cCI6MjUzNDAyMzAwODAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.Y_KsRhEnu_NKsxOf0U5HfHRILpnENXShJsgjjTbL5Ss';
-                            // Prepare the authorisation token
+                                curl_setopt( $ch2, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', $authorization ) );
+                                // Inject the token into the header
+                                curl_setopt( $ch2, CURLOPT_CUSTOMREQUEST, 'POST' );
+                                curl_setopt( $ch2, CURLOPT_POSTFIELDS, $msg );
+                                curl_setopt( $ch2, CURLOPT_RETURNTRANSFER, true );
+                                curl_setopt( $ch2, CURLOPT_SSL_VERIFYPEER, false );
+                                $result2 = curl_exec( $ch2 );
+                                curl_close( $ch2 );
 
-                            curl_setopt( $ch2, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', $authorization ) );
-                            // Inject the token into the header
-                            curl_setopt( $ch2, CURLOPT_CUSTOMREQUEST, 'POST' );
-                            curl_setopt( $ch2, CURLOPT_POSTFIELDS, $msg );
-                            curl_setopt( $ch2, CURLOPT_RETURNTRANSFER, true );
-                            curl_setopt( $ch2, CURLOPT_SSL_VERIFYPEER, false );
-                            $result2 = curl_exec( $ch2 );
-                            curl_close( $ch2 );
+                                $otpData = [ 'password'=>bcrypt( $otp ) ];
+                                $row = AuthService::auth_update( $otpData, $auth_id );
 
-                            $otpData = [ 'password'=>bcrypt( $otp ) ];
-                            $row = AuthService::auth_update( $otpData, $auth_id );
+                                return response()->json( [ 'message' => 'Otp has been sent successfully' ], 200 );
 
-                            return response()->json( [ 'message' => 'Otp has been sent successfully' ], 200 );
-
+                            } else {
+                                //Account not activated
+                                return response()->json( [ 'message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111' ], 502 );
+                            }
                         } else {
-                            //Account not activated
-                            return response()->json( [ 'message' => 'Account not activated. Please check your registered email inbox and activate your account. If you face any difficulty contact - 080-42171111' ], 502 );
+                            return response()->json( [ 'message'=>'Oops! Invalid Email' ], 502 );
                         }
+
                     } else {
                         return response()->json( [ 'message' => 'Your Email is not Registered' ], 502 );
                     }
@@ -456,6 +461,21 @@ class AuthController extends Controller {
         else
         //fetch from user table
         return AuthService::user_auth( $authUser_email );
+    }
+
+public function getAuthUser() {
+        $authUser_email = auth()->user()->email;
+        $role = $this->get_role();
+        if ( $role == 'SS' || $role == 'SP' ) {
+            //fetch from customer table
+            $user = AuthService::customer_auth( $authUser_email );
+        } else {
+            //fetch from user table
+            $user = AuthService::user_auth( $authUser_email );
+        }
+
+        return response()->json(['user'=>$user,'role'=> $role]);
+
     }
 
     public function stateList() {
@@ -554,21 +574,22 @@ class AuthController extends Controller {
         }
     }
 
-    public function createNewToken($token) {
+    public function createNewToken( $token ) {
         $user = $this->auth_user_profile();
         $role = $this->get_role();
 
         $email = auth()->user()->email;
-        //date_default_timezone_set('Asia/Kolkata');
+        //date_default_timezone_set( 'Asia/Kolkata' );
         $loginData[ 'last_login' ] = date( 'Y-m-d H:i:s' );
         //update last_login
-        $check = AuthService::updateLastLogin($email,$loginData);
+        $check = AuthService::updateLastLogin( $email, $loginData );
 
-        if ($check) {
+        if ( $check ) {
             return response()->json( [
                 'access_token'=>$token,
                 'token_type'=>'bearer',
                 'role'=>$role,
+                'email'=>$email,
                 'user'=>$user,
                 'expires_in'=> auth()->factory()->getTTL()*60,
             ] );

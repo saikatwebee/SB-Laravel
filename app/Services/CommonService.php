@@ -33,6 +33,7 @@ class CommonService implements CommonInterface{
 
     public static function getCidByEmail($email){
         $customer = Customer::where('email',$email)->first();
+        if( $customer)
         return $customer->customer_id;
     }
 
