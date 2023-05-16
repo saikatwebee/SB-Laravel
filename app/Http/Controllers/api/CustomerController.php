@@ -537,6 +537,7 @@ class CustomerController extends Controller {
 
     public function bugReport( Request $request ) {
         try {
+            $cid = CommonService::getCidByEmail( auth()->user()->email );
             $bug_desc = $request->input( 'bug_desc' );
             $rules = [
                 'bug_desc'=>'required'
@@ -546,9 +547,12 @@ class CustomerController extends Controller {
             if ( $validator->fails() ) {
                 return response()->json( [ 'info'=>$validator->errors()->toJson(), 'message'=>'Oops! Invalid request!' ], 400 );
             } else {
-                // Mail::to( 'admin@solutionbuggy.com' )->send(
-                //     new BugReport( 'saikatsb10@gmail.com' )
-                // );
+
+                // $email_data['desc'] = $bug_desc;
+                // $email_data['fullname'] = ProfileService::getFullName($cid);
+                
+                // Mail::to('admin@solutionbuggy.com' )->send(new BugReport($email_data));
+
                 return response()->json(
                     [
                         'success' => true,

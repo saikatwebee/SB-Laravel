@@ -173,6 +173,56 @@ class AuthController extends Controller {
         }
     }
 
+
+    public function sentRegisterMail(Request $request){
+       
+        $email = trim($request->input('email'));
+        $phone = trim( $request->input( 'phone' ) );
+
+        $last_ten = substr( $phone, -10, 10 );
+        $ph = '+91'.$last_ten;
+        $cid = AuthService::get_cid_reg($email);
+        $fullname = ProfileService::getFullName($cid);
+
+        //register wati sms 
+
+        $body = [
+            'parameters' => [
+                [
+                    'name' => 'fullname',
+                    'value' => $fullname
+                ],
+
+            ],
+            'template_name' => 'thankyou_msg_registered',
+            'broadcast_name' => 'sb-ThankYou'
+        ];
+
+        $msg = json_encode( $body );
+
+        $ch = curl_init( 'https://live-server-6804.wati.io/api/v1/sendTemplateMessage?whatsappNumber='.$ph );
+
+        $authorization = 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NDczODQzNy0zMDVjLTQ5NDctOGI1MC0zMzllMWRhNjIxNGIiLCJ1bmlxdWVfbmFtZSI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwibmFtZWlkIjoiYWRtaW5Ac29sdXRpb25idWdneS5jb20iLCJlbWFpbCI6ImFkbWluQHNvbHV0aW9uYnVnZ3kuY29tIiwiYXV0aF90aW1lIjoiMDEvMTcvMjAyMiAxMDoyMTo1OCIsImRiX25hbWUiOiI2ODA0IiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiQURNSU5JU1RSQVRPUiIsImV4cCI6MjUzNDAyMzAwODAwLCJpc3MiOiJDbGFyZV9BSSIsImF1ZCI6IkNsYXJlX0FJIn0.Y_KsRhEnu_NKsxOf0U5HfHRILpnENXShJsgjjTbL5Ss';
+        // Prepare the authorisation token
+
+        curl_setopt( $ch, CURLOPT_HTTPHEADER, array( 'Content-Type: application/json', $authorization ) );
+        // Inject the token into the header
+        curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, 'POST' );
+        curl_setopt( $ch, CURLOPT_POSTFIELDS, $msg );
+        curl_setopt( $ch, CURLOPT_RETURNTRANSFER, true );
+        curl_setopt( $ch, CURLOPT_SSL_VERIFYPEER, false );
+        $result = curl_exec( $ch );
+        curl_close( $ch );
+
+        //registration mail to user
+
+        $email_data[ 'fullname' ] = $fullname;
+        Mail::to( $email )->send( new RegistrationMail( $email_data ) );
+
+
+    }
+
+
     public function adsRegister( Request $request ) {
         try {
             $firstname = trim( $request->input( 'firstname' ) );
@@ -589,7 +639,6 @@ public function getAuthUser() {
                 'access_token'=>$token,
                 'token_type'=>'bearer',
                 'role'=>$role,
-                'email'=>$email,
                 'user'=>$user,
                 'expires_in'=> auth()->factory()->getTTL()*60,
             ] );

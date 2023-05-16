@@ -11,6 +11,9 @@ use App\Services\CommonService;
 use App\Services\InvoiceService;
 use App\Services\ProblemService;
 use Illuminate\Support\Facades\Mail;
+
+use App\Mail\PaymentRequestMail;
+
 // use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
@@ -178,6 +181,8 @@ class InvoiceController extends Controller {
                         $data[ 'payment_doc' ] = $uploaded_file;
                         $res = InvoiceService::addPaymentReq( $data );
                         if ( $res ) {
+
+
                             //add project files for payment_doc
 
                             $ftype = 3;
@@ -205,6 +210,33 @@ class InvoiceController extends Controller {
         }
 
     }
+
+
+    public function sentPaymentMail(Request $request){
+        try{
+            $email = "project@solutionbuggy";
+            $cid = CommonService::getCidByEmail($email);
+            $pid = trim($request->input('pid'));
+
+            $email_data['cid'] = $cid;
+            $email_data['pid'] = $pid;
+            $email_data['fullname'] = ProfileService::getFullName($cid);
+
+            $payment=ProblemService::getPaymentDetails($cid,$pid);
+
+            $email_data['amount'] = $payment->amount;
+            $email_data['gst'] = $payment->gst;
+           
+
+            Mail::to($email)->send(new PaymentRequestMail($email_data));
+
+        }catch(Exception $e){
+            return response()->json(['message' => $e->getMessage()],502);
+        }
+    }
+
+
+
 
     public function getPaymentRequest( Request $request ) {
         try {

@@ -483,28 +483,37 @@
                                                                                                         <p
                                                                                                             style="margin: 0;">
                                                                                                             Dear
-                                                                                                            <?= isset($email_data['firstname']) ? $email_data['firstname'] : "NA"; ?>,
+                                                                                                            <?= isset($email_data['fullname']) ? $email_data['fullname'] : "NA"; ?>,
+                                                                                                        </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                             </p>
+                                                                                                        <p
+                                                                                                            style="margin: 0;">
+                                                                                                            Great, you
+                                                                                                            have
+                                                                                                            successfully
+                                                                                                            applied for
+                                                                                                            a project on
+                                                                                                            the
+                                                                                                            SolutionBuggy
+                                                                                                            dashboard.
                                                                                                         </p>
                                                                                                         <p
                                                                                                             style="margin: 0;">
                                                                                                             </p>
                                                                                                         <p
                                                                                                             style="margin: 0;">
-																											Your payment was Unsuccessful. Please find the details below. If you are facing any issues with the payment, please reply us to this email or contact us at +91-9353714647.
-                                                                                                        </p>
-                                                                                                        <p
-                                                                                                            style="margin: 0;">
-                                                                                                            </p>
-                                                                                                        <p
-                                                                                                            style="margin: 0;">
-                                                                                                            Payment
+                                                                                                            Project
                                                                                                             details are
                                                                                                             as
-                                                                                                            follows,<br>Payment
-                                                                                                            Method:
-                                                                                                            PayU Money ,<br>Amount:
-                                                                                                            <?= isset($email_data['amount']) ? $email_data['amount'] : "NA"; ?>,<br>Transaction ID:
-                                                                                                            <?= isset($email_data['txnid']) ? $email_data['txnid'] : "NA"; ?>.
+                                                                                                            follows,<br>Project
+                                                                                                            Id:
+                                                                                                            <?= isset($email_data['projectid']) ? $email_data['projectid'] : "NA"; ?> ,<br>Industry:
+                                                                                                            <?= isset($email_data['industryname']) ? $email_data['industryname'] : "NA"; ?>,<br>Location:
+                                                                                                            <?= isset($email_data['location']) ? $email_data['location'] : "NA"; ?>,<br>Project
+                                                                                                            description:
+                                                                                                            <?= isset($email_data['projectdescription']) ? $email_data['projectdescription'] : "NA"; ?>.
                                                                                                         </p>
                                                                                                         <p
                                                                                                             style="margin: 0;">
@@ -524,7 +533,7 @@
                                                                                                         </p>
                                                                                                         <p
                                                                                                             style="margin: 0;">
-                                                                                                            </p>
+                                                                                                             </p>
                                                                                                         <p
                                                                                                             style="margin: 0;">
                                                                                                             For any

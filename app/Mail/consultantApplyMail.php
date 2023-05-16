@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class PostProject extends Mailable
+class consultantApplyMail extends Mailable
 {
     use Queueable, SerializesModels;
     public $email_data;
@@ -18,10 +18,7 @@ class PostProject extends Mailable
 
     public function build()
     {
-       return $this->subject('Thanks for posting the project')->view('Mails.post_project')->with(['email_data' => $this->email_data]);
+       return $this->subject('Project Applied')->view('Mails.apply_project')->with(['email_data' => $this->email_data]);
            
     }
 }
-?>
-
-

@@ -489,22 +489,20 @@
                                                                                                         <p
                                                                                                             style="margin: 0;">
                                                                                                             Dear
-                                                                                                            <?= $email_data['fullname'] ?>,<br>Greetings
+                                                                                                            Project Managers,<br>Greetings
                                                                                                         </p>
                                                                                                         <p
                                                                                                             style="margin: 0;">
                                                                                                         </p>
                                                                                                         <p
                                                                                                             style="margin: 0;">
-                                                                                                            Your project
+                                                                                                            <?= $email_data['fullname'] ?> has submitted project
                                                                                                             proposal
                                                                                                             towards
                                                                                                             SolutionBuggy
                                                                                                             project id
-                                                                                                            <?= $email_data['pid'] ?>
-                                                                                                            has been
-                                                                                                            submitted
-                                                                                                            successfully.
+                                                                                                            <?= $email_data['pid'] ?>.
+                                                                                                            
                                                                                                         </p>
                                                                                                         <p
                                                                                                             style="margin: 0;">
@@ -516,7 +514,7 @@
                                                                                                             as
                                                                                                             follows,<br>Project
                                                                                                             Id:
-                                                                                                            <?= $email_data['pid'] ?>,<br>Customer
+                                                                                                            <?= $email_data['pid'] ?>,<br>Consultant
                                                                                                             Id:
                                                                                                             <?= $email_data['cid'] ?>,<br>Amount:
                                                                                                             <?= $email_data['amount'] ?>,<br>GST
