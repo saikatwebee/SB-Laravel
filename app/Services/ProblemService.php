@@ -368,7 +368,7 @@ class ProblemService implements ProblemInterface{
 
 
     public static function  getPaymentDetails($cid,$pid){
-        $data = DB::table('payment_req')
+        $data = DB::table('payment_request')
         ->select('*')
         ->where(['cid'=>$cid,'pid'=>$pid])
         ->get()

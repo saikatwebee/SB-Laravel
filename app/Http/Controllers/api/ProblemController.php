@@ -634,14 +634,14 @@ public function notawardedExecution(){
          $pdetails = ProblemService::getProject($pid);
  
  
-             //mail to industry
+             //mail to consultant
              $email_data['fullname']=ProfileService::getFullName($cid);
              $email_data['projectid']=$pid;
              $email_data['industryname']=$pdetails->industry;
              $email_data['location']=$pdetails->location;
              $email_data['projectdescription']=$pdetails->describe;
 
-            Mail::to(auth()->user()->email)->send(new consultantApplyMail());
+            Mail::to(auth()->user()->email)->send(new consultantApplyMail($email_data));
 
     }
 
@@ -883,8 +883,9 @@ public function notawardedExecution(){
 
     public function sentProposalMail(Request $request){
         try{
-            $email = "project@solutionbuggy";
-            $cid = CommonService::getCidByEmail($email);
+            $email = "projects@solutionbuggy.com";
+            
+            $cid = CommonService::getCidByEmail(auth()->user()->email);
             $pid = trim($request->input('pid'));
 
             $email_data['cid'] = $cid;

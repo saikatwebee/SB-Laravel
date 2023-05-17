@@ -8,6 +8,7 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Invoice;
 use App\Services\CommonService;
+use App\Services\ProfileService;
 use App\Services\InvoiceService;
 use App\Services\ProblemService;
 use Illuminate\Support\Facades\Mail;
@@ -183,6 +184,22 @@ class InvoiceController extends Controller {
                         if ( $res ) {
 
 
+                            $to_email = "projects@solutionbuggy.com";
+
+                
+                            $email_data['cid'] = $data[ 'cid' ];
+                            $email_data['pid'] = $data[ 'pid' ];
+                            $email_data['fullname'] = ProfileService::getFullName($data[ 'cid' ]);
+                
+                            $payment=ProblemService::getPaymentDetails($data[ 'cid' ],$data[ 'pid' ]);
+                
+                            $email_data['amount'] = $payment->amount;
+                            $email_data['gst'] = $payment->gst;
+                
+                            Mail::to($to_email)->send(new PaymentRequestMail($email_data));
+                
+
+
                             //add project files for payment_doc
 
                             $ftype = 3;
@@ -210,32 +227,6 @@ class InvoiceController extends Controller {
         }
 
     }
-
-
-    public function sentPaymentMail(Request $request){
-        try{
-            $email = "project@solutionbuggy";
-            $cid = CommonService::getCidByEmail($email);
-            $pid = trim($request->input('pid'));
-
-            $email_data['cid'] = $cid;
-            $email_data['pid'] = $pid;
-            $email_data['fullname'] = ProfileService::getFullName($cid);
-
-            $payment=ProblemService::getPaymentDetails($cid,$pid);
-
-            $email_data['amount'] = $payment->amount;
-            $email_data['gst'] = $payment->gst;
-           
-
-            Mail::to($email)->send(new PaymentRequestMail($email_data));
-
-        }catch(Exception $e){
-            return response()->json(['message' => $e->getMessage()],502);
-        }
-    }
-
-
 
 
     public function getPaymentRequest( Request $request ) {

@@ -206,8 +206,7 @@ use Illuminate\Support\Facades\Route;
         //add Payment Request 
         Route::post('/paymentRequest', [InvoiceController::class, 'paymentRequest']);
 
-        //payment request mail
-        Route::post('/sentPaymentMail', [InvoiceController::class, 'paymentRequest']);
+       
         
 
         //get payment request
