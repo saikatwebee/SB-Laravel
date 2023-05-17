@@ -107,6 +107,9 @@ use Illuminate\Support\Facades\Route;
 
         //Project related routes of SS start
         Route::post('/postProject',[ProblemController::class, 'post_project']); 
+        Route::post('/postProjectMail',[ProblemController::class, 'postProjectMail']); 
+        
+        // ss project data-tables
         Route::get('/notlive-project', [ProblemController::class, 'notLiveProject']);
         Route::get('/live-project', [ProblemController::class, 'liveProject']);
         Route::get('/completed-project', [ProblemController::class, 'completedProject']);
@@ -178,6 +181,11 @@ use Illuminate\Support\Facades\Route;
         Route::post('/NotRelevant',[ProblemController::class, 'NotRelevant']);
         //Apply Project
         Route::post('/ApplyProject',[ProblemController::class, 'ApplyProject']);
+        
+        //apply project mail
+        Route::post('/ApplyMailSent',[ProblemController::class, 'ApplyMailSent']);
+        
+
         //Refer Project
         Route::post('/ReferProject',[ProblemController::class, 'ReferProject']);
         
@@ -197,6 +205,9 @@ use Illuminate\Support\Facades\Route;
 
         //add Payment Request 
         Route::post('/paymentRequest', [InvoiceController::class, 'paymentRequest']);
+
+       
+        
 
         //get payment request
         Route::post('/getPaymentRequest', [InvoiceController::class, 'getPaymentRequest']);

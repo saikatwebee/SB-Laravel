@@ -7,10 +7,12 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class PostProject extends Mailable
+class PaymentRequestMail extends Mailable
 {
     use Queueable, SerializesModels;
+    
     public $email_data;
+
     public function __construct($email_data)
     {
         $this->email_data = $email_data;
@@ -18,10 +20,6 @@ class PostProject extends Mailable
 
     public function build()
     {
-       return $this->subject('Thanks for posting the project')->view('Mails.post_project')->with(['email_data' => $this->email_data]);
-           
+        return $this->subject('SolutionBuggy Payment-Request')->view('Mails.payment_request')->with(['email_data' => $this->email_data]);
     }
 }
-?>
-
-

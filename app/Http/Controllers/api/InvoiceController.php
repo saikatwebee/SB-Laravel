@@ -8,9 +8,13 @@ use Exception;
 use Symfony\Component\HttpFoundation\Response;
 use App\Models\Invoice;
 use App\Services\CommonService;
+use App\Services\ProfileService;
 use App\Services\InvoiceService;
 use App\Services\ProblemService;
 use Illuminate\Support\Facades\Mail;
+
+use App\Mail\PaymentRequestMail;
+
 // use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Carbon;
@@ -178,6 +182,24 @@ class InvoiceController extends Controller {
                         $data[ 'payment_doc' ] = $uploaded_file;
                         $res = InvoiceService::addPaymentReq( $data );
                         if ( $res ) {
+
+
+                            $to_email = "projects@solutionbuggy.com";
+
+                
+                            $email_data['cid'] = $data[ 'cid' ];
+                            $email_data['pid'] = $data[ 'pid' ];
+                            $email_data['fullname'] = ProfileService::getFullName($data[ 'cid' ]);
+                
+                            $payment=ProblemService::getPaymentDetails($data[ 'cid' ],$data[ 'pid' ]);
+                
+                            $email_data['amount'] = $payment->amount;
+                            $email_data['gst'] = $payment->gst;
+                
+                            Mail::to($to_email)->send(new PaymentRequestMail($email_data));
+                
+
+
                             //add project files for payment_doc
 
                             $ftype = 3;
@@ -205,6 +227,7 @@ class InvoiceController extends Controller {
         }
 
     }
+
 
     public function getPaymentRequest( Request $request ) {
         try {

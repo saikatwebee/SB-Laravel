@@ -44,6 +44,7 @@ interface ProblemInterface
     public static function get_awarded_count($cid);
     public static function get_complted_count($cid);
     public static function getProposal($cid,$pid);
+    public static function getPaymentDetails($cid,$pid);
     public static function addProblemFiles($data);
     public static function updateProblemFiles($data,$cid,$pid,$ftype);
     
@@ -361,6 +362,17 @@ class ProblemService implements ProblemInterface{
                 ->where(['cid'=>$cid,'pid'=>$pid])
                 ->get()
                 ->first();
+
+        return $data;
+    }
+
+
+    public static function  getPaymentDetails($cid,$pid){
+        $data = DB::table('payment_request')
+        ->select('*')
+        ->where(['cid'=>$cid,'pid'=>$pid])
+        ->get()
+        ->first();
 
         return $data;
     }

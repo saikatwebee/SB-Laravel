@@ -22,7 +22,6 @@ body{ font-family:Verdana, Geneva, sans-serif;
 <p>Solution Seeker Contact Number: <b><?= $email_data['iphone'] ?></b></p>
 
 
-<h4><a href="http://localhost:3000/auth/login-page">Login Now</a></h4><br>
 
             
 <p>Best Wishes<br> 
