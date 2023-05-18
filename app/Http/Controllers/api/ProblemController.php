@@ -840,8 +840,8 @@ public function notawardedExecution(){
                             $res=ProblemService::proposal_insert($data);
                             if($res){
                                 $ftype=1;
-                                $root_url = "https://api.solutionbuggy.com/";
-                                 //$root_url = "http://127.0.0.1:8000/";
+                                //$root_url = "https://api.solutionbuggy.com/";
+                                 $root_url = "http://127.0.0.1:8000/";
                                 $file_path = $root_url.'proposal/'.$data['cid'].'/'.$uploaded_file;
 
 					            $fileData['fpath']=$file_path;
@@ -917,8 +917,8 @@ public function notawardedExecution(){
             $res =  ProblemService::getProposal($cid,$pid);
             $doc_name = $res->proposal_doc;
 
-           $root_url = "https://api.solutionbuggy.com/";
-             //$root_url = "http://127.0.0.1:8000/";
+           //$root_url = "https://api.solutionbuggy.com/";
+             $root_url = "http://127.0.0.1:8000/";
             $file_path = $root_url.'proposal/'.$cid.'/'.$doc_name;
 
             $res->doc_src = $file_path;
@@ -965,8 +965,8 @@ public function notawardedExecution(){
                             if($res){
                                
                                 $ftype=1;
-                                $root_url = "https://api.solutionbuggy.com/";
-                                //$root_url = "http://127.0.0.1:8000/";
+                               // $root_url = "https://api.solutionbuggy.com/";
+                                $root_url = "http://127.0.0.1:8000/";
                                 $file_path = $root_url.'proposal/'.$cid.'/'.$uploaded_file;
 
 					            $fileData['fpath']=$file_path;
