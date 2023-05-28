@@ -184,8 +184,8 @@ class InvoiceController extends Controller {
                         if ( $res ) {
 
 
-                            $to_email = "projects.mail.web@gmail.com";
-                           //$to_email = "projects@solutionbuggy.com";
+                            //$email = "projects.mail.web@gmail.com";
+                           $email = "projects@solutionbuggy.com";
 
                             $email_data['cid'] = $data[ 'cid' ];
                             $email_data['pid'] = $data[ 'pid' ];
@@ -196,7 +196,7 @@ class InvoiceController extends Controller {
                             $email_data['amount'] = $payment->amount;
                             $email_data['gst'] = $payment->gst;
                 
-                            Mail::to($to_email)->send(new PaymentRequestMail($email_data));
+                            Mail::to($email)->send(new PaymentRequestMail($email_data));
                 
                             //add project files for payment_doc
 

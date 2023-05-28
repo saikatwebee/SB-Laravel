@@ -123,17 +123,6 @@ class ProblemController extends Controller
 
              Mail::to(auth()->user()->email)->send(new PostProject($email_data));
 
-
-            //return response()->json($email_data);
-
-
-         
-            //mail to project@solutionbuggy.com
-
-                    // Mail::to('project@solutionbuggy.com')->send(
-                    //     new PostProjectInfo('saikatsb10@gmail.com')
-                    // );
-
     }
 
 
@@ -659,17 +648,25 @@ public function notawardedExecution(){
                 $datas['date_added'] = date('Y-m-d H:i:s');
                 $res1 = ProblemService::updateProblemToProvider($datas,$provider_id,$problem_id);
                 if ($res1) {
-
+                    //industry id
                     $cid = CommonService::getCidByEmail(auth()->user()->email);
+                    $provider = CommonService::getRowByCid($provider_id);
+                    $pdetails = ProblemService::getProject($problem_id);
 
-                    $email_data['pfullname'] = ProfileService::getFullName($provider_id);
-                    $email_data['ifullname'] = ProfileService::getFullName($cid);
-                    $email_data['iemail'] = auth()->user()->email;
-                    $email_data['iphone'] = ProfileService::getPhone($cid);
-                    $email_data['proTitle'] = ProblemService::getprotitle($problem_id);
+                    //provider details:
+                    $email_data['fullname'] = ProfileService::getFullName($provider_id);
+                    $email_data['provider_email']= $provider->email;
 
+                    //project Details:
+
+                    $email_data['projectid']= $problem_id;
+                    $email_data['industryname']=$pdetails->industry;
+                    $email_data['location']=$pdetails->location;
+                    $email_data['projectdescription']=$pdetails->describe;
+                    // $email_data['proTitle'] = ProblemService::getprotitle($problem_id);
+                   
                     //sending email 
-                    Mail::to($email_data['iemail'])->send(new AwardIndustryProject($email_data));
+                    Mail::to($email_data['provider_email'])->cc("projects@solutionbuggy.com")->send(new AwardIndustryProject($email_data));
                     
                     return response()->json(['success' => true,'message' => 'Awarded Successfully','cid'  => $cid,'email_data' => $email_data],200);
                 }
@@ -883,8 +880,8 @@ public function notawardedExecution(){
 
     public function sentProposalMail(Request $request){
         try{
-            $email = "projects.mail.web@gmail.com";
-             //$to_email = "projects@solutionbuggy.com";
+            //$email = "projects.mail.web@gmail.com";
+             $email = "projects@solutionbuggy.com";
             
             $cid = CommonService::getCidByEmail(auth()->user()->email);
             $pid = trim($request->input('pid'));

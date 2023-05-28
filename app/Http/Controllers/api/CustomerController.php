@@ -548,10 +548,10 @@ class CustomerController extends Controller {
                 return response()->json( [ 'info'=>$validator->errors()->toJson(), 'message'=>'Oops! Invalid request!' ], 400 );
             } else {
 
-                // $email_data['desc'] = $bug_desc;
-                // $email_data['fullname'] = ProfileService::getFullName($cid);
+                $email_data['desc'] = $bug_desc;
+                $email_data['fullname'] = ProfileService::getFullName($cid);
                 
-                // Mail::to('admin@solutionbuggy.com' )->send(new BugReport($email_data));
+                Mail::to('admin@solutionbuggy.com' )->send(new BugReport($email_data));
 
                 return response()->json(
                     [
