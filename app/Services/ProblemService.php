@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Services;
+
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Exception;
@@ -21,9 +23,9 @@ interface ProblemInterface
     public static function getApplyCount($customer_id);
     public static function subProblemCount($customer_id);
     public static function subApplyCount($customer_id);
-    public static function updateProblem($data,$problem_id);
-    public static function updateProblemToProvider($data,$customer_id,$problem_id);
-    public static function checkProblemForwarded($customer_id,$problem_id);
+    public static function updateProblem($data, $problem_id);
+    public static function updateProblemToProvider($data, $customer_id, $problem_id);
+    public static function checkProblemForwarded($customer_id, $problem_id);
     public static function addProblemToProvider($data);
     public static function addReferProject($data);
     public static function getProject($id);
@@ -31,104 +33,117 @@ interface ProblemInterface
     public static function getCategoryDependent($ind);
     public static function getSkillDependent($ind);
     public static function proposal_insert($data1);
-    public static function proposal_update($data,$cid,$pid);
+    public static function proposal_update($data, $cid, $pid);
 
     public static function getprotitle($problem_id);
     public static function category_browse_sp($sub_cat);
-    public static function category_browse_ss($sub_cat,$customer_id);
+    public static function category_browse_ss($sub_cat, $customer_id);
     public static function industry_browse_sp($industries);
-    public static function industry_browse_ss($industries,$customer_id);
-    public static function browse_sp($sub_cat,$industries);
-    public static function browse_ss($sub_cat,$industries,$customer_id);
-    public static function get_provider($pid,$cid);
+    public static function industry_browse_ss($industries, $customer_id);
+    public static function browse_sp($sub_cat, $industries);
+    public static function browse_ss($sub_cat, $industries, $customer_id);
+    public static function recent_activities_ss($cid);
+    public static function recent_activities_sp($cid);
+    public static function get_provider($pid, $cid);
     public static function get_awarded_count($cid);
     public static function get_complted_count($cid);
-    public static function getProposal($cid,$pid);
-    public static function getPaymentDetails($cid,$pid);
+    public static function getProposal($cid, $pid);
+    public static function getPaymentDetails($cid, $pid);
     public static function addProblemFiles($data);
-    public static function updateProblemFiles($data,$cid,$pid,$ftype);
-    
+    public static function updateProblemFiles($data, $cid, $pid, $ftype);
 }
 
-class ProblemService implements ProblemInterface{
-    public static function postProject($data){
+class ProblemService implements ProblemInterface
+{
+    public static function postProject($data)
+    {
         $id = DB::table('problem')->insertGetId($data);
         return $id;
     }
 
-    public static function verifyPlanId($customer_id){
-        if(CustomerPlane::where('customer_id',$customer_id)->exists()){
+    public static function verifyPlanId($customer_id)
+    {
+        if (CustomerPlane::where('customer_id', $customer_id)->exists()) {
             return true;
-          }
+        }
     }
 
-    public static function getExpDate($customer_id){
-        $row = CustomerPlane::select("exp_plane")->where('customer_id',$customer_id)->first();
-       return $row->exp_plane;
+    public static function getExpDate($customer_id)
+    {
+        $row = CustomerPlane::select("exp_plane")->where('customer_id', $customer_id)->first();
+        return $row->exp_plane;
     }
 
-    public static function getProblemCount($customer_id){
-        $row = CustomerPlane::select("problem")->where('customer_id',$customer_id)->first();
+    public static function getProblemCount($customer_id)
+    {
+        $row = CustomerPlane::select("problem")->where('customer_id', $customer_id)->first();
         return $row->problem;
     }
 
-    public static function getApplyCount($customer_id){
-        $row = CustomerPlane::select("apply")->where('customer_id',$customer_id)->first();
+    public static function getApplyCount($customer_id)
+    {
+        $row = CustomerPlane::select("apply")->where('customer_id', $customer_id)->first();
         return $row->apply;
     }
 
-    
 
-    public static function subProblemCount($customer_id){
-        $problem_count = CustomerPlane::select("problem")->where('customer_id',$customer_id)->first();
-        if($problem_count->problem > 0){
+
+    public static function subProblemCount($customer_id)
+    {
+        $problem_count = CustomerPlane::select("problem")->where('customer_id', $customer_id)->first();
+        if ($problem_count->problem > 0) {
             $problem = $problem_count->problem - 1;
-            $affectedRows = CustomerPlane::where("customer_id",$customer_id)->update(['problem'=>$problem]);
-            if($affectedRows > 0)
-            return true;
+            $affectedRows = CustomerPlane::where("customer_id", $customer_id)->update(['problem' => $problem]);
+            if ($affectedRows > 0)
+                return true;
         }
     }
 
-    public static function subApplyCount($customer_id){
-        $data = CustomerPlane::select("apply")->where('customer_id',$customer_id)->first();
+    public static function subApplyCount($customer_id)
+    {
+        $data = CustomerPlane::select("apply")->where('customer_id', $customer_id)->first();
         $apply_count = $data->apply;
-        if($apply_count > 0){
+        if ($apply_count > 0) {
             $apply = $apply_count - 1;
-            $affectedRows = CustomerPlane::where("customer_id",$customer_id)->update(['apply'=>$apply]);
-            if($affectedRows > 0)
-            return true;
+            $affectedRows = CustomerPlane::where("customer_id", $customer_id)->update(['apply' => $apply]);
+            if ($affectedRows > 0)
+                return true;
         }
     }
 
-    public static function updateProblem($data,$problem_id)
+    public static function updateProblem($data, $problem_id)
     {
-        $affectedRows = Problem::where("id",$problem_id)->update($data);
-        if($affectedRows > 0)
-        return true;
+        $affectedRows = Problem::where("id", $problem_id)->update($data);
+        if ($affectedRows > 0)
+            return true;
     }
 
-    public static function updateProblemToProvider($data,$customer_id,$problem_id)
+    public static function updateProblemToProvider($data, $customer_id, $problem_id)
     {
-        $affectedRows = ProblemToProvider::where(["customer_id"=>$customer_id,"problem_id"=>$problem_id])->update($data);
-        if($affectedRows > 0)
-        return true;
+        $affectedRows = ProblemToProvider::where(["customer_id" => $customer_id, "problem_id" => $problem_id])->update($data);
+        if ($affectedRows > 0)
+            return true;
     }
 
-    public static function checkProblemForwarded($customer_id,$problem_id){
-        if (ProblemToProvider::where(["customer_id"=>$customer_id,"problem_id"=>$problem_id])->exists())
-        return true;
+    public static function checkProblemForwarded($customer_id, $problem_id)
+    {
+        if (ProblemToProvider::where(["customer_id" => $customer_id, "problem_id" => $problem_id])->exists())
+            return true;
     }
-    public static function addProblemToProvider($data){
+    public static function addProblemToProvider($data)
+    {
         $affectedRows = ProblemToProvider::insert($data);
-        if($affectedRows > 0)
-        return true;
+        if ($affectedRows > 0)
+            return true;
     }
-    public static function addReferProject($data){
+    public static function addReferProject($data)
+    {
         $affectedRows = ProblemReferral::insert($data);
-        if($affectedRows > 0)
-        return true;
+        if ($affectedRows > 0)
+            return true;
     }
-    public static function getProject($id){
+    public static function getProject($id)
+    {
         $inv = DB::table('problem')
             ->leftJoin('industries', 'industries.id', '=', 'problem.industries')
             ->leftJoin('category', 'category.id', '=', 'problem.sub_cat')
@@ -137,258 +152,357 @@ class ProblemService implements ProblemInterface{
                 'industries.name as industry',
                 'category.name as cat'
             )
-            ->where('problem.id',$id)
+            ->where('problem.id', $id)
             ->get()
 
             ->first();
-           
+
         return $inv;
-        
     }
-    public static function getProfile($id){
+    public static function getProfile($id)
+    {
         $pro = DB::table('customer')
             ->select(
                 'customer.*'
             )
-            ->where('customer_id',$id)
+            ->where('customer_id', $id)
             ->get()
             ->first();
         return $pro;
-        
     }
 
-    public static function getCategoryDependent($ind){
+    public static function getCategoryDependent($ind)
+    {
         $data = DB::table('category')
-                ->select('id','name','ind_id')
-                ->where(['ind_id'=>$ind,'status'=>1])
-                ->orderBy('id', 'asc')
-                ->get();
-
-                if($data->count() > 0){
-                    return $data;
-                }
-                else{
-                    $default_data = DB::table('category')
-                                ->select('id','name')
-                                ->where(['status'=>1])
-                                ->orderBy('id', 'asc')
-                                ->limit(72)
-                                ->get();
-                        return $default_data;
-                }
-    }
-
-    public static function getSkillDependent($ind){
-        $data = DB::table('skill')
-            ->select('id','name')
-            ->where(['ind_id'=>$ind,'status'=>1])
+            ->select('id', 'name', 'ind_id')
+            ->where(['ind_id' => $ind, 'status' => 1])
             ->orderBy('id', 'asc')
             ->get();
 
-            if($data->count() > 0){
-                return $data;
-            }
-            else{
-                $default_data = DB::table('skill')
-                            ->select('id','name')
-                            ->where(['status'=>1])
-                            ->orderBy('id', 'asc')
-                            ->limit(33)
-                            ->get();
-                    return $default_data;
-            }
-
-
+        if ($data->count() > 0) {
+            return $data;
+        } else {
+            $default_data = DB::table('category')
+                ->select('id', 'name')
+                ->where(['status' => 1])
+                ->orderBy('id', 'asc')
+                ->limit(72)
+                ->get();
+            return $default_data;
+        }
     }
-    
-    public static function proposal_insert($data1){
-        $affected_rows=Proposal::insert($data1);
-        if($affected_rows > 0)
+
+    public static function getSkillDependent($ind)
+    {
+        $data = DB::table('skill')
+            ->select('id', 'name')
+            ->where(['ind_id' => $ind, 'status' => 1])
+            ->orderBy('id', 'asc')
+            ->get();
+
+        if ($data->count() > 0) {
+            return $data;
+        } else {
+            $default_data = DB::table('skill')
+                ->select('id', 'name')
+                ->where(['status' => 1])
+                ->orderBy('id', 'asc')
+                ->limit(33)
+                ->get();
+            return $default_data;
+        }
+    }
+
+    public static function proposal_insert($data1)
+    {
+        $affected_rows = Proposal::insert($data1);
+        if ($affected_rows > 0)
             return true;
     }
 
-    public static function proposal_update($data,$cid,$pid){
-        $affectedRows = Proposal::where(['cid'=>$cid,'pid'=>$pid])->update($data);
-        if($affectedRows > 0)
-        return true;
+    public static function proposal_update($data, $cid, $pid)
+    {
+        $affectedRows = Proposal::where(['cid' => $cid, 'pid' => $pid])->update($data);
+        if ($affectedRows > 0)
+            return true;
     }
 
-    public static function getprotitle($problem_id){
+    public static function getprotitle($problem_id)
+    {
         $data = DB::table('problem')
-                    ->select('title')
-                    ->where('id', $problem_id)
-                    ->get();
-                return $data->title;
+            ->select('title')
+            ->where('id', $problem_id)
+            ->get();
+        return $data->title;
     }
 
-    public static function category_browse_sp($sub_cat){
+    public static function category_browse_sp($sub_cat)
+    {
         //example of raw query 
 
         // $results = DB::select( DB::raw("SELECT * FROM some_table WHERE some_col = :somevariable"), array(
         //     'somevariable' => $someVariable,
         //   ));
 
-        $to = date('Y-m-d H:i:s');
-        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
+        // $to = date('Y-m-d H:i:s');
+        // $from = date('Y-m-d H:i:s', strtotime('-3 month'));
 
-       // DB::enableQueryLog();
+        // DB::enableQueryLog();
         $data = DB::table('problem')
-                    ->select('*')
-                    ->where(['action'=>1,'sub_cat'=>$sub_cat])
-                    ->whereBetween('date_added', [$from, $to])
-                    //->toSql();
-                    ->get();
-
-                    //$query = DB::getQueryLog();
-
-                    return $data;
-        
-    }
-
-    public static function category_browse_ss($sub_cat,$customer_id){
-        $to = date('Y-m-d H:i:s');
-        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
-
-        $data = DB::table('problem')
-                    ->select('*')
-                    ->where(['action'=>1,'sub_cat'=>$sub_cat,'customer_id'=>$customer_id])
-                    ->whereBetween('date_added', [$from, $to])
-                    //->toSql();
-                    ->get();
-        return $data;
-    }
-
-
-    public static function industry_browse_sp($industries){
-        $to = date('Y-m-d H:i:s');
-        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
-
-
-        $data = DB::table('problem')
-                    ->select('*')
-                    ->where(['action'=>1,'industries'=>$industries])
-                    ->whereBetween('date_added', [$from, $to])
-                   // ->toSql();
-                    ->get();
-
-                    return $data;
-    }
-
-    public static function industry_browse_ss($industries,$customer_id){
-        $to = date('Y-m-d H:i:s');
-        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
-
-            $data = DB::table('problem')
-                    ->select('*')
-                    ->where(['action'=>1,'industries'=>$industries,'customer_id'=>$customer_id])
-                    ->whereBetween('date_added', [$from, $to])
-                   // ->toSql();
-                    ->get();
-            return $data;
-    }
-
-
-    public static function browse_sp($sub_cat,$industries){
-        $to = date('Y-m-d H:i:s');
-        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
-
-
-        $data = DB::table('problem')
-                    ->select('*')
-                    ->where(['action'=>1,'sub_cat'=>$sub_cat,'industries'=>$industries])
-                    ->whereBetween('date_added', [$from, $to])
-                   // ->toSql();
-                    ->get();
-
-                    return $data;
-    }
-
-    public static function browse_ss($sub_cat,$industries,$customer_id){
-        $to = date('Y-m-d H:i:s');
-        $from = date('Y-m-d H:i:s',strtotime('-3 month'));
-
-
-        $data = DB::table('problem')
-                    ->select('*')
-                    ->where(['action'=>1,'sub_cat'=>$sub_cat,'industries'=>$industries,'customer_id'=>$customer_id])
-                    ->whereBetween('date_added', [$from, $to])
-                   // ->toSql();
-                    ->get();
-
-                    return $data;
-    }
-
-    public static function get_provider($pid,$cid){
-        $data = DB::table('problem_to_provider')
-        ->select('*')
-        ->where(['problem_id'=>$pid,'customer_id'=>$cid])
-        ->get()
-        ->first();
-
-        return $data;
-    }
-
-    public static function get_awarded_count($cid){
-        $data = DB::table('problem_to_provider')
-        ->select('*')
-        ->where(['action'=>2,'customer_id'=>$cid])
-        ->get();
-
-       if($data)
-        return $data->count();
-        else
-        return 0;
-       
-    }
-
-    public static function get_complted_count($cid){
-        $res = DB::table('problem')
-            ->select('*')
-            ->where('customer_id',$cid,)
-            ->whereIn('action', [2,4,5])
+            ->leftJoin('industries', 'industries.id', '=', 'problem.industries')
+            ->leftJoin('category', 'category.id', '=', 'problem.sub_cat')
+            ->select(
+                'problem.*',
+                'industries.name as industry',
+                'category.name as cat'
+            )
+            ->where(['action' => 1, 'sub_cat' => $sub_cat])
+            // ->whereBetween('date_added', [$from, $to])
+            ->orderBy('problem.id', 'desc')
             ->get();
 
-        if($res){
+        //$query = DB::getQueryLog();
+
+        return $data;
+    }
+
+    public static function category_browse_ss($sub_cat, $customer_id)
+    {
+        // $to = date('Y-m-d H:i:s');
+        // $from = date('Y-m-d H:i:s', strtotime('-3 month'));
+
+        $data = DB::table('problem')
+            ->leftJoin('industries', 'industries.id', '=', 'problem.industries')
+            ->leftJoin('category', 'category.id', '=', 'problem.sub_cat')
+            ->select(
+                'problem.*',
+                'industries.name as industry',
+                'category.name as cat'
+            )
+            ->where(['sub_cat' => $sub_cat, 'customer_id' => $customer_id])
+            // ->whereBetween('date_added', [$from, $to])
+            ->orderBy('problem.id', 'desc')
+            ->get();
+        return $data;
+    }
+
+
+    public static function industry_browse_sp($industries)
+    {
+        // $to = date('Y-m-d H:i:s');
+        // $from = date('Y-m-d H:i:s', strtotime('-3 month'));
+
+
+        $data = DB::table('problem')
+            ->leftJoin('industries', 'industries.id', '=', 'problem.industries')
+            ->leftJoin('category', 'category.id', '=', 'problem.sub_cat')
+            ->select(
+                'problem.*',
+                'industries.name as industry',
+                'category.name as cat'
+            )
+            ->where(['action' => 1, 'industries' => $industries])
+            // ->whereBetween('date_added', [$from, $to])
+            ->orderBy('problem.id', 'desc')
+            ->get();
+
+        return $data;
+    }
+
+    public static function industry_browse_ss($industries, $customer_id)
+    {
+        // $to = date('Y-m-d H:i:s');
+        // $from = date('Y-m-d H:i:s', strtotime('-3 month'));
+
+        $data = DB::table('problem')
+            ->leftJoin('industries', 'industries.id', '=', 'problem.industries')
+            ->leftJoin('category', 'category.id', '=', 'problem.sub_cat')
+            ->select(
+                'problem.*',
+                'industries.name as industry',
+                'category.name as cat'
+            )
+            ->where(['industries' => $industries, 'customer_id' => $customer_id])
+            // ->whereBetween('date_added', [$from, $to])
+            ->orderBy('problem.id', 'desc')
+            ->get();
+        return $data;
+    }
+
+
+    public static function browse_sp($sub_cat, $industries)
+    {
+        // $to = date('Y-m-d H:i:s');
+        // $from = date('Y-m-d H:i:s', strtotime('-3 month'));
+
+
+        $data = DB::table('problem')
+            ->leftJoin('industries', 'industries.id', '=', 'problem.industries')
+            ->leftJoin('category', 'category.id', '=', 'problem.sub_cat')
+            ->select(
+                'problem.*',
+                'industries.name as industry',
+                'category.name as cat'
+            )
+            ->where(['action' => 1, 'sub_cat' => $sub_cat, 'industries' => $industries])
+            // ->whereBetween('date_added', [$from, $to])
+            ->orderBy('problem.id', 'desc')
+            ->get();
+
+        return $data;
+    }
+
+    public static function browse_ss($sub_cat, $industries, $customer_id)
+    {
+        // $to = date('Y-m-d H:i:s');
+        // $from = date('Y-m-d H:i:s', strtotime('-3 month'));
+
+
+        $data = DB::table('problem')
+            ->leftJoin('industries', 'industries.id', '=', 'problem.industries')
+            ->leftJoin('category', 'category.id', '=', 'problem.sub_cat')
+            ->select(
+                'problem.*',
+                'industries.name as industry',
+                'category.name as cat'
+            )
+            ->where(['sub_cat' => $sub_cat, 'industries' => $industries, 'customer_id' => $customer_id])
+            // ->whereBetween('date_added', [$from, $to])
+            ->orderBy('problem.id', 'desc')
+            ->get();
+
+        return $data;
+    }
+
+    public static function recent_activities_sp($cid)
+    {
+        $to = date('Y-m-d H:i:s');
+        $from = date('Y-m-d H:i:s', strtotime('-3 month'));
+
+        $data = DB::table('problem_to_provider')
+            ->leftJoin('problem', 'problem_to_provider.problem_id', '=', 'problem.id')
+            ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+            ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+            ->select(
+                'problem.id as projectId',
+                'problem.title',
+                'problem.execution',
+                'industries.name as industry',
+                'category.name as category',
+                'problem.location',
+                'problem.date_added',
+                'problem_to_provider.action'
+            )
+            ->where(['problem_to_provider.customer_id' => $cid])
+            ->whereBetween('problem_to_provider.date_added', [$from, $to])
+            ->orderBy('problem.id', 'desc')
+            ->get();
+
+        return $data;
+    }
+
+    public static function recent_activities_ss($cid)
+    {
+        $to = date('Y-m-d H:i:s');
+        $from = date('Y-m-d H:i:s', strtotime('-3 month'));
+
+        $data = DB::table('problem')
+        ->leftJoin('industries', 'problem.industries', '=', 'industries.id')
+        ->leftJoin('category', 'problem.sub_cat', '=', 'category.id')
+        ->select(
+            'problem.id as projectId',
+            'problem.title',
+            'problem.execution',
+            'industries.name as industry',
+            'category.name as category',
+            'problem.location',
+            'problem.date_added',
+            'problem.action'
+        )
+        ->where(['problem.customer_id' => $cid])
+        ->whereBetween('problem.date_added', [$from, $to])
+        ->orderBy('problem.id', 'desc')
+        ->get();
+
+    return $data;
+
+
+
+    }
+
+    public static function get_provider($pid, $cid)
+    {
+        $data = DB::table('problem_to_provider')
+            ->select('*')
+            ->where(['problem_id' => $pid, 'customer_id' => $cid])
+            ->get()
+            ->first();
+
+        return $data;
+    }
+
+    public static function get_awarded_count($cid)
+    {
+        $data = DB::table('problem_to_provider')
+            ->select('*')
+            ->where(['action' => 2, 'customer_id' => $cid])
+            ->get();
+
+        if ($data)
+            return $data->count();
+        else
+            return 0;
+    }
+
+    public static function get_complted_count($cid)
+    {
+        $res = DB::table('problem')
+            ->select('*')
+            ->where('customer_id', $cid,)
+            ->whereIn('action', [2, 4, 5])
+            ->get();
+
+        if ($res) {
             return $res->count();
-        }
-        else{
+        } else {
             return 0;
         }
     }
 
-    public static function getProposal($cid,$pid){
+    public static function getProposal($cid, $pid)
+    {
         $data = DB::table('proposal')
-                ->select('*')
-                ->where(['cid'=>$cid,'pid'=>$pid])
-                ->get()
-                ->first();
+            ->select('*')
+            ->where(['cid' => $cid, 'pid' => $pid])
+            ->get()
+            ->first();
 
         return $data;
     }
 
 
-    public static function  getPaymentDetails($cid,$pid){
+    public static function  getPaymentDetails($cid, $pid)
+    {
         $data = DB::table('payment_request')
-        ->select('*')
-        ->where(['cid'=>$cid,'pid'=>$pid])
-        ->get()
-        ->first();
+            ->select('*')
+            ->where(['cid' => $cid, 'pid' => $pid])
+            ->get()
+            ->first();
 
         return $data;
     }
 
-    public static function addProblemFiles($data){
+    public static function addProblemFiles($data)
+    {
         $affectedRows = ProblemFiles::insert($data);
-        if($affectedRows > 0)
-        return true;
-    }
-
-    public static function updateProblemFiles($data,$cid,$pid,$ftype){
-        $affectedRows = ProblemFiles::where(['cid'=>$cid,'pid'=>$pid,'ftype'=>$ftype])->update($data);
-            if($affectedRows > 0)
+        if ($affectedRows > 0)
             return true;
     }
-   
-}
 
-?>
+    public static function updateProblemFiles($data, $cid, $pid, $ftype)
+    {
+        $affectedRows = ProblemFiles::where(['cid' => $cid, 'pid' => $pid, 'ftype' => $ftype])->update($data);
+        if ($affectedRows > 0)
+            return true;
+    }
+}

@@ -131,11 +131,20 @@ use Illuminate\Support\Facades\Route;
         //industry dashboard api data
         Route::get('/getIndustryDashboard',[CustomerController::class, 'getIndustryDashboard']);
 
+        //browse project for SS
         Route::post('/categoryBrowseSs',[ProblemController::class, 'categoryBrowseSs']);
         Route::post('/industryBrowseSs',[ProblemController::class, 'industryBrowseSs']);
         Route::post('/browseSs',[ProblemController::class, 'browseSs']);
+
+        //SS recent activities
+        Route::get('/RecentActivitiesSs',[ProblemController::class, 'RecentActivitiesSs']);
+
+
+        //onboarding api
         Route::get('/getInfo', [OnboardingController::class, 'getInfo']);
         Route::get('/OnboardingPaymentNotifySS', [OnboardingController::class, 'OnboardingPaymentNotifySS']);
+        
+        //notification api after prequalified 
         Route::get('/sentPrequalificationNotification', [OnboardingController::class, 'sentPrequalificationNotification']);
         
         
@@ -219,10 +228,13 @@ use Illuminate\Support\Facades\Route;
         //consultant dashboard api data
         Route::get('/getConsultantDashboard',[CustomerController::class, 'getConsultantDashboard']);
 
-        //sp browsw project
+        //sp browse project
         Route::post('/categoryBrowseSp', [ProblemController::class, 'categoryBrowseSp']);
         Route::post('/industryBrowseSp', [ProblemController::class, 'industryBrowseSp']);
         Route::post('/browseSp', [ProblemController::class, 'browseSp']);
+
+        //sp recent activities
+        Route::get('/RecentActivitiesSp',[ProblemController::class, 'RecentActivitiesSp']);
 
 
         Route::post('/OnboardingPreference', [OnboardingController::class, 'OnboardingPreference']);

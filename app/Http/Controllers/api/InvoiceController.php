@@ -184,9 +184,9 @@ class InvoiceController extends Controller {
                         if ( $res ) {
 
 
-                            $to_email = "projects@solutionbuggy.com";
+                            $to_email = "projects.mail.web@gmail.com";
+                           //$to_email = "projects@solutionbuggy.com";
 
-                
                             $email_data['cid'] = $data[ 'cid' ];
                             $email_data['pid'] = $data[ 'pid' ];
                             $email_data['fullname'] = ProfileService::getFullName($data[ 'cid' ]);
@@ -198,13 +198,11 @@ class InvoiceController extends Controller {
                 
                             Mail::to($to_email)->send(new PaymentRequestMail($email_data));
                 
-
-
                             //add project files for payment_doc
 
                             $ftype = 3;
-                            //$root_url = 'https://api.solutionbuggy.com/';
-                            $root_url = 'http://127.0.0.1:8000/';
+                            $root_url = 'https://api.solutionbuggy.com/';
+                            //$root_url = 'http://127.0.0.1:8000/';
                             $file_path = $root_url.'payment/'.$data[ 'cid' ].'/'.$uploaded_file;
 
                             $fileData[ 'fpath' ] = $file_path;

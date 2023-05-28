@@ -840,8 +840,8 @@ public function notawardedExecution(){
                             $res=ProblemService::proposal_insert($data);
                             if($res){
                                 $ftype=1;
-                                //$root_url = "https://api.solutionbuggy.com/";
-                                 $root_url = "http://127.0.0.1:8000/";
+                                $root_url = "https://api.solutionbuggy.com/";
+                                 //$root_url = "http://127.0.0.1:8000/";
                                 $file_path = $root_url.'proposal/'.$data['cid'].'/'.$uploaded_file;
 
 					            $fileData['fpath']=$file_path;
@@ -883,7 +883,8 @@ public function notawardedExecution(){
 
     public function sentProposalMail(Request $request){
         try{
-            $email = "projects@solutionbuggy.com";
+            $email = "projects.mail.web@gmail.com";
+             //$to_email = "projects@solutionbuggy.com";
             
             $cid = CommonService::getCidByEmail(auth()->user()->email);
             $pid = trim($request->input('pid'));
@@ -917,8 +918,8 @@ public function notawardedExecution(){
             $res =  ProblemService::getProposal($cid,$pid);
             $doc_name = $res->proposal_doc;
 
-           //$root_url = "https://api.solutionbuggy.com/";
-             $root_url = "http://127.0.0.1:8000/";
+           $root_url = "https://api.solutionbuggy.com/";
+             //$root_url = "http://127.0.0.1:8000/";
             $file_path = $root_url.'proposal/'.$cid.'/'.$doc_name;
 
             $res->doc_src = $file_path;
@@ -965,8 +966,8 @@ public function notawardedExecution(){
                             if($res){
                                
                                 $ftype=1;
-                               // $root_url = "https://api.solutionbuggy.com/";
-                                $root_url = "http://127.0.0.1:8000/";
+                               $root_url = "https://api.solutionbuggy.com/";
+                                //$root_url = "http://127.0.0.1:8000/";
                                 $file_path = $root_url.'proposal/'.$cid.'/'.$uploaded_file;
 
 					            $fileData['fpath']=$file_path;
@@ -1085,6 +1086,35 @@ public function notawardedExecution(){
             return response()->json($res);
         }
     } 
+
+    public function RecentActivitiesSp(){
+        try{
+            $cid = CommonService::getCidByEmail(auth()->user()->email);
+          
+            if($cid > 0){
+                $res=ProblemService::recent_activities_sp($cid);
+                return response()->json($res);
+           }
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 502);
+        }
+        
+    }
+
+    public function RecentActivitiesSs(){
+        try{
+            $cid = CommonService::getCidByEmail(auth()->user()->email);
+            if($cid > 0){
+                $res=ProblemService::recent_activities_ss($cid);
+                return response()->json($res);
+           }
+        }
+        catch (Exception $e){
+            return response()->json(['message' => $e->getMessage()], 502);
+        }
+        
+    }
 
     public function getProviderDetails(Request $request){
        try {
